@@ -1,0 +1,12 @@
+{
+  "id": "baron-blade-character",
+  "name": "Baron Blade",
+  "deckId": "baron-blade",
+  "type": "villainCharacter",
+  "keywords": [],
+  "text": "At the start of the villain turn, Baron Blade deals each hero target 1 energy damage.\n\nFLIPPED — MOBILE DEFENSE PLATFORM: At the start of the villain turn, Baron Blade deals each hero target 2 energy damage. Baron Blade is immune to damage from hero ongoing and equipment cards.",
+  "hp": 30,
+  "imageUrl": null,
+  "version": null,
+  "template": null
+}

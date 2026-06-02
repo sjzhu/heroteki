@@ -1,0 +1,38 @@
+[
+  {
+    "id": "megalopolis-citizens-militia",
+    "name": "Citizens Militia",
+    "deckId": "megalopolis",
+    "type": "environmentCard",
+    "keywords": ["ongoing"],
+    "text": "At the end of the environment turn, this card deals the non-environment target with the highest HP 2 melee damage.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  },
+  {
+    "id": "megalopolis-hostage-situation",
+    "name": "Hostage Situation",
+    "deckId": "megalopolis",
+    "type": "environmentCard",
+    "keywords": ["ongoing"],
+    "text": "Whenever a hero is dealt damage, that hero's player discards a card. At the start of the environment turn, this card deals each hero target 1 melee damage.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  },
+  {
+    "id": "megalopolis-police-backup",
+    "name": "Police Backup",
+    "deckId": "megalopolis",
+    "type": "environmentCard",
+    "keywords": ["one-shot"],
+    "text": "Each player may draw a card. The hero target with the lowest HP deals 1 melee damage to each villain target.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  }
+]

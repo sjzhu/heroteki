@@ -1,0 +1,10 @@
+{
+  "id": "baron-blade",
+  "name": "Baron Blade",
+  "deckType": "villain",
+  "version": "1.0.0",
+  "characterCardId": "baron-blade-character",
+  "characterVersion": "1.0.0",
+  "sideDeck": null,
+  "setupInstructions": "Place Baron Blade's character card villain-side up. Shuffle the villain deck and place it face-down. Find and shuffle Mobile Defense Platform into the villain deck."
+}

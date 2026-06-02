@@ -1,0 +1,12 @@
+{
+  "id": "legacy-character",
+  "name": "Legacy",
+  "deckId": "legacy",
+  "type": "heroCharacter",
+  "keywords": [],
+  "text": "Whenever Legacy deals damage, he may redirect 1 of that damage to any target.\n\nINCAPACITATED: One player may discard a card to draw a card. One hero may deal 1 projectile damage to any target. Select a hero; until the start of your next turn, reduce damage dealt to that hero by 1.",
+  "hp": 32,
+  "imageUrl": null,
+  "version": null,
+  "template": null
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "baron-blade-mobile-defense-platform",
+    "name": "Mobile Defense Platform",
+    "deckId": "baron-blade",
+    "type": "villainCard",
+    "keywords": ["ongoing"],
+    "text": "At the start of the villain turn, this card deals each hero target 2 melee damage. At the end of the villain turn, if this card is in play, flip Baron Blade's character card.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  },
+  {
+    "id": "baron-blade-backlash-field",
+    "name": "Backlash Field",
+    "deckId": "baron-blade",
+    "type": "villainCard",
+    "keywords": ["ongoing"],
+    "text": "Whenever a hero deals damage to Baron Blade or a villain target, that hero's player discards a card.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  },
+  {
+    "id": "baron-blade-plummet-the-moon",
+    "name": "Plummet the Moon",
+    "deckId": "baron-blade",
+    "type": "villainCard",
+    "keywords": ["one-shot"],
+    "text": "Baron Blade deals each hero target 4 energy damage. Destroy all hero ongoing and equipment cards.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  }
+]

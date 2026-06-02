@@ -1,0 +1,10 @@
+{
+  "id": "legacy",
+  "name": "Legacy",
+  "deckType": "hero",
+  "version": "1.0.0",
+  "characterCardId": "legacy-character",
+  "characterVersion": "1.0.0",
+  "sideDeck": null,
+  "setupInstructions": null
+}

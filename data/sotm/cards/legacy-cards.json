@@ -1,0 +1,38 @@
+[
+  {
+    "id": "legacy-surge-of-strength",
+    "name": "Surge of Strength",
+    "deckId": "legacy",
+    "type": "heroCard",
+    "keywords": ["one-shot"],
+    "text": "Legacy deals 3 melee damage to 1 target. You may play an additional card this turn.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  },
+  {
+    "id": "legacy-inspiring-presence",
+    "name": "Inspiring Presence",
+    "deckId": "legacy",
+    "type": "heroCard",
+    "keywords": ["ongoing"],
+    "text": "At the start of your turn, each hero other than Legacy may deal 1 projectile damage to any target.\n\nAt the end of your turn, Legacy deals 1 projectile damage to 1 target.",
+    "hp": null,
+    "imageUrl": "https://example.com/placeholder.png",
+    "version": null,
+    "template": "default"
+  },
+  {
+    "id": "legacy-next-evolution",
+    "name": "Next Evolution",
+    "deckId": "legacy",
+    "type": "heroCard",
+    "keywords": ["ongoing"],
+    "text": "Legacy is immune to damage from environment cards. At the end of your turn, Legacy deals 1 melee damage to 1 target.",
+    "hp": null,
+    "imageUrl": null,
+    "version": null,
+    "template": null
+  }
+]

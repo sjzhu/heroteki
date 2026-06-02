@@ -1,0 +1,10 @@
+{
+  "id": "megalopolis",
+  "name": "Megalopolis",
+  "deckType": "environment",
+  "version": "1.0.0",
+  "characterCardId": null,
+  "characterVersion": null,
+  "sideDeck": null,
+  "setupInstructions": null
+}
