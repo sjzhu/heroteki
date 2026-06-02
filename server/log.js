@@ -7,7 +7,7 @@ if (!fs.existsSync(__dirname + '/logs/')) {
 }
 
 let rotate = new transports.DailyRotateFile({
-    filename: __dirname + '/logs/ashteki-%DATE%.log',
+    filename: __dirname + '/logs/sentinels-%DATE%.log',
     datePattern: 'YYYY-MM-DD',
     zippedArchive: true
 });

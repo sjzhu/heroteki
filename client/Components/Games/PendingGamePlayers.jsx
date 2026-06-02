@@ -73,7 +73,7 @@ const PendingGamePlayers = ({ currentGame, user }) => {
 
     const patreonLoginClick = (event) => {
         if (user?.patreon === 'linked') {
-            window.location = 'https://www.patreon.com/ashteki';
+            window.location = 'https://www.patreon.com';
         } else {
             window.location = patreonUrl;
         }

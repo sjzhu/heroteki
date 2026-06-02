@@ -85,7 +85,7 @@ const Matches = () => {
             function callback(blob) {
 
                 // see FileSaver.js
-                saveAs(blob, game.gameId + '.ashteki');
+                saveAs(blob, game.gameId + '.sotmde');
 
                 // showMessage("done !");
             },

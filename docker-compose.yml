@@ -3,7 +3,7 @@ services:
     lobby:
         restart: always
         build: .
-        image: ashteki
+        image: sentinels-online
         ports:
             - '4000:4000'
             - '9229:9229'

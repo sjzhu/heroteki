@@ -1,13 +1,12 @@
 {
-    "name": "ashteki",
-    "version": "2.0.0",
-    "description": "An Ashes Ascendancy Card Game Server",
+    "name": "sentinels-online",
+    "version": "0.1.0",
+    "description": "Sentinels of the Multiverse: Definitive Edition online facilitator",
     "main": "index.js",
     "scripts": {
         "dev": "vite",
         "mongod": "mongod --dbpath=/data --port 27017\n",
         "start": "node .",
-        "fetchdata": "node server/scripts/fetchdata",
         "game": "node server/gamenode",
         "test": "cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine",
         "lint": "eslint --ext=js --ext=jsx client/ server/ test/",
@@ -15,23 +14,14 @@
         "lint:js": "eslint . --ext .js,.jsx,.ts,.tsx",
         "lint:js:fix": "npm run lint:js -- --fix"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/danj3000/ashteki.git"
-    },
     "keywords": [
-        "ashes",
-        "ascendancy",
-        "reborn",
-        "phoenixborn",
+        "sentinels",
+        "multiverse",
+        "definitive-edition",
         "cardgame"
     ],
     "author": "Various",
     "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/danj3000/ashteki/issues"
-    },
-    "homepage": "https://github.com/danj3000/ashteki#readme",
     "dependencies": {
         "@azure/storage-blob": "^12.29.1",
         "@babel/core": "^7.15.8",

@@ -5,7 +5,7 @@ const fs = require('fs');
 const request = require('request');
 const crypto = require('crypto');
 
-const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/ashteki';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/sentinels';
 console.log('attached to: ' + mongoUrl);
 let db = monk(mongoUrl);
 

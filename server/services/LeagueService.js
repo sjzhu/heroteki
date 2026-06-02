@@ -3,12 +3,16 @@ const monk = require('monk');
 class LeagueService {
     constructor(configService) {
         const mongoUrl = process.env.LEAGUEDB_URL || configService.getValue('leaguedb');
-        let db = monk(mongoUrl);
-        this.pairings = db.get('pairings');
-        this.nameLinks = db.get('namelinks');
+        if (mongoUrl) {
+            let db = monk(mongoUrl);
+            this.pairings = db.get('pairings');
+            this.nameLinks = db.get('namelinks');
+        }
+        this.enabled = !!mongoUrl;
     }
 
     async getLatest(tag) {
+        if (!this.enabled) return { pairings: [] };
         return this.pairings
             .findOne(
                 { tag: tag },
@@ -24,6 +28,7 @@ class LeagueService {
     }
 
     async getPrevious(tag) {
+        if (!this.enabled) return [];
         return this.pairings
             .find(
                 { tag: tag },
@@ -39,6 +44,7 @@ class LeagueService {
     }
 
     async getNameLinks() {
+        if (!this.enabled) return [];
         return this.nameLinks
             .find(
                 {},

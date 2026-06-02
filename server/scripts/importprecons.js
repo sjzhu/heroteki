@@ -7,7 +7,7 @@ const CardService = require('../services/AshesCardService');
 const DeckService = require('../services/AshesDeckService');
 const ConfigService = require('../services/ConfigService');
 
-let db = monk('mongodb://127.0.0.1:27017/ashteki');
+let db = monk('mongodb://127.0.0.1:27017/sentinels');
 
 class ImportPrecons {
     constructor() {

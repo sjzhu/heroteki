@@ -1,7 +1,7 @@
 const monk = require('monk');
 const moment = require('moment');
 
-const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/ashteki';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/sentinels';
 console.log('attached to: ' + mongoUrl);
 let db = monk(mongoUrl);
 

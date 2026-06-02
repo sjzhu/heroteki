@@ -3,13 +3,13 @@
     minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
 
     lobby: {
-        appName: 'Ashes Ascendancy Online',
-        emailFromAddress: 'mailer@ashteki.com',
+        appName: 'SotMDE Online',
+        emailFromAddress: 'mailer@sentinels-online.local',
         blockDisposableEmail: false,
         requireActivation: false,
         hmacSecret: 'somethingevenmoresecret',
-        patreonCallbackUrl: 'https://ashteki.com/patreon',
-        patreonClientId: 'kPREwt5MsRP3lK0rsqLitscg7A9o5hn-bkbzELmHIcgo4C80TPARfUWe3rjXIqOh'
+        patreonCallbackUrl: '',
+        patreonClientId: ''
 
         /*
          * Other server configurations used, but not specified, include:

@@ -1,7 +1,7 @@
 {
     env: 'development',
 
-    mongo: 'mongodb://mongo:27017/ashteki',
+    mongo: 'mongodb://mongo:27017/sentinels',
     secret: 'somethingverysecret',
     redisUrl: 'redis://redis/',
     minLobbyChatTime: 0, // The time (in seconds) an account has to be registered before it can chat in the lobby
@@ -10,10 +10,21 @@
      *  - sentryDsn (for production only) - DON'T USE THIS, use process.env.SENTRY_DSN
      */
 
+    privateMode: false,
+    privateUser: '',
+    privatePassword: '',
+    inactivityTimeoutHours: 48,
+    notificationEmail: {
+        enabled: false,
+        smtpHost: '',
+        smtpPort: 587,
+        fromAddress: ''
+    },
+
     lobby: {
         port: 4000,
-        appName: 'Ashes Ascendancy Online',
-        emailFromAddress: 'noreply@ashteki.online',
+        appName: 'SotMDE Online',
+        emailFromAddress: 'noreply@sentinels-online.local',
         blockDisposableEmail: false,
         requireActivation: false,
         hmacSecret: 'somethingevenmoresecret'

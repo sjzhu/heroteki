@@ -144,7 +144,7 @@ const Navigation = (props) => {
     return (
         <Navbar variant='dark' className='navbar-sm' fixed='top'>
             <Nav>
-                <NavbarBrand href='/'>Ashteki</NavbarBrand>
+                <NavbarBrand href='/'>SotMDE Online</NavbarBrand>
                 {renderMenuItems(LeftMenu)}
             </Nav>
             <Navbar.Collapse id='navbar' className='justify-content-end'>
@@ -171,12 +171,6 @@ const Navigation = (props) => {
                     {renderMenuItems(RightMenu)}
                     <ProfileDropdown menu={ProfileMenu} user={props.user} />
 
-                    <Nav.Link
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        href='https://www.patreon.com/ashteki'>
-                        <span className='patreon-link'>Patreon</span>
-                    </Nav.Link>
                 </Nav>
 
             </Navbar.Collapse>

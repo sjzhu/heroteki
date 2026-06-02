@@ -1,5 +1,5 @@
 const monk = require('monk');
-const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/ashteki';
+const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/sentinels';
 console.log('attached to: ' + mongoUrl);
 // 2: user, 3: card id, 4..x: alt stubs
 if (process.argv.length > 3) {
