@@ -27,6 +27,7 @@ const config = require('config');
 
 const { CARD_TYPES } = require('../game/sotm/cardSchema.js');
 const { EXPECTED_DECK_SIZES } = require('../game/sotm/deckSchema.js');
+const { generatePlaceholder, shouldGeneratePlaceholder } = require('../game/sotm/cardImageGenerator');
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -426,25 +427,42 @@ async function main() {
     console.log(`[Step 6] Decks: ${decksInserted} inserted, ${decksUpdated} updated, ${decksUnchanged} unchanged.`);
 
     // -----------------------------------------------------------------------
-    // Step 7 — Placeholder generation stub
+    // Step 7 — Placeholder image generation
     // -----------------------------------------------------------------------
 
     console.log('\n[Step 7] Checking for cards requiring placeholder image generation...');
 
-    const PLACEHOLDER_DIR = '/card-images/placeholders/';
+    let placeholdersGenerated = 0;
+    let placeholdersSkipped = 0;
+    let placeholdersFailed = 0;
 
+    // We work from allCards (already validated and upserted in Step 2).
+    // Re-read each card's current DB record to pick up any imageUrl already set.
     for (const [, card] of allCards) {
-        const needsPlaceholder =
-            card.imageUrl === null ||
-            card.imageUrl === undefined ||
-            (typeof card.imageUrl === 'string' && card.imageUrl.startsWith(PLACEHOLDER_DIR));
+        // Fetch the freshly-upserted record to get the latest imageUrl value.
+        const dbCard = await cardsCollection.findOne({ id: card.id });
+        const cardForCheck = dbCard || card;
 
-        if (needsPlaceholder) {
-            // Agent-2B will wire in the actual placeholder generation here.
-            // For now, log a stub message so the import script can complete during development.
-            console.log(`[PLACEHOLDER] placeholder generation pending for ${card.id}`);
+        if (!shouldGeneratePlaceholder(cardForCheck)) {
+            placeholdersSkipped++;
+            continue;
+        }
+
+        try {
+            const generatedPath = await generatePlaceholder(cardForCheck);
+            await cardsCollection.findOneAndUpdate(
+                { id: cardForCheck.id },
+                { $set: { imageUrl: generatedPath } }
+            );
+            console.log(`[GEN] Placeholder generated for '${cardForCheck.id}' → ${generatedPath}`);
+            placeholdersGenerated++;
+        } catch (err) {
+            console.error(`[ERROR] Placeholder generation failed for '${cardForCheck.id}': ${err.message}`);
+            placeholdersFailed++;
         }
     }
+
+    console.log(`[Step 7] Placeholders: ${placeholdersGenerated} generated, ${placeholdersSkipped} skipped (had imageUrl), ${placeholdersFailed} failed.`);
 
     // -----------------------------------------------------------------------
     // Done
