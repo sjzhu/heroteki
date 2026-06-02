@@ -1,20 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const _ = require('underscore');
-
-const { matchCardByNameAndPack } = require('./cardutil.js');
-
-const PathToSubModulePacks = path.join(__dirname, '../../data/cards');
-const PathToPreconData = path.join(__dirname, '../../data/decks');
-
-const defaultFiller = ['open-memories'];
-const defaultDummyDeck = ['rampage', 'hunting-instincts'];
-
+// STUBBED: Ashes card data removed for SotMDE port. Ashes integration tests
+// that depend on DeckBuilder are deleted in Phase 9.
 class DeckBuilder {
     constructor() {
-        this.cardsByCode = this.loadCards(PathToSubModulePacks);
-        this.cards = Object.values(this.cardsByCode);
-        this.precons = this.loadPrecons(PathToPreconData);
+        this.cardsByCode = {};
+        this.cards = [];
+        this.precons = [];
     }
 
     loadCards(directory) {
