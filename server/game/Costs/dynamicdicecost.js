@@ -1,14 +1,2 @@
-const DiceCost = require('./dicecost');
-
-class DynamicDiceCost extends DiceCost {
-    constructor(costFunc) {
-        super({ diceReq: 'dynamic' });
-        this.costFunc = costFunc;
-    }
-
-    getDiceReq(context) {
-        return this.costFunc(context);
-    }
-}
-
-module.exports = DynamicDiceCost;
+// STUBBED: Ashes rules engine removed for SotMDE port
+module.exports = {};

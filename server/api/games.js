@@ -1,13 +1,12 @@
+// SotMDE Phase 1: Replay system disabled. Replay endpoints return 404.
 const passport = require('passport');
 
 const GameService = require('../services/AshesGameService.js');
 const ConfigService = require('../services/ConfigService.js');
 const { wrapAsync } = require('../util.js');
-const ReplayService = require('../services/AshesReplayService.js');
 
 const configService = new ConfigService();
 const gameService = new GameService(configService);
-const replayService = new ReplayService(configService);
 
 module.exports.init = function (server) {
     server.get(
@@ -16,8 +15,7 @@ module.exports.init = function (server) {
         wrapAsync(async function (req, res) {
             let games = await gameService.findByUserName(req.user.username, {
                 months: req.query.months,
-                gameType: req.query.gameType,
-                hasReplay: req.query.hasReplay
+                gameType: req.query.gameType
             });
             res.send({ success: true, games: games });
         })
@@ -36,7 +34,6 @@ module.exports.init = function (server) {
 
     server.get(
         '/api/games/report/:tag',
-        // passport.authenticate('jwt', { session: false }),
         wrapAsync(async function (req, res) {
             let report = await gameService.getTagReport(req.params.tag, {
                 months: req.query.months,
@@ -50,30 +47,12 @@ module.exports.init = function (server) {
         '/api/game/:id',
         wrapAsync(async function (req, res) {
             let game = await gameService.getGameById(req.params.id);
-            res.attachment(req.params.id + '.json');
-            // res.type('.json');
             res.send({ success: true, game: game });
         })
     );
 
-    server.get(
-        '/api/game/:id/chat',
-        wrapAsync(async function (req, res) {
-            let game = await gameService.getGameById(req.params.id);
-            // res.attachment(req.params.id + '-chat.txt');
-            // res.type('.json');
-            res.send('<pre>' + game.chat + '</pre>');
-        })
-    );
-
-    server.get(
-        '/api/game/:id/replay',
-        // passport.authenticate('jwt', { session: false }),
-        wrapAsync(async function (req, res) {
-            let replay = await replayService.getReplayForGame(req.params.id);
-            // res.attachment(req.params.id + '-chat.txt');
-            // res.type('.json');
-            res.send({ success: true, replay: replay });
-        })
+    // Replay system disabled in Phase 1
+    server.get('/api/game/:id/replay', (req, res) =>
+        res.status(404).send({ success: false, message: 'Replay system not available' })
     );
 };

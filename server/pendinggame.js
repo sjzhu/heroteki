@@ -10,15 +10,10 @@ const { GameTypes } = require('./constants.js');
 
 class PendingGame {
     constructor(owner, details) {
-        this.newGameType = details.newGameType; // pvp, chimera, league
-        this.solo = details.newGameType === GameTypes.chimera;
-        if (this.solo) {
-            this.soloLevel = 'S';
-            this.soloStage = '1';
-        }
+        this.newGameType = details.newGameType;
         this.gameFormat = details.gameFormat;
         this.allowSpectators = details.allowSpectators;
-        this.saveReplay = details.saveReplay;
+        this.saveReplay = false; // replay system disabled in Phase 1
         this.createdAt = new Date();
         this.startedAt = null;
         this.finishedAt = null;
@@ -37,8 +32,6 @@ class PendingGame {
         this.started = false;
         this.swap = !!details.swap;
         this.rematch = false;
-        this.league = details.league;
-        this.pairing = details.pairing;
 
         this.useGameTimeLimit = details.useGameTimeLimit;
         this.gameTimeLimit = details.gameTimeLimit;
@@ -80,25 +73,20 @@ class PendingGame {
     getSaveState() {
         let players = _.map(this.getPlayers(), (player) => {
             return {
-                deck: player.deck.phoenixborn[0].card.name,
                 name: player.name,
-                turn: player.turn,
                 wins: player.wins
             };
         });
 
         return {
             id: this.id,
-            gameFormat: this.gameFormat,
             gamePrivate: this.gamePrivate,
             gameId: this.id,
             gameType: this.gameType,
             label: this.label,
             players: players,
             startedAt: this.createdAt,
-            swap: this.swap,
-            solo: this.solo,
-            pairing: this.pairing
+            swap: this.swap
         };
     }
 
@@ -238,9 +226,6 @@ class PendingGame {
 
         if (this.players[playerName]) {
             if (!this.started) {
-                if (this.solo && !this.isSpectator(playerName)) {
-                    this.removeDummy();
-                }
                 this.removeAndResetOwner(playerName);
 
                 delete this.players[playerName];
@@ -346,20 +331,8 @@ class PendingGame {
             if (player.deck) {
                 deck = {
                     selected: player.deck.selected,
-                    status: player.deck.status,
-                    name: null,
-                    isChimera: player.playerType === 'dummy',
-                    stub: player.deck.listClass || player.deck.phoenixborn[0]?.card.stub || player.deck.phoenixborn[0]?.card.id,
-                    pbStub:
-                        player.deck.phoenixborn[0]?.card.imageStub ||
-                        player.deck.phoenixborn[0]?.card.stub
+                    name: player.deck.name || null
                 };
-                if (
-                    activePlayer === player.name ||
-                    ['firstadventure', 'standard', 'survival'].includes(this.gameFormat)
-                ) {
-                    deck.name = player.deck.name;
-                }
             }
 
             playerSummaries[player.name] = {
@@ -407,7 +380,6 @@ class PendingGame {
                 };
             }),
             startedAt: this.startedAt,
-            solo: this.solo,
             useGameTimeLimit: this.useGameTimeLimit,
             clockType: this.clockType,
             saveReplay: this.saveReplay
@@ -457,12 +429,7 @@ class PendingGame {
             started: this.started,
             swap: this.swap,
             useGameTimeLimit: this.useGameTimeLimit,
-            clockType: this.clockType,
-            solo: this.solo,
-            soloLevel: this.soloLevel,
-            soloStage: this.soloStage,
-            pairing: this.pairing,
-            league: this.league
+            clockType: this.clockType
         };
     }
 }

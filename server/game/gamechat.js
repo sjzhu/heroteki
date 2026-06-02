@@ -1,9 +1,5 @@
-const Card = require('./Card.js');
-const Spectator = require('./spectator.js');
-const Player = require('./player.js');
-const Die = require('./Die.js');
-const Dice = require('./dice.js');
-const Behaviour = require('./solo/Behaviour.js');
+// SotMDE: Retained from Ashteki with Ashes-specific imports and command methods removed.
+// Retains addMessage/messages list so the chat panel still works.
 
 class GameChat {
     constructor(game) {
@@ -21,38 +17,23 @@ class GameChat {
         const messageParts = [];
         for (const [key, fragment] of Object.entries(message)) {
             if (fragment === null || fragment === undefined) {
-                // messages.push('');
-
                 continue;
             }
             if (fragment.message) {
                 messageParts.push(this.getMessageAsText(fragment.message));
-
             } else if (fragment.link && fragment.label) {
                 continue;
             } else if (fragment.argType === 'card') {
                 const indexLabel = fragment.index > 0 ? ' (' + fragment.index + ')' : '';
-                messageParts.push(
-                    fragment.name + indexLabel
-
-                );
+                messageParts.push(fragment.name + indexLabel);
             } else if (fragment.name && fragment.argType === 'player') {
                 continue;
-                // messageParts.push(formatPlayerChatMsg(fragment));
             } else if (fragment.argType === 'nonAvatarPlayer') {
                 messageParts.push(fragment.name);
-            } else if (fragment.argType === 'die') {
-                messageParts.push(fragment.name
-                );
-            } else if (fragment.argType === 'actions') {
-                messageParts.push(
-                    //
-                );
             } else {
                 let messageFragment = fragment.toString();
                 messageParts.push(messageFragment);
             }
-
         }
         return messageParts.join('');
     }
@@ -81,21 +62,14 @@ class GameChat {
     getFormattedMessage(message) {
         let args = Array.from(arguments).slice(1);
         let argList = args.map((arg) => {
-            if (arg instanceof Spectator) {
-                return {
-                    name: arg.name,
-                    argType: 'nonAvatarPlayer'
-                };
-            } else if (arg && arg.name && arg.argType === 'player') {
+            if (arg && arg.name && arg.argType === 'player') {
                 return {
                     name: arg.name,
                     argType: arg.argType
                 };
             }
-
             return arg;
         });
-
         return this.formatMessage(message, argList);
     }
 
@@ -125,43 +99,10 @@ class GameChat {
                 if (arg || arg === 0) {
                     if (Array.isArray(arg)) {
                         returnedFraments.push(this.formatArray(arg));
-                    } else if (arg instanceof Card) {
-                        returnedFraments.push({
-                            name: arg.name,
-                            id: arg.id,
-                            imageStub: arg.imageStub,
-                            index: arg.index,
-                            argType: 'card'
-                        });
-                    } else if (arg instanceof Spectator || arg instanceof Player) {
-                        returnedFraments.push({
-                            name: arg.user.username,
-                            argType: 'nonAvatarPlayer'
-                        });
-                    } else if (arg instanceof Die) {
-                        returnedFraments.push({
-                            name: arg.name,
-                            argType: 'die',
-                            level: arg.level,
-                            magic: arg.magic,
-                            code: Dice.getDieCode(arg)
-                        });
-                    } else if (arg instanceof Behaviour) {
-                        returnedFraments.push({
-                            argType: 'behaviour',
-                            data: arg.getShortSummary()
-                        });
-                    } else if (arg.main || arg.side) {
-                        returnedFraments.push({
-                            argType: 'actions',
-                            main: arg.main,
-                            side: arg.side
-                        });
                     } else {
                         returnedFraments.push(arg);
                     }
                 }
-
                 continue;
             }
 
@@ -178,18 +119,7 @@ class GameChat {
             return '';
         }
 
-        let format;
-
-        format = [...Array(array.length).keys()].map((i) => '{' + i + '}').join(',');
-        // if (array.length === 1) {
-        //     format = '{0}';
-        // } else if (array.length === 2) {
-        //     format = '{0} and {1}';
-        // } else {
-        //     let range = [...Array(array.length - 1).keys()].map((i) => '{' + i + '}');
-        //     format = range.join(', ') + ', and {' + (array.length - 1) + '}';
-        // }
-
+        let format = [...Array(array.length).keys()].map((i) => '{' + i + '}').join(',');
         return { message: this.formatMessage(format, array) };
     }
 }
