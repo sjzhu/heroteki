@@ -354,6 +354,10 @@ class Lobby {
         socket.registerEvent('startgame', this.onStartGame.bind(this));
         socket.registerEvent('togglenode', this.onToggleNode.bind(this));
         socket.registerEvent('watchgame', this.onWatchGame.bind(this));
+        // SotMDE hero selection events
+        socket.registerEvent('addhero', this.onAddHero.bind(this));
+        socket.registerEvent('removehero', this.onRemoveHero.bind(this));
+        socket.registerEvent('setheroorder', this.onSetHeroOrder.bind(this));
 
         socket.on('authenticate', this.onAuthenticated.bind(this));
         socket.on('disconnect', this.onSocketDisconnected.bind(this));
@@ -1153,6 +1157,66 @@ class Lobby {
         }
 
         this.broadcastGameList();
+    }
+
+    // ---- SotMDE hero selection socket handlers ----
+
+    /**
+     * Player claims a hero deck for themselves.
+     * Emits: { deckId }
+     */
+    onAddHero(socket, { deckId } = {}) {
+        const username = socket.user.username;
+        const game = this.findGameForUser(username);
+        if (!game || game.started || game.isSpectator(username)) return;
+
+        const err = game.addHeroDeck(username, deckId);
+        if (err) {
+            socket.send('gameerror', err);
+            return;
+        }
+
+        this.sendGameState(game);
+        this.broadcastGameMessage('updategame', game);
+    }
+
+    /**
+     * Player releases a hero deck.
+     * Emits: { deckId }
+     */
+    onRemoveHero(socket, { deckId } = {}) {
+        const username = socket.user.username;
+        const game = this.findGameForUser(username);
+        if (!game || game.started || game.isSpectator(username)) return;
+
+        game.removeHeroDeck(username, deckId);
+
+        this.sendGameState(game);
+        this.broadcastGameMessage('updategame', game);
+    }
+
+    /**
+     * Host locks in the hero turn order.
+     * Emits: { orderedDeckIds: string[] }
+     */
+    onSetHeroOrder(socket, { orderedDeckIds } = {}) {
+        const username = socket.user.username;
+        const game = this.findGameForUser(username);
+        if (!game || game.started || game.isSpectator(username)) return;
+
+        if (!game.isOwner(username)) {
+            socket.send('gameerror', 'Only the host can set hero order');
+            return;
+        }
+
+        const err = game.setHeroOrder(orderedDeckIds || []);
+        if (err) {
+            socket.send('gameerror', err);
+            return;
+        }
+
+        this.sendGameState(game);
+        this.broadcastGameMessage('updategame', game);
     }
 }
 

@@ -38,6 +38,14 @@ class PendingGame {
         this.clockType = details.clockType;
 
         this.gameChat = new GameChat(this);
+
+        // SotMDE-specific fields
+        this.villainDeckId = details.villainDeckId || null;
+        this.environmentDeckId = details.environmentDeckId || null;
+        // heroSelection: { [playerName]: deckId[] } — each player may claim 1+ hero decks
+        this.heroSelection = {};
+        // heroOrder: [{ heroId (=deckId), controllerPlayerId (=playerName) }] — in turn order
+        this.heroOrder = [];
     }
 
     // Getters
@@ -132,8 +140,9 @@ class PendingGame {
     }
 
     join(id, user, password) {
-        if (_.size(this.players) === 2 || this.started) {
-            return 'Game full';
+        // SotMDE: removed 2-player hard cap; game is ready when allHeroesSelected()
+        if (this.started) {
+            return 'Game already started';
         }
 
         if (this.isUserBlocked(user)) {
@@ -248,6 +257,107 @@ class PendingGame {
         player.argType = 'player';
 
         this.addMessage('{0} {1}', player, message);
+    }
+
+    // ---- SotMDE hero deck selection methods ----
+
+    /**
+     * Claim a hero deck for a player.
+     * @param {string} playerName
+     * @param {string} deckId
+     * @returns {string|undefined} error message, or undefined on success
+     */
+    addHeroDeck(playerName, deckId) {
+        // Check not already claimed by another player
+        for (const [pName, deckIds] of Object.entries(this.heroSelection)) {
+            if (pName !== playerName && deckIds.includes(deckId)) {
+                return `Hero deck ${deckId} is already claimed by ${pName}`;
+            }
+        }
+
+        if (!this.heroSelection[playerName]) {
+            this.heroSelection[playerName] = [];
+        }
+
+        if (!this.heroSelection[playerName].includes(deckId)) {
+            this.heroSelection[playerName].push(deckId);
+        }
+
+        return undefined;
+    }
+
+    /**
+     * Release a hero deck for a player.
+     * @param {string} playerName
+     * @param {string} deckId
+     */
+    removeHeroDeck(playerName, deckId) {
+        if (!this.heroSelection[playerName]) return;
+        this.heroSelection[playerName] = this.heroSelection[playerName].filter(id => id !== deckId);
+        if (this.heroSelection[playerName].length === 0) {
+            delete this.heroSelection[playerName];
+        }
+    }
+
+    /**
+     * Set the final hero turn order.
+     * orderedDeckIds must be a permutation of all selected hero deckIds.
+     * @param {string[]} orderedDeckIds
+     * @returns {string|undefined} error message, or undefined on success
+     */
+    setHeroOrder(orderedDeckIds) {
+        // Build complete set of all selected deckIds
+        const allSelected = [];
+        for (const deckIds of Object.values(this.heroSelection)) {
+            allSelected.push(...deckIds);
+        }
+
+        // Validate: must be a permutation
+        if (orderedDeckIds.length !== allSelected.length) {
+            return 'heroOrder length does not match total selected hero decks';
+        }
+        for (const id of allSelected) {
+            if (!orderedDeckIds.includes(id)) {
+                return `Hero deck ${id} is missing from the hero order`;
+            }
+        }
+
+        // Build heroOrder — map each deckId back to its controller player
+        const deckToPlayer = {};
+        for (const [pName, deckIds] of Object.entries(this.heroSelection)) {
+            for (const deckId of deckIds) {
+                deckToPlayer[deckId] = pName;
+            }
+        }
+
+        this.heroOrder = orderedDeckIds.map(deckId => ({
+            heroId: deckId,
+            controllerPlayerId: deckToPlayer[deckId]
+        }));
+
+        return undefined;
+    }
+
+    /**
+     * Returns true when the game is ready to start from a SotMDE standpoint:
+     * every player has at least one hero selected, villain and environment are set,
+     * and heroOrder has been locked in.
+     */
+    allHeroesSelected() {
+        const playerNames = Object.keys(this.players);
+        if (playerNames.length === 0) return false;
+
+        // Every player must have at least one hero selection
+        for (const pName of playerNames) {
+            if (!this.heroSelection[pName] || this.heroSelection[pName].length === 0) {
+                return false;
+            }
+        }
+
+        if (!this.villainDeckId || !this.environmentDeckId) return false;
+        if (this.heroOrder.length === 0) return false;
+
+        return true;
     }
 
     selectDeck(playerName, deck, forOpponent) {
@@ -429,7 +539,12 @@ class PendingGame {
             started: this.started,
             swap: this.swap,
             useGameTimeLimit: this.useGameTimeLimit,
-            clockType: this.clockType
+            clockType: this.clockType,
+            // SotMDE fields
+            villainDeckId: this.villainDeckId,
+            environmentDeckId: this.environmentDeckId,
+            heroSelection: this.heroSelection,
+            heroOrder: this.heroOrder,
         };
     }
 }
