@@ -4,6 +4,8 @@ const Sentry = require('@sentry/node');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const monk = require('monk');
+const config = require('config');
 
 const { detectBinary } = require('../util');
 const logger = require('../log');
@@ -16,6 +18,16 @@ const DummyUser = require('../models/DummyUser');
 const GameStateWriter = require('./GameStateWriter');
 const PlayerStateWriter = require('./PlayerStateWriter');
 
+// Lazy monk DB for SotMDE card/state loading
+let _db = null;
+function getDb() {
+    if (!_db) {
+        const mongoUrl = process.env.MONGO_URL || config.get('mongo');
+        _db = monk(mongoUrl);
+    }
+    return _db;
+}
+
 class GameServer {
     constructor() {
         this.configService = new ConfigService();
@@ -27,6 +39,8 @@ class GameServer {
         }
 
         this.games = {};
+        // Map of gameId → NodeJS.Timeout for TTL-based eviction after all players disconnect
+        this._evictionTimers = {};
 
         this.protocol = 'https';
 
@@ -98,6 +112,10 @@ class GameServer {
         this.io.on('connection', this.onConnection.bind(this));
 
         setInterval(() => this.clearStaleAndFinishedGames(), 30 * 1000);
+
+        // SotMDE: inactivity check — every 5 minutes, finalise abandoned games
+        const inactivityMs = (config.get('inactivityTimeoutHours') || 48) * 60 * 60 * 1000;
+        setInterval(() => this.checkInactiveGames(inactivityMs), 5 * 60 * 1000);
     }
 
     debugDump() {
@@ -147,13 +165,8 @@ class GameServer {
             debugData.messages = game.getPlainTextLog();
             debugData.game.messages = undefined;
 
-            for (const player of game.getPlayers()) {
-                debugData[player.name] = new PlayerStateWriter(
-                    player,
-                    game.cardVisibility,
-                    game.solo
-                ).getState(player, game.activePlayer);
-            }
+            // SotMDE: PlayerStateWriter stubbed; skip per-player debug dump
+            debugData.players = game.getPlayers().map(p => ({ name: p.name }));
         }
 
         Sentry.configureScope((scope) => {
@@ -199,6 +212,29 @@ class GameServer {
             logger.info(`closed empty game ${game.id}`);
             logger.info(JSON.stringify(game.getSaveState()));
             this.closeGame(game);
+        }
+    }
+
+    /**
+     * SotMDE: Automatically finalise games that have exceeded the inactivity timeout.
+     * @param {number} inactivityMs
+     */
+    checkInactiveGames(inactivityMs) {
+        const now = Date.now();
+        for (const game of Object.values(this.games)) {
+            if (!game.turnManager) continue;
+            if (game.turnManager.phase === 'game_over') continue;
+
+            const lastActivity = game.turnManager.lastActivityAt;
+            if (lastActivity && now - new Date(lastActivity).getTime() > inactivityMs) {
+                logger.info(`Auto-abandoning inactive game ${game.id}`);
+                try {
+                    game.endSession('system');
+                    this.sendGameState(game);
+                } catch (err) {
+                    logger.error(`Auto-abandon failed for game ${game.id}:`, err);
+                }
+            }
         }
     }
 
@@ -327,7 +363,61 @@ class GameServer {
      * @param {import("../pendinggame")} pendingGame
      */
     onStartGame(pendingGame) {
-        let game = new Game(pendingGame, { router: this, cardData: this.cardData });
+        // SotMDE: load card data for all three decks from MongoDB, then start game
+        this._loadCardDataForGame(pendingGame).then((cardData) => {
+            this._startGameWithCardData(pendingGame, cardData);
+        }).catch(err => {
+            logger.error(`Failed to load card data for game ${pendingGame.id}:`, err);
+            // Fallback: start with empty card data (game will have no cards but won't crash)
+            this._startGameWithCardData(pendingGame, {});
+        });
+    }
+
+    /**
+     * Load card data for the decks specified in pendingGame from MongoDB.
+     * Returns a map of { [cardId]: cardDataRecord }.
+     * @param {object} pendingGame
+     * @returns {Promise<object>}
+     */
+    async _loadCardDataForGame(pendingGame) {
+        const deckIds = [];
+
+        // Collect all deck IDs referenced in this game
+        if (pendingGame.villainDeckId) deckIds.push(pendingGame.villainDeckId);
+        if (pendingGame.environmentDeckId) deckIds.push(pendingGame.environmentDeckId);
+
+        const heroOrder = pendingGame.heroOrder || [];
+        for (const slot of heroOrder) {
+            if (slot.heroId && !deckIds.includes(slot.heroId)) {
+                deckIds.push(slot.heroId);
+            }
+        }
+
+        if (deckIds.length === 0) {
+            return {};
+        }
+
+        try {
+            const db = getDb();
+            const cards = db.get('cards');
+            const cardDocs = await cards.find({ deckId: { $in: deckIds } });
+            const cardMap = {};
+            for (const doc of cardDocs) {
+                cardMap[doc.id] = doc;
+            }
+            logger.info(`Loaded ${Object.keys(cardMap).length} cards for game ${pendingGame.id}`);
+            return cardMap;
+        } catch (err) {
+            logger.error('Failed to load cards from MongoDB:', err);
+            return {};
+        }
+    }
+
+    /**
+     * Internal: create and initialise a Game with already-loaded card data.
+     */
+    _startGameWithCardData(pendingGame, cardData) {
+        let game = new Game(pendingGame, { router: this, cardData });
 
         game.on('onTimeExpired', () => {
             this.sendGameState(game);
@@ -341,22 +431,13 @@ class GameServer {
             let playerName = player.name;
             logger.info(`game player: ${game.id} : ${playerName}`);
             game.setWins(playerName, player.wins);
-
-            // rematch swap decks
-            if (pendingGame.swap) {
-                let otherPlayer = game.getOtherPlayer(player);
-                if (otherPlayer) {
-                    playerName = otherPlayer.name;
-                }
-            }
-
-            game.selectDeck(playerName, player.deck);
         }
 
         game.initialise();
         if (pendingGame.rematch) {
             game.addAlert('info', 'The rematch is ready');
         }
+        this.sendGameState(game);
     }
 
     /**
@@ -467,6 +548,12 @@ class GameServer {
             game.reconnect(socket, player.name);
         }
 
+        // Cancel any pending eviction timer for this game
+        if (this._evictionTimers[game.id]) {
+            clearTimeout(this._evictionTimers[game.id]);
+            delete this._evictionTimers[game.id];
+        }
+
         socket.joinChannel(game.id);
 
         player.socket = socket;
@@ -502,17 +589,29 @@ class GameServer {
         game.disconnect(socket.user.username);
 
         if (!socket.tIsClosing) {
-            if (game.isEmpty()) {
-                delete this.games[game.id];
-
-                this.gameSocket.send('GAMECLOSED', { game: game.id });
-            } else if (isSpectator) {
+            if (isSpectator) {
                 this.gameSocket.send('PLAYERLEFT', {
                     gameId: game.id,
                     game: game.getSaveState(),
                     player: socket.user.username,
                     spectator: true
                 });
+            } else if (game.isEmpty()) {
+                // SotMDE: Don't destroy immediately. Set a 60s TTL so players can reconnect.
+                // State is persisted to MongoDB so eviction is safe.
+                const EVICTION_TTL_MS = 60 * 1000;
+                if (this._evictionTimers[game.id]) {
+                    clearTimeout(this._evictionTimers[game.id]);
+                }
+                this._evictionTimers[game.id] = setTimeout(() => {
+                    delete this._evictionTimers[game.id];
+                    const g = this.games[game.id];
+                    if (g && g.isEmpty()) {
+                        logger.info(`Evicting empty game ${game.id} after TTL`);
+                        delete this.games[game.id];
+                        this.gameSocket.send('GAMECLOSED', { game: game.id });
+                    }
+                }, EVICTION_TTL_MS);
             }
         }
 
