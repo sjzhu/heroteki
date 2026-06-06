@@ -492,7 +492,12 @@ class PendingGame {
             startedAt: this.startedAt,
             useGameTimeLimit: this.useGameTimeLimit,
             clockType: this.clockType,
-            saveReplay: this.saveReplay
+            saveReplay: this.saveReplay,
+            // SotMDE fields
+            villainDeckId: this.villainDeckId,
+            environmentDeckId: this.environmentDeckId,
+            heroSelection: this.heroSelection,
+            heroOrder: this.heroOrder
         };
     }
 

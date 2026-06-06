@@ -531,11 +531,9 @@ class Lobby {
             return;
         }
 
-        if (
-            Object.values(game.getPlayers()).some((player) => {
-                return !player.deck;
-            })
-        ) {
+        // SotMDE: replaced Ashes-era player.deck guard with allHeroesSelected() check
+        if (!game.allHeroesSelected()) {
+            socket.send('gameerror', 'All players must select heroes and the hero order must be confirmed before starting');
             return;
         }
 
