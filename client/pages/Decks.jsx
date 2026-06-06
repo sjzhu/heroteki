@@ -1,265 +1,215 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { Col, Form, Row } from 'react-bootstrap';
-import DeckList from '../Components/Decks/DeckList';
-import ViewDeck from '../Components/Decks/ViewDeck';
-import ApiStatus from '../Components/Site/ApiStatus';
-import { Decks } from '../redux/types';
-import { clearApiStatus, loadDecks, selectDeck } from '../redux/actions';
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
-import DeckTypeInfo from '../Components/Decks/DeckTypeInfo';
-import DeckFilter from '../Components/Decks/DeckFilter';
-import debounce from 'lodash.debounce';
+/**
+ * SotMDE Card Library page (replaces Ashes Decks page).
+ * Fetches cards from /api/sotm/cards with filtering by source and deck.
+ * Official and manual cards visible to all authenticated users.
+ * User-source cards visible only to their owner (enforced server-side).
+ *
+ * Route: /decks  (kept at /decks to avoid AppRoutes.jsx changes)
+ */
+import React, { useEffect, useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import { Col, Form, Row, Badge, Spinner, Button } from 'react-bootstrap';
+import Panel from '../Components/Site/Panel';
 import './Decks.scss';
-import { PaginationControl } from 'react-bootstrap-pagination-control';
-import DeckListEx from '../Components/Decks/DeckListEx';
 
-const DecksComponent = () => {
-    const { t } = useTranslation();
-    const dispatch = useDispatch();
-    const apiState = useSelector((state) => {
-        const retState = state.api[Decks.DeleteDeck];
+const CardLibrary = () => {
+    const user = useSelector((state) => state.account.user);
 
-        if (retState && retState.success) {
-            retState.message = t('Deck deleted successfully');
+    const [cards, setCards] = useState([]);
+    const [decks, setDecks] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-            setTimeout(() => {
-                dispatch(clearApiStatus(Decks.DeleteDeck));
-            }, 1000);
+    const [filterDeck, setFilterDeck] = useState('');
+    const [filterSource, setFilterSource] = useState('');
+    const [filterName, setFilterName] = useState('');
+
+    // Load available decks for filter dropdown
+    useEffect(() => {
+        const fetchDecks = async () => {
+            try {
+                const res = await fetch('/api/sotm/decks');
+                if (res.ok) setDecks(await res.json());
+            } catch (_) {
+                // non-fatal
+            }
+        };
+        fetchDecks();
+    }, []);
+
+    const fetchCards = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const params = new URLSearchParams();
+            if (filterDeck) params.set('deckId', filterDeck);
+            if (filterSource) params.set('source', filterSource);
+            const res = await fetch(`/api/sotm/cards?${params.toString()}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            setCards(data);
+        } catch (err) {
+            setError('Failed to load cards. The card library API may not be available yet.');
+            setCards([]);
+        } finally {
+            setLoading(false);
         }
-
-        return retState;
-    });
-    const [tabIndex, setTabIndex] = useState(0);
-    const onDuplicate = () => {
-        setTabIndex(0);
-    };
-    const {
-        myDecks,
-        standaloneDecks,
-        adventuringPartyDecks,
-        firstAdventureDecks,
-        pveDecks,
-        dualDuelDecks,
-        oneCollectionDecks,
-        ascendancyDecks
-    } = useSelector((state) => ({
-        myDecks: state.cards.decks,
-        standaloneDecks: state.cards.standaloneDecks,
-        adventuringPartyDecks: state.cards.adventuringPartyDecks,
-        firstAdventureDecks: state.cards.firstAdventureDecks,
-        pveDecks: state.cards.pveDecks,
-        dualDuelDecks: state.cards.dualDuelDecks,
-        oneCollectionDecks: state.cards.oneCollectionDecks,
-        ascendancyDecks: state.cards.ascendancyDecks
-    }));
-    const [pbFilter, setPbFilter] = useState('');
-    const [nameFilter, setNameFilter] = useState('');
-    const [showFaves, setShowFaves] = useState(false);
-    const [pageNumber, setPageNumber] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
-
-    const { numDecks, selectedDeck, deckReload } = useSelector((state) => ({
-        numDecks: state.cards.numDecks,
-        selectedDeck: state.cards.selectedDeck,
-        deckReload: state.cards.deckReload
-    }));
+    }, [filterDeck, filterSource]);
 
     useEffect(() => {
-        const filter = [
-            { name: 'pb', value: pbFilter },
-            { name: 'name', value: nameFilter },
-            { name: 'favourite', value: showFaves }
-        ];
-        const pagingDetails = {
-            pageSize: pageSize,
-            page: pageNumber,
-            sort: 'lastUpdated',
-            sortDir: 'desc',
-            filter: filter
-        };
+        fetchCards();
+    }, [fetchCards]);
 
-        dispatch(loadDecks(pagingDetails));
-    }, [
-        nameFilter,
-        pbFilter,
-        showFaves,
-        dispatch,
-        deckReload,
-        standaloneDecks,
-        pageNumber,
-        pageSize
-    ]);
+    const filteredCards = filterName
+        ? cards.filter((c) => c.name?.toLowerCase().includes(filterName.toLowerCase()))
+        : cards;
 
-    let onNameChange = debounce((event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setNameFilter(event.target.value);
-    }, 500);
-
-    let onPbChange = (event) => {
-        setPbFilter(event.target.value);
-    };
-
-    const handleFaveChange = () => {
-        setShowFaves(!showFaves);
-    };
-    const onPageClick = (page) => {
-        setPageNumber(page);
-    };
-
-    const onTabChange = (index, lastIndex, event) => {
-        setTabIndex(index);
-        let deck = null;
-        switch (index) {
-            case 0:
-                deck = myDecks[0];
-                break;
-            case 1: // ascendancy
-                deck = ascendancyDecks[0];
-                break;
-            case 2:
-                deck = standaloneDecks[0];
-                break;
-            case 3:
-                deck = pveDecks[0];
-                break;
-            case 4:
-                deck = firstAdventureDecks[0];
-                break;
-            case 5:
-                deck = adventuringPartyDecks[0];
-                break;
-            case 6:
-                deck = dualDuelDecks[0];
-                break;
-            case 7: // oneCollection
-                deck = oneCollectionDecks[0];
-                break;
+    const sourceColor = (source) => {
+        switch (source) {
+            case 'official': return 'primary';
+            case 'manual': return 'warning';
+            case 'user': return 'secondary';
+            default: return 'light';
         }
-        dispatch(selectDeck(deck));
     };
 
     return (
-        <div className='decks-container'>
-            <div className='full-height'>
-                <div className='lobby-card'>
-                    <Col sm={12}>
-                        <ApiStatus
-                            state={apiState}
-                            onClose={() => dispatch(clearApiStatus(Decks.DeleteDeck))}
+        <div className='decks-container full-height'>
+            <div className='lobby-card'>
+                <h2>Card Library</h2>
+
+                {/* Filters */}
+                <Row className='mb-3'>
+                    <Col md={4}>
+                        <Form.Control
+                            type='text'
+                            placeholder='Search by name...'
+                            value={filterName}
+                            onChange={(e) => setFilterName(e.target.value)}
                         />
                     </Col>
+                    <Col md={3}>
+                        <Form.Select value={filterDeck} onChange={(e) => setFilterDeck(e.target.value)}>
+                            <option value=''>All Decks</option>
+                            {decks.map((d) => (
+                                <option key={d.id} value={d.id}>
+                                    {d.name} ({d.deckType})
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Col>
+                    <Col md={3}>
+                        <Form.Select value={filterSource} onChange={(e) => setFilterSource(e.target.value)}>
+                            <option value=''>All Sources</option>
+                            <option value='official'>Official</option>
+                            <option value='manual'>Manual (admin)</option>
+                            {user && <option value='user'>My Uploads</option>}
+                        </Form.Select>
+                    </Col>
+                    <Col md={2}>
+                        <Button variant='outline-secondary' onClick={fetchCards} disabled={loading}>
+                            Refresh
+                        </Button>
+                    </Col>
+                </Row>
 
-                    {/* <div className='lobby-header'> Decks</div> */}
-                    <Tabs onSelect={onTabChange} selectedIndex={tabIndex}>
-                        <TabList>
-                            <Tab>My Decks</Tab>
-                            <Tab>Ascendancy Precons</Tab>
-                            <Tab>Reborn Precons</Tab>
-                            <Tab>Red Rains Precons</Tab>
-                            <Tab>First Adventure</Tab>
-                            <Tab>Adventuring Party</Tab>
-                            <Tab>Dual Duel</Tab>
-                            <Tab>One Collection Battlebox</Tab>
-                        </TabList>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckFilter
-                                        onNameChange={onNameChange}
-                                        onPbChange={onPbChange}
-                                        handleFaveChange={handleFaveChange}
-                                        showButtons={true}
-                                        onPageSizeChange={(e) => setPageSize(e.target.value)}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col lg={6}>
-                                    <DeckList decks={myDecks} showWinRate={true} allowInvalidSelection={true} />
-                                    {(myDecks?.length > 0) && (
-                                        <div className='pagination-wrapper'>
-                                            <PaginationControl
-                                                page={pageNumber}
-                                                between={4}
-                                                total={numDecks}
-                                                limit={pageSize}
-                                                changePage={(page) => {
-                                                    onPageClick(page);
-                                                }}
-                                                ellipsis={1}
-                                            />
-                                        </div>
-                                    )}
-                                </Col>
-                                <Col lg={6}>{selectedDeck && <ViewDeck deck={selectedDeck} onDuplicate={onDuplicate} allowEdit={true} />}</Col>
-                            </Row>
-                        </TabPanel>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckTypeInfo deckType='ascendancy' />
-                                    <DeckListEx decks={ascendancyDecks} />
-                                </Col>
-                            </Row>
-                        </TabPanel>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckTypeInfo deckType='precon' />
-                                    <DeckListEx decks={standaloneDecks} />
-                                </Col>
-                            </Row>
-                        </TabPanel>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckTypeInfo deckType='pveDecks' />
-                                    <DeckListEx decks={pveDecks} />
-                                </Col>
-                            </Row>
-                        </TabPanel>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckTypeInfo deckType='firstadventure' />
-                                    <DeckListEx decks={firstAdventureDecks} />
-                                </Col>
-                            </Row>
-                        </TabPanel>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckTypeInfo deckType='aparty' />
-                                    <DeckListEx decks={adventuringPartyDecks} />
-                                </Col>
-                            </Row>
-                        </TabPanel>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckTypeInfo deckType='dualduel' />
-                                    <DeckListEx decks={dualDuelDecks} />
-                                </Col>
-                            </Row>
-                        </TabPanel>
-                        <TabPanel>
-                            <Row>
-                                <Col>
-                                    <DeckTypeInfo deckType='onecollection' />
-                                    <DeckListEx decks={oneCollectionDecks} />
-                                </Col>
-                            </Row>
-                        </TabPanel>
-                    </Tabs>
-                </div>
+                {loading && (
+                    <div className='text-center p-4'>
+                        <Spinner animation='border' />
+                        <div className='mt-2'>Loading cards...</div>
+                    </div>
+                )}
+
+                {error && (
+                    <div className='alert alert-warning'>{error}</div>
+                )}
+
+                {!loading && !error && filteredCards.length === 0 && (
+                    <div className='text-muted p-3'>
+                        No cards found. Use the import script to load official cards, or{' '}
+                        <a href='/decks/upload'>upload a deck</a>.
+                    </div>
+                )}
+
+                {!loading && filteredCards.length > 0 && (
+                    <div style={{ overflowX: 'auto' }}>
+                        <table className='table table-dark table-striped table-hover'>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Deck</th>
+                                    <th>Keywords</th>
+                                    <th>HP</th>
+                                    <th>Version</th>
+                                    <th>Source</th>
+                                    {user?.permissions?.isAdmin && <th>Image</th>}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredCards.map((card) => (
+                                    <tr key={card.id}>
+                                        <td>
+                                            {card.imageUrl ? (
+                                                <a
+                                                    href={card.imageUrl}
+                                                    target='_blank'
+                                                    rel='noopener noreferrer'
+                                                    title='View card image'
+                                                >
+                                                    {card.name}
+                                                </a>
+                                            ) : (
+                                                card.name
+                                            )}
+                                        </td>
+                                        <td>
+                                            <code style={{ fontSize: '0.8em' }}>{card.type}</code>
+                                        </td>
+                                        <td>{card.deckId}</td>
+                                        <td>
+                                            {(card.keywords || []).map((kw) => (
+                                                <Badge key={kw} bg='info' className='me-1' style={{ fontSize: '0.75em' }}>
+                                                    {kw}
+                                                </Badge>
+                                            ))}
+                                        </td>
+                                        <td>{card.hp ?? '—'}</td>
+                                        <td>
+                                            {card.version && (
+                                                <Badge bg='secondary' style={{ fontSize: '0.75em' }}>
+                                                    v{card.version}
+                                                </Badge>
+                                            )}
+                                        </td>
+                                        <td>
+                                            <Badge bg={sourceColor(card.source)} style={{ fontSize: '0.75em' }}>
+                                                {card.source}
+                                            </Badge>
+                                        </td>
+                                        {user?.permissions?.isAdmin && (
+                                            <td>
+                                                {card.imageUrl ? (
+                                                    <a href='/admin/upload-image' style={{ fontSize: '0.8em' }}>
+                                                        Replace
+                                                    </a>
+                                                ) : (
+                                                    <a href='/admin/upload-image' style={{ fontSize: '0.8em' }}>
+                                                        Upload
+                                                    </a>
+                                                )}
+                                            </td>
+                                        )}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </div>
     );
 };
 
-DecksComponent.displayName = 'Decks';
-
-export default DecksComponent;
+CardLibrary.displayName = 'CardLibrary';
+export default CardLibrary;

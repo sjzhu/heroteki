@@ -1,3 +1,8 @@
+/**
+ * SotMDE Stats.jsx — player profile statistics page.
+ * Removed Ashes-specific per-Phoenixborn stats. Shows generic games played / wins only.
+ * Future: will show SotMDE win/loss by villain and hero deck.
+ */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -6,16 +11,21 @@ import * as actions from '../../redux/actions';
 
 function Stats() {
     const [selectedTerm, setSelectedTerm] = useState(0);
-    const [gameType, setGameType] = useState(null);
     const stats = useSelector((state) => state.stats && state.stats.stats);
-    const apiLoading = useSelector((state) => state.api.REQUEST_USERSTATS ? state.api.REQUEST_USERSTATS.loading : undefined);
-    const apiMessage = useSelector((state) => state.api.REQUEST_USERSTATS ? state.api.REQUEST_USERSTATS.message : undefined);
-    const apiSuccess = useSelector((state) => state.api.REQUEST_USERSTATS ? state.api.REQUEST_USERSTATS.success : undefined);
+    const apiLoading = useSelector((state) =>
+        state.api.REQUEST_USERSTATS ? state.api.REQUEST_USERSTATS.loading : undefined
+    );
+    const apiMessage = useSelector((state) =>
+        state.api.REQUEST_USERSTATS ? state.api.REQUEST_USERSTATS.message : undefined
+    );
+    const apiSuccess = useSelector((state) =>
+        state.api.REQUEST_USERSTATS ? state.api.REQUEST_USERSTATS.success : undefined
+    );
     const dispatch = useDispatch();
 
     const loadUserStats = useCallback(() => {
-        dispatch(actions.loadUserStats(selectedTerm, gameType));
-    }, [dispatch, selectedTerm, gameType]);
+        dispatch(actions.loadUserStats(selectedTerm, null));
+    }, [dispatch, selectedTerm]);
 
     useEffect(() => {
         loadUserStats();
@@ -25,89 +35,26 @@ function Stats() {
         setSelectedTerm(event.target.value);
     }, []);
 
-    const handleTypeChange = useCallback((event) => {
-        setGameType(event.target.value);
-    }, []);
-
-    const statRow = (pbid, stat) => {
-        return (
-            <tr key={'stat-' + pbid}>
-                <td style={{ whiteSpace: 'nowrap' }}>{stat.name}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{stat.wins}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{stat.losses}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{stat.total}</td>
-                <td style={{ whiteSpace: 'nowrap' }}>{stat.winRate}%</td>
-            </tr>
-        );
-    };
-
     let content = null;
 
     if (apiLoading) {
-        content = (
-            <div>
-                Loading games from the server...
-            </div>
-        );
+        content = <div>Loading games from the server...</div>;
     } else if (!apiSuccess) {
         content = <AlertPanel type='error' message={apiMessage} />;
     } else {
-        let statisticRows = [];
+        // Generic totals — don't break if stats is shaped like old Ashes format
+        let totalWins = 0;
+        let totalLosses = 0;
+        let totalPlayed = 0;
+
         if (stats) {
-            statisticRows = Object.values(stats)
-                .sort((a, b) => (a.winRate > b.winRate ? -1 : 1))
-                .map((stat) => {
-                    const pbid = stat.name
-                        .replaceAll(' ', '-')
-                        .replaceAll(',', '')
-                        .toLowerCase();
-                    return statRow(pbid, stat);
-                });
-
-            if (statisticRows.length > 0) {
-                const totalStat = Object.values(stats).reduce(
-                    (agg, current) => {
-                        agg.wins += current.wins;
-                        agg.losses += current.losses;
-
-                        return agg;
-                    },
-                    { name: 'Total', wins: 0, losses: 0 }
-                );
-                totalStat.total = totalStat.wins + totalStat.losses;
-                totalStat.winRate = Math.round((totalStat.wins / totalStat.total) * 100);
-
-                statisticRows.push(statRow('total', totalStat));
-            }
+            const entries = Object.values(stats);
+            totalWins = entries.reduce((sum, s) => sum + (s.wins || 0), 0);
+            totalLosses = entries.reduce((sum, s) => sum + (s.losses || 0), 0);
+            totalPlayed = entries.reduce((sum, s) => sum + (s.total || 0), 0) || totalWins + totalLosses;
         }
 
-        let table =
-            statisticRows.length === 0 ? (
-                <div>You have no recorded games.</div>
-            ) : (
-                <table className='table table-striped table-totals table-dark'>
-                    <thead>
-                        <tr>
-                            <th>
-                                Phoenixborn
-                            </th>
-                            <th>
-                                Wins
-                            </th>
-                            <th>
-                                Losses
-                            </th>
-                            <th>
-                                Total
-                            </th>
-                            <th>
-                                Win Rate
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>{statisticRows}</tbody>
-                </table>
-            );
+        const winRate = totalPlayed > 0 ? Math.round((totalWins / totalPlayed) * 100) : 0;
 
         content = (
             <div>
@@ -124,20 +71,31 @@ function Stats() {
                             <option value='12'>Last 12 months</option>
                         </select>
                     </div>
-                    <div className='col-md-6 inline'>
-                        <select
-                            className='form-control'
-                            value={gameType}
-                            onChange={handleTypeChange}
-                        >
-                            <option value=''>All PvP</option>
-                            <option value='competitive'>Ranked PvP</option>
-                            <option value='casual'>Casual PvP</option>
-                            <option value='solo'>Solo</option>
-                        </select>
-                    </div>
 
-                    {table}
+                    <div className='mt-3'>
+                        {totalPlayed === 0 ? (
+                            <div>You have no recorded games.</div>
+                        ) : (
+                            <table className='table table-striped table-dark'>
+                                <thead>
+                                    <tr>
+                                        <th>Wins</th>
+                                        <th>Losses</th>
+                                        <th>Total</th>
+                                        <th>Win Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{totalWins}</td>
+                                        <td>{totalLosses}</td>
+                                        <td>{totalPlayed}</td>
+                                        <td>{winRate}%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
                 </div>
             </div>
         );
@@ -147,5 +105,4 @@ function Stats() {
 }
 
 Stats.displayName = 'Stats';
-
 export default Stats;

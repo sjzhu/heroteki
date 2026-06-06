@@ -7,6 +7,7 @@ import Panel from '../Components/Site/Panel';
 import ApiStatus from '../Components/Site/ApiStatus';
 import { Formik } from 'formik';
 import { loadCardStats } from '../redux/actions';
+import UploadCardImage from '../Components/Admin/UploadCardImage';
 
 const schema = yup.object({
     cardName: yup.string().required('Card name must be specified'),
@@ -120,4 +121,11 @@ const CardStatsAdmin = () => {
     );
 };
 
-export default CardStatsAdmin;
+const CardStatsAdminPage = () => (
+    <div>
+        <CardStatsAdmin />
+        <UploadCardImage />
+    </div>
+);
+
+export default CardStatsAdminPage;

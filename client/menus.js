@@ -13,15 +13,10 @@
  */
 export const LeftMenu = [
     { path: '/', title: 'Play' },
-    { path: '/cards', title: 'Cards', showOnlyWhenLoggedIn: false },
-    { path: '/decks', title: 'Decks', showOnlyWhenLoggedIn: true },
-    {
-        path: '/decks/chimera',
-        title: 'Chimera',
-        showOnlyWhenLoggedIn: true,
-        permission: 'isSupporter'
-    },
-    { path: '/results', title: 'Results', showOnlyWhenLoggedIn: true },
+    // Card Library: browse all SotMDE cards (replaces Ashes /cards and /decks nav)
+    { path: '/decks', title: 'Card Library', showOnlyWhenLoggedIn: false },
+    // My Uploaded Decks — user deck upload page (/decks/add repurposed as upload)
+    { path: '/decks/add', title: 'My Decks', showOnlyWhenLoggedIn: true },
     { path: '/faq', title: 'Help' },
     {
         title: 'Admin',
@@ -32,7 +27,7 @@ export const LeftMenu = [
             { path: '/nodes', title: 'Nodes', permission: 'canManageNodes' },
             { path: '/banlist', title: 'Ban List', permission: 'canManageBanlist' },
             { path: '/taggedgames', title: 'Tagged Games', permission: 'canManageTournaments' },
-            { path: '/cardstats', title: 'Card Stats', permission: 'isAdmin' }
+            { path: '/cardstats', title: 'Card Stats / Upload Image', permission: 'isAdmin' }
         ]
     }
 ];
