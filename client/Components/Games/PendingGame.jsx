@@ -1,19 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import $ from 'jquery';
 
 import Messages from '../GameBoard/Messages';
 import { startGame, leaveGame, sendSocketMessage } from '../../redux/actions';
 import PendingGamePlayers from './PendingGamePlayers';
+import HeroOrderPanel from './HeroOrderPanel';
 import ChargeMp3 from '../../assets/sound/charge.mp3';
 import ChargeOgg from '../../assets/sound/charge.ogg';
-import { getFormatLabel, getGameTypeLabel, getRankedLabel } from '../../util';
+import { getGameTypeLabel } from '../../util';
 
 import './PendingGame.scss';
 import { useEffect } from 'react';
-import GameFormatInfo from './GameFormatInfo';
 import PictureButton from '../Lobby/PictureButton';
 import { toastr } from 'react-redux-toastr';
 
@@ -100,24 +100,29 @@ const PendingGame = () => {
         return null;
     }
 
+    // SotMDE readiness: all players have heroes, villain+env set, heroOrder confirmed
+    const allHeroesReady = () => {
+        const players = Object.values(currentGame.players);
+        if (players.length === 0) return false;
+        const heroSelection = currentGame.heroSelection || {};
+        const heroOrder = currentGame.heroOrder || [];
+        const allPlayersHaveHeroes = players.every(
+            (p) => heroSelection[p.name] && heroSelection[p.name].length > 0
+        );
+        return (
+            allPlayersHaveHeroes &&
+            !!currentGame.villainDeckId &&
+            !!currentGame.environmentDeckId &&
+            heroOrder.length > 0
+        );
+    };
+
     const canClickStart = () => {
-        if (
-            !user ||
-            !currentGame ||
-            currentGame.owner !== user.username ||
-            connecting ||
-            Object.values(currentGame.players).length < 2
-        ) {
+        if (!user || !currentGame || currentGame.owner !== user.username || connecting) {
             return false;
         }
 
-        if (
-            !Object.values(currentGame.players).every((player) => {
-                return (
-                    !!player.deck.selected && (!!player.deck.status.legalToPlay || currentGame.solo)
-                );
-            })
-        ) {
+        if (!allHeroesReady()) {
             return false;
         }
 
@@ -141,23 +146,30 @@ const PendingGame = () => {
             return t('Waiting for lobby server...');
         }
 
-        if (Object.values(currentGame.players).length < 2) {
-            return t('Waiting for players...');
+        const heroSelection = currentGame.heroSelection || {};
+        const heroOrder = currentGame.heroOrder || [];
+        const players = Object.values(currentGame.players);
+
+        const missingHeroes = players.filter(
+            (p) => !heroSelection[p.name] || heroSelection[p.name].length === 0
+        );
+        if (missingHeroes.length > 0) {
+            return t('Waiting for players to select heroes...');
         }
 
-        if (
-            !Object.values(currentGame.players).every((player) => {
-                return !!player.deck.selected;
-            })
-        ) {
-            return t('Waiting for players to select decks');
+        if (!currentGame.villainDeckId || !currentGame.environmentDeckId) {
+            return t('Villain and environment must be set (check game creation)');
+        }
+
+        if (heroOrder.length === 0) {
+            return t('Host must confirm hero turn order');
         }
 
         if (currentGame.owner === user.username) {
-            return t('Ready to begin, click start to begin the game');
+            return t('Ready to begin, click Start');
         }
 
-        return t('Ready to begin, waiting for opponent to start the game');
+        return t('Ready to begin, waiting for host to start the game');
     };
 
     const sendMessage = () => {
@@ -169,26 +181,6 @@ const PendingGame = () => {
 
         setMessage('');
     };
-
-    let gameLabel = null;
-    let timelimit = null;
-
-    if (currentGame.gameType === 'competitive') {
-        gameLabel = (
-            <h3>
-                Label: <span className='unbold'>{currentGame.label}</span>
-            </h3>
-        );
-
-        timelimit = (
-            <h3>
-                Time Limit:{' '}
-                <span className='unbold'>
-                    {currentGame.useGameTimeLimit ? currentGame.gameTimeLimit + ', ' + currentGame.clockType : 'None'}
-                </span>
-            </h3>
-        );
-    }
 
     const copyGameLink = () => {
         const gameLink = `${window.location.protocol}//${window.location.host}/play?gameId=${currentGame.id}`;
@@ -236,32 +228,36 @@ const PendingGame = () => {
                             Start
                         </Button>
                     </div>
-                    <h3>
-                        Format: <span className='unbold cap'>{getFormatLabel(currentGame.gameFormat)}</span>
-                    </h3>
-                    <div>
-                        <GameFormatInfo gameType={currentGame.gameFormat} />
-                    </div>
+
                 </div>
             </div>
             <div className='game-status'>{getGameStatus()}</div>
-            {!currentGame.solo && (
-                <>
-                    <div className='copy-game-link'>
-                        <Button variant='primary' className='def' onClick={copyGameLink}>
-                            <Trans>Copy Game Link</Trans>
-                        </Button>
-                    </div>
-                    <h3>
-                        Type: <span className='unbold cap'>{getRankedLabel(currentGame.gameType)}</span>
-                    </h3>
+            <div className='copy-game-link'>
+                <Button variant='primary' className='def' onClick={copyGameLink}>
+                    Copy Game Link
+                </Button>
+            </div>
 
-                    {timelimit}
-                    {gameLabel}
-                </>
+            {/* SotMDE game details sidebar */}
+            {currentGame.villainDeckId && (
+                <h4>
+                    Villain:{' '}
+                    <span className='unbold'>
+                        {currentGame.villainDeckId}
+                    </span>
+                </h4>
+            )}
+            {currentGame.environmentDeckId && (
+                <h4>
+                    Environment:{' '}
+                    <span className='unbold'>
+                        {currentGame.environmentDeckId}
+                    </span>
+                </h4>
             )}
 
             <PendingGamePlayers currentGame={currentGame} user={user} />
+            <HeroOrderPanel currentGame={currentGame} user={user} />
 
             <h3>Spectators ({currentGame.spectators.length})</h3>
             <div className='spectator-list'>

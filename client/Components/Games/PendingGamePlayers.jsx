@@ -1,203 +1,96 @@
+/**
+ * SotMDE PendingGamePlayers.jsx — player rows in the pending game lobby.
+ * Replaced Ashes deck-selection UI with SotMDE hero selection badges and
+ * the [+ Add Hero] button that opens SotmHeroSelectModal.
+ * Removed: Chimera/solo controls, DeckStatus, selectdeck socket message.
+ */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { sendSocketMessage } from '../../redux/actions';
-import { Button, Col, Form, Row } from 'react-bootstrap';
-import classNames from 'classnames';
+import { Button } from 'react-bootstrap';
 
 import './PendingGamePlayer.scss';
-import DeckStatus from '../Decks/DeckStatus';
 import PlayerName from '../Site/PlayerName';
-import SelectDeckModal from './SelectDeckModal';
-import { PatreonStatus } from '../../types';
-import { patreonUrl } from '../../constants';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import SotmHeroSelectModal from './SotmHeroSelectModal';
 
 /**
- * @typedef PendingGamePlayersProps
- * @property {PendingGame} currentGame The current pending game
- * @property {User} user The logged in user
- * @property {function(): void} onSelectDeck The callback to be invoked when a deck selection is requested
- */
-
-/**
- * @param {PendingGamePlayersProps} props
+ * @param {{ currentGame: object, user: object }} props
  */
 const PendingGamePlayers = ({ currentGame, user }) => {
     const [showModal, setShowModal] = useState(false);
-    const [playerIsMe, setPlayerIsMe] = useState(true);
     const dispatch = useDispatch();
-    const allowPremium = user?.patreon === PatreonStatus.Pledged || user?.permissions?.isSupporter;
-    const unlinked = !user?.patreon || user?.patreon === PatreonStatus.Unlinked;
-    const showPatreonAdvice = !allowPremium;
-    const isSolo = currentGame.solo;
-    const userIsSpectator = !!currentGame.spectators.find((s) => s.name === user?.username);
 
-    let firstPlayer = true;
-    // need to account for coaloff, and player index
-    let clickHandler = (playerIsMe) => {
-        if (userIsSpectator) {
-            return;
-        }
-        if (currentGame.gameFormat === 'coaloff') {
-            return true;
-        }
-
-        setPlayerIsMe(playerIsMe);
-        setShowModal(true);
-    };
-
-    const deckSelectedHandler = (deck) => {
-        setShowModal(false);
-        dispatch(
-            sendSocketMessage('selectdeck', currentGame.id, playerIsMe, deck._id, !!deck.precon_id)
-        );
-    };
-
-    const chooseForMeHandler = (deckType) => {
-        // guard for unsubscribed user getting access to a random premium deck
-        if (!playerIsMe && isSolo && !allowPremium) {
-            return;
-        }
-        setShowModal(false);
-        dispatch(sendSocketMessage('selectdeck', currentGame.id, playerIsMe, -1, 0, deckType));
-    };
-
-    const onSoloLevelChange = (newLevel) => {
-        dispatch(sendSocketMessage('setsololevel', currentGame.id, newLevel));
-    };
-
-    const onSoloStageChange = (newStage) => {
-        dispatch(sendSocketMessage('setsolostage', currentGame.id, newStage));
-    };
-
-    const patreonLoginClick = (event) => {
-        if (user?.patreon === 'linked') {
-            window.location = 'https://www.patreon.com';
-        } else {
-            window.location = patreonUrl;
-        }
-
-        event.preventDefault();
-    };
+    const userIsSpectator = !!currentGame?.spectators?.find((s) => s.name === user?.username);
+    const heroSelection = currentGame?.heroSelection || {};
 
     return (
         <div className='pending-game-players'>
             <h3>Players:</h3>
             {Object.values(currentGame.players).map((player) => {
                 const isMe = player && player.name === user?.username;
+                const myHeroIds = heroSelection[player.name] || [];
 
-                let deck = null;
-                let selectLink = null;
-                let status = null;
-                let soloControls = null;
-
-                let clickClasses = classNames('deck-selection', {
-                    clickable: currentGame.gameFormat !== 'coaloff'
-                });
-
-                if (player && player.deck && player.deck.selected) {
-                    if (!userIsSpectator && (isMe || currentGame.solo)) {
-                        const deckName = player.deck.name;
-                        deck = (
-                            <button className={clickClasses} title='Select Deck' onClick={() => clickHandler(isMe)}>
-                                {deckName}
-                            </button>
-                        );
-                    } else {
-                        const deckName =
-                            player.name === 'Chimera'
-                                ? player.deck.name
-                                : 'Deck Selected';
-                        deck = <span className='deck-selection'>{deckName}</span>;
-                    }
-
-                    status = !(currentGame.solo && !isMe) && (
-                        <DeckStatus
-                            deck={player.deck}
-                            status={player.deck.status}
-                            gameFormat={currentGame.gameFormat}
-                        />
-                    );
-
-                    if (player.deck.isChimera) {
-                        if (userIsSpectator) {
-                            soloControls = <span></span>;
-                        } else {
-                            soloControls = (
-                                <>
-                                    <Form.Select className='inline'
-
-                                        onChange={(e) => onSoloLevelChange(e.target.value)}
-                                    >
-                                        <option value='S'>Standard</option>
-                                        <option value='H'>Heroic</option>
-                                        <option value='V'>Survival</option>
-                                    </Form.Select>
-
-                                    {currentGame.gameFormat === 'standard' && (
-                                        <Form.Select
-                                            className='inline'
-                                            onChange={(e) => onSoloStageChange(e.target.value)}
-                                        >
-                                            <option>1</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                        </Form.Select>
-                                    )}
-                                </>
-                            );
-                        }
-                    }
-                } else if (player && isMe) {
-                    selectLink = (
-                        <>
-                            <Button onClick={() => clickHandler(isMe)} className='btn-focus def'>
-                                Select Deck
-                            </Button>
-                        </>
-                    );
-                }
-
-                let rowClass = 'player-row';
-                if (firstPlayer) {
-                    rowClass += ' mb-2';
-
-                    firstPlayer = false;
-                }
                 return (
-                    <div className={rowClass} key={player.name}>
-                        <div className='form-row'>
+                    <div className='player-row mb-2' key={player.name}>
+                        <div className='form-row' style={{ flexWrap: 'wrap', gap: '8px' }}>
                             <PlayerName player={player} />
-                            {deck}
-                            {status}
-                            {selectLink}
-                            {soloControls}
-                        </div>
-                        {player.deck.isChimera && showPatreonAdvice && (
-                            <Row className='form-row patreon-row'>
-                                <span className='pending-player-name'></span>
-                                <div>
-                                    <span className='unlock-advice'>
-                                        <a href='#' onClick={patreonLoginClick}>
-                                            {unlinked ? 'Login to' : 'Support on'} Patreon
-                                        </a>{' '}
-                                        to unlock all content <FontAwesomeIcon icon={faCircleInfo} title='You may need to reload this page after' />
-                                    </span>
+
+                            {/* Hero badges */}
+                            {myHeroIds.length > 0 ? (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
+                                    {myHeroIds.map((deckId) => (
+                                        <span key={deckId} className='badge bg-info text-dark'>
+                                            {deckId}
+                                            {isMe && !userIsSpectator && (
+                                                <button
+                                                    style={{
+                                                        background: 'none',
+                                                        border: 'none',
+                                                        padding: '0 0 0 4px',
+                                                        cursor: 'pointer',
+                                                        color: 'inherit',
+                                                        fontWeight: 'bold'
+                                                    }}
+                                                    onClick={() =>
+                                                        dispatch(
+                                                            sendSocketMessage('removehero', {
+                                                                deckId
+                                                            })
+                                                        )
+                                                    }
+                                                    title='Remove hero'
+                                                >
+                                                    &times;
+                                                </button>
+                                            )}
+                                        </span>
+                                    ))}
                                 </div>
-                            </Row>
-                        )}
+                            ) : (
+                                isMe && !userIsSpectator && (
+                                    <span style={{ color: '#888', fontSize: '0.9em' }}>
+                                        No heroes selected
+                                    </span>
+                                )
+                            )}
+
+                            {/* Add hero button — only for this player */}
+                            {isMe && !userIsSpectator && (
+                                <Button
+                                    size='sm'
+                                    variant='outline-primary'
+                                    onClick={() => setShowModal(true)}
+                                >
+                                    + Add Hero
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 );
             })}
+
             {showModal && (
-                <SelectDeckModal
-                    gameFormat={currentGame.gameFormat}
-                    onClose={() => setShowModal(false)}
-                    onDeckSelected={deckSelectedHandler}
-                    onChooseForMe={chooseForMeHandler}
-                    playerIsMe={playerIsMe}
-                />
+                <SotmHeroSelectModal onClose={() => setShowModal(false)} />
             )}
         </div>
     );

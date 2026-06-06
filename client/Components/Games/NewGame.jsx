@@ -1,159 +1,79 @@
-import React from 'react';
+/**
+ * SotMDE NewGame.jsx — game creation form.
+ * Stripped of all Ashes-specific fields (ranked, format, clock, time limit, solo, saveReplay).
+ * Added villain and environment deck selectors fetched from /api/sotm/decks.
+ */
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Col } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
-import GameFormats from './GameFormats';
-
-// import GameOptions from './GameOptions';
-import { getGameTypeLabel, getStandardControlProps } from '../../util';
 import { cancelNewGame, sendSocketMessage } from '../../redux/actions';
-import TimeLimitIcon from '../../assets/img/Timelimit.png';
+import { getStandardControlProps } from '../../util';
 
 import './NewGame.scss';
 import PictureButton from '../Lobby/PictureButton';
-import { PatreonStatus } from '../../types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
+import { getGameTypeLabel } from '../../util';
 
 const GameNameMaxLength = 64;
 
-/**
- * @typedef NewGameProps
- * @property {import("../../typedefs").GameType} [defaultGameType] The default game type to use
- * @property {number} [defaultTimeLimit] The default time limit to use
- * @property {boolean} [defaultPrivate] Whether or not the game defaults to private
- */
-
-/**
- * @param {NewGameProps} props
- */
-const NewGame = ({ defaultGameType, defaultPrivate, defaultTimeLimit, onClosed }) => {
+const NewGame = ({ onClosed }) => {
     const lobbySocket = useSelector((state) => state.lobby.socket);
     const username = useSelector((state) => state.account.user?.username);
     const newGameType = useSelector((state) => state.lobby.newGameType);
-    const isSolo = newGameType === 'chimera';
-    const user = useSelector((state) => state.account.user);
-    const allowPremium = user?.patreon === PatreonStatus.Pledged || user?.permissions?.isSupporter;
 
     const dispatch = useDispatch();
+
+    const [villainDecks, setVillainDecks] = useState([]);
+    const [environmentDecks, setEnvironmentDecks] = useState([]);
+    const [decksLoading, setDecksLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDecks = async () => {
+            try {
+                const [vRes, eRes] = await Promise.all([
+                    fetch('/api/sotm/decks?type=villain'),
+                    fetch('/api/sotm/decks?type=environment')
+                ]);
+                if (vRes.ok) setVillainDecks(await vRes.json());
+                if (eRes.ok) setEnvironmentDecks(await eRes.json());
+            } catch (err) {
+                // non-fatal — selects will just be empty
+            } finally {
+                setDecksLoading(false);
+            }
+        };
+        fetchDecks();
+    }, []);
 
     const schema = yup.object({
         name: yup
             .string()
             .required('You must specify a name for the game')
-            .max(
-                GameNameMaxLength,
-                `Game name must be less than ${GameNameMaxLength} characters`
-            ),
+            .max(GameNameMaxLength, `Game name must be less than ${GameNameMaxLength} characters`),
         password: yup.string().optional(),
-        label: yup.string().optional(),
-        gameTimeLimit: yup
-            .number()
-            .min(1, 'Games must be at least 10 minutes long')
-            .max(120, 'Games must be less than 2 hours'),
-        gameType: yup.string().required()
+        allowSpectators: yup.boolean(),
+        villainDeckId: yup.string().required('You must select a villain'),
+        environmentDeckId: yup.string().required('You must select an environment')
     });
 
     const initialValues = {
         name: `${username}'s game`,
         password: '',
-        label: '',
         allowSpectators: true,
-        gameType: defaultGameType || 'casual',
         newGameType: newGameType,
-        gameFormat: isSolo ? 'standard' : 'constructed',
-        useGameTimeLimit: !!defaultTimeLimit,
-        gameTimeLimit: defaultTimeLimit || 30,
-        clockType: 'chess',
-        gamePrivate: defaultPrivate,
-        ranked: false,
-        solo: isSolo,
-        saveReplay: false
-    };
-
-    const options = [
-        { name: 'ranked', label: 'Ranked (affects Elo rating)' },
-        { name: 'allowSpectators', label: 'Allow spectators' },
-        { name: 'useGameTimeLimit', label: 'Use a time limit (mins) with sudden death rules' },
-        { name: 'showHand', label: 'Show hands to spectators' },
-        { name: 'openHands', label: 'Play with open hands' }
-    ];
-
-    if (allowPremium) {
-        options.push({ name: 'saveReplay', label: 'Save a replay' });
-    }
-    const soloOptions = [{ name: 'allowSpectators', label: 'Allow spectators' }];
-
-    let clockType = [
-        { name: 'chess', label: 'Chess Clock (each)' },
-        { name: 'timer', label: 'Shared' }
-    ];
-
-    const defaultTime = {
-        timer: '50',
-        chess: '30',
-        hourglass: '15',
-        byoyomi: '0'
-    };
-
-    const onClockChange = (value, setFieldValue) => {
-        setFieldValue('clockType', value);
-        setFieldValue('gameTimeLimit', defaultTime[value]);
-    };
-
-    const handlePresetChange = (value, setFieldValue) => {
-        // update the values to the presets for this game type
-        switch (value) {
-            case 'FFL':
-                setFieldValue('ranked', false);
-                setFieldValue('saveReplay', false);
-                setFieldValue('useGameTimeLimit', false);
-
-                break;
-
-            case 'PHX':
-                setFieldValue('ranked', true);
-                setFieldValue('saveReplay', true);
-                setFieldValue('useGameTimeLimit', true);
-                setFieldValue('clockType', 'chess');
-                setFieldValue('gameTimeLimit', 30);
-                setFieldValue('gameFormat', 'constructed');
-
-                break;
-
-            default:
-                break;
-        }
-        setFieldValue('label', value);
-    };
-
-    const getOptionToggle = (option, formProps) => {
-        return (
-            <Form.Check
-                type='switch'
-                id={option.name}
-                label={option.label}
-                disabled={option.disabled}
-                // inline
-                onChange={(e) => {
-                    formProps.handleChange(e);
-                    if (option.name === 'ranked') {
-                        formProps.setFieldValue('saveReplay', e.target.checked);
-                    }
-                }}
-                value='true'
-                checked={formProps.values[option.name]}
-            />
-        );
+        gameType: 'casual',
+        gameFormat: 'standard',
+        villainDeckId: '',
+        environmentDeckId: ''
     };
 
     if (!lobbySocket) {
         return (
             <div>
-                The connection to the lobby has been lost, waiting for it to be restored. If
-                this message persists, please refresh the page.
+                The connection to the lobby has been lost, waiting for it to be restored. If this
+                message persists, please refresh the page.
             </div>
         );
     }
@@ -175,154 +95,112 @@ const NewGame = ({ defaultGameType, defaultPrivate, defaultTimeLimit, onClosed }
                             formProps.handleSubmit(event);
                         }}
                     >
-                        {
-                            <>
-                                <div className='newgame-header'>
-                                    <PictureButton
-                                        text={getGameTypeLabel(newGameType)}
-                                        // header='Premium'
-                                        disabled={true}
-                                        imageClass={newGameType}
+                        <div className='newgame-header'>
+                            <PictureButton
+                                text={getGameTypeLabel(newGameType)}
+                                disabled={true}
+                                imageClass={newGameType}
+                            />
+                            <Col>
+                                <Form.Group controlId='formGridGameName' className='mb-3'>
+                                    <Form.Label>Name</Form.Label>
+                                    <Form.Control
+                                        type='text'
+                                        placeholder='Game Name'
+                                        maxLength={GameNameMaxLength}
+                                        {...getStandardControlProps(formProps, 'name')}
                                     />
+                                    <Form.Control.Feedback type='invalid'>
+                                        {formProps.errors.name}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                            </Col>
+                        </div>
 
-                                    <Col>
-                                        <Form.Group controlId='formGridGameName' className='mb-3'>
-                                            <Form.Label>{'Name'}</Form.Label>
-                                            <Form.Control
-                                                type='text'
-                                                placeholder={'Game Name'}
-                                                maxLength={GameNameMaxLength}
-                                                {...getStandardControlProps(formProps, 'name')}
-                                            />
-                                            <Form.Control.Feedback type='invalid'>
-                                                {formProps.errors.name}
-                                            </Form.Control.Feedback>
+                        {/* Villain selector */}
+                        <Form.Group className='mb-3' controlId='villainDeckId'>
+                            <Form.Label>Villain</Form.Label>
+                            <Form.Select
+                                disabled={decksLoading}
+                                {...getStandardControlProps(formProps, 'villainDeckId')}
+                                onChange={(e) =>
+                                    formProps.setFieldValue('villainDeckId', e.target.value)
+                                }
+                            >
+                                <option value=''>
+                                    {decksLoading ? 'Loading...' : '— Select Villain —'}
+                                </option>
+                                {villainDecks.map((d) => (
+                                    <option key={d.id} value={d.id}>
+                                        {d.name}
+                                        {d.version ? ` (v${d.version})` : ''}
+                                        {d.cardCount ? ` · ${d.cardCount} cards` : ''}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                            {formProps.touched.villainDeckId && formProps.errors.villainDeckId && (
+                                <Form.Control.Feedback type='invalid' style={{ display: 'block' }}>
+                                    {formProps.errors.villainDeckId}
+                                </Form.Control.Feedback>
+                            )}
+                        </Form.Group>
 
-                                            {newGameType === 'chimera' &&
-                                                soloOptions.map((option) =>
-                                                    getOptionToggle(option, formProps)
-                                                )}
-                                            {newGameType === 'pvp' && (
-                                                <div className='mt-3'>
-                                                    <Form.Label>League Presets</Form.Label>
-                                                    <Form.Select
-                                                        onChange={(e) => {
-                                                            handlePresetChange(
-                                                                e.target.value,
-                                                                formProps.setFieldValue
-                                                            );
-                                                            e.stopPropagation();
-                                                        }}
-                                                    >
-                                                        <option value=''></option>
-                                                        <option value='FFL'>First Five League</option>
-                                                        <option value='PHX'>Phoenix League</option>
-                                                    </Form.Select>
-                                                </div>
-                                            )}
-                                        </Form.Group>
-                                    </Col>
-                                </div>
-                                {!isSolo && <GameFormats formProps={formProps} />}
-                                {newGameType === 'pvp' && (
-                                    <>
-                                        <Form.Group className='mb-3'>
-                                            <Row>
-                                                <h3 >Options</h3>
-                                                {options.map((option) => (
-                                                    <Col key={option.name} lg='6'>
-                                                        {getOptionToggle(option, formProps)}
-                                                        {option.disabled && (
-                                                            <span className='premium-lozenge sm'>
-                                                                <FontAwesomeIcon icon={faLock} />
-                                                                &nbsp;Premium
-                                                            </span>
-                                                        )}
-                                                    </Col>
-                                                ))}
-                                            </Row>
-                                        </Form.Group>
-                                    </>
+                        {/* Environment selector */}
+                        <Form.Group className='mb-3' controlId='environmentDeckId'>
+                            <Form.Label>Environment</Form.Label>
+                            <Form.Select
+                                disabled={decksLoading}
+                                {...getStandardControlProps(formProps, 'environmentDeckId')}
+                                onChange={(e) =>
+                                    formProps.setFieldValue('environmentDeckId', e.target.value)
+                                }
+                            >
+                                <option value=''>
+                                    {decksLoading ? 'Loading...' : '— Select Environment —'}
+                                </option>
+                                {environmentDecks.map((d) => (
+                                    <option key={d.id} value={d.id}>
+                                        {d.name}
+                                        {d.version ? ` (v${d.version})` : ''}
+                                        {d.cardCount ? ` · ${d.cardCount} cards` : ''}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                            {formProps.touched.environmentDeckId &&
+                                formProps.errors.environmentDeckId && (
+                                    <Form.Control.Feedback
+                                        type='invalid'
+                                        style={{ display: 'block' }}
+                                    >
+                                        {formProps.errors.environmentDeckId}
+                                    </Form.Control.Feedback>
                                 )}
-                                {formProps.values.useGameTimeLimit && (
-                                    <Row>
-                                        <Form.Group className='mb-3'>
-                                            <Form.Label>
-                                                <span>
-                                                    <img
-                                                        src={TimeLimitIcon}
-                                                        className='game-list-icon'
-                                                        alt={'Time limit used'}
-                                                    />
-                                                </span>
-                                                &nbsp;
-                                                {'Time Limit'}
-                                            </Form.Label>
-                                            <Form.Control
-                                                type='text'
-                                                placeholder={'Enter time limit'}
-                                                {...getStandardControlProps(
-                                                    formProps,
-                                                    'gameTimeLimit'
-                                                )}
-                                            />
-                                            <Form.Control.Feedback type='invalid'>
-                                                {formProps.errors.gameTimeLimit}
-                                            </Form.Control.Feedback>
+                        </Form.Group>
 
-                                            <div className='mt-3'>
-                                                {clockType.map((type) => (
-                                                    <Form.Check
-                                                        name='clockType'
-                                                        key={type.name}
-                                                        type='radio'
-                                                        id={type.name}
-                                                        label={type.label}
-                                                        inline
-                                                        onChange={(e) => {
-                                                            formProps.handleChange(e);
-                                                            onClockChange(
-                                                                type.name,
-                                                                formProps.setFieldValue
-                                                            );
-                                                        }}
-                                                        value={type.name}
-                                                        checked={
-                                                            formProps.values.clockType === type.name
-                                                        }
-                                                    />
-                                                ))}
-                                            </div>
-                                        </Form.Group>
-                                    </Row>
-                                )}
-                            </>
-                        }
-                        {newGameType === 'pvp' && (
-                            <Row>
-                                <Col sm={6}>
-                                    <Form.Group className='mb-3'>
-                                        <Form.Label>{'Password'}</Form.Label>
-                                        <Form.Control
-                                            type='text'
-                                            placeholder={'Enter a password'}
-                                            autoComplete='off'
-                                            {...getStandardControlProps(formProps, 'password')}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                                <Col sm={6}>
-                                    <Form.Group className='mb-3'>
-                                        <Form.Label>{'Label (for tournaments)'}</Form.Label>
-                                        <Form.Control
-                                            type='text'
-                                            placeholder={'Enter a label'}
-                                            {...getStandardControlProps(formProps, 'label')}
-                                        />
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                        )}
+                        {/* Password */}
+                        <Form.Group className='mb-3' controlId='password'>
+                            <Form.Label>Password (optional)</Form.Label>
+                            <Form.Control
+                                type='text'
+                                placeholder='Leave blank for open game'
+                                autoComplete='off'
+                                {...getStandardControlProps(formProps, 'password')}
+                            />
+                        </Form.Group>
+
+                        {/* Allow spectators */}
+                        <Form.Group className='mb-3'>
+                            <Form.Check
+                                type='switch'
+                                id='allowSpectators'
+                                label='Allow spectators'
+                                checked={formProps.values.allowSpectators}
+                                onChange={(e) =>
+                                    formProps.setFieldValue('allowSpectators', e.target.checked)
+                                }
+                            />
+                        </Form.Group>
+
                         <div className='text-center newgame-buttons'>
                             <Button
                                 variant='primary'
