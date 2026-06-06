@@ -1,33 +1,44 @@
-// SotMDE GameStateWriter — bridges game.getState() to socket emission.
-// Phase 7 will finalize this; for now it delegates to game.getState() directly.
+/**
+ * SotMDE GameStateWriter — bridges game.getState() to socket emission.
+ *
+ * game.getState(forPlayerName) returns the full broadcast state shape:
+ * {
+ *   gameId:                    string,
+ *   round:                     number,
+ *   phase:                     TurnPhase,
+ *   H:                         number,           // fixed; number of hero decks
+ *   activeHeroId:              string | null,    // heroId whose turn it is; null during villain/env phases
+ *   activeControllerPlayerId:  string | null,    // socket user id in control; null during villain/env phases
+ *   villain:                   VillainState,     // all zones fully visible
+ *   environment:               EnvironmentState, // all zones fully visible
+ *   heroes:                    HeroState[],      // in heroOrder sequence;
+ *                                                // hand visible only to that hero's controllerPlayerId
+ *                                                // (one user may control multiple heroes)
+ *   chatLog:                   ChatMessage[],
+ *   setupInstructions:         string | null,    // non-null only during SETUP phase
+ *   isGameOver:                boolean,
+ * }
+ *
+ * Serialisation is player-specific: call getStateForPlayer(player) per socket.
+ * Spectators and replay calls use getStateForReplay() which passes null so all
+ * hands are treated as hidden.
+ */
 class GameStateWriter {
     constructor(game) {
         this.game = game;
     }
 
-    /**
-     * Serialize state for a specific player (hands are hidden for others).
-     * @param {import('../game/player')} player
-     */
     getStateForPlayer(player) {
-        if (typeof this.game.getState === 'function') {
-            return this.game.getState(player.name);
-        }
-        return { id: this.game.id, started: false };
+        return this.game.getState(player.name);
     }
 
     getStateForReplay() {
-        if (typeof this.game.getState === 'function') {
-            return this.game.getState(null);
-        }
-        return {};
+        return this.game.getState(null);
     }
 
     getState(userName) {
-        if (typeof this.game.getState === 'function') {
-            return this.game.getState(userName || null);
-        }
-        return { id: this.game.id, started: false };
+        return this.game.getState(userName || null);
     }
 }
+
 module.exports = GameStateWriter;

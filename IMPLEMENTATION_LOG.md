@@ -182,15 +182,19 @@ decisions made along the way.
 
 ### Agent-4D: Game State Serialization (Phase 7)
 
-- **Status:** Not started
+- **Status:** Complete ✅
 - **Steps:** 7.1 – 7.3
-- **Started:**
-- **Completed:**
+- **Started:** 2026-06-06
+- **Completed:** 2026-06-06
 - **Exit gate:**
-  - [ ] `gameserver.js` compiles without errors after deletes
-  - [ ] `client/redux/selectors/game.js` exports all eight selectors
-  - [ ] A started game produces a non-empty `gamestate` socket event
+  - [x] `gameserver.js` compiles without errors after deletes (verified via `node -e "require('./server/gamenode/GameStateWriter')"`)
+  - [x] `client/redux/selectors/game.js` exports all eight required selectors (plus `selectChatLog`, `selectCurrentGame`, `selectGameOverPrompt`)
+  - [x] `game.getState()` shape confirmed at `server/game/game.js:624-643`; all required fields present
+  - [x] `PlayerStateWriter.js`, `CardStateWriter.js`, `DieStateWriter.js` deleted; no remaining imports found
 - **Deviations / decisions:**
+  - The three stale writers were staged for deletion by Agent-4D but landed in Agent-4C's Step 6.4 commit (they were already in the git index); no functional impact
+  - `gameserver.js` updated to remove `PlayerStateWriter` import and add a `_pendingBroadcast` flush path for `gameOverPrompt`/`gameOverCancelled` events
+  - Selectors file includes three bonus exports beyond the spec: `selectChatLog`, `selectCurrentGame`, `selectGameOverPrompt` — additive, not breaking
 
 ---
 

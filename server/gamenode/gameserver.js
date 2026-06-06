@@ -16,7 +16,6 @@ const ConfigService = require('../services/ConfigService');
 const version = require('../../version');
 const DummyUser = require('../models/DummyUser');
 const GameStateWriter = require('./GameStateWriter');
-const PlayerStateWriter = require('./PlayerStateWriter');
 
 // Lazy monk DB for SotMDE card/state loading
 let _db = null;
@@ -677,9 +676,21 @@ class GameServer {
         this.runAndCatchErrors(game, () => {
             game.stopClocks();
 
+            game._pendingBroadcast = null;
             game[command](socket.user.username, ...args);
 
             game.continue();
+
+            // SotMDE: check for pending broadcast events (e.g. gameOverPrompt, gameOverCancelled)
+            if (game._pendingBroadcast) {
+                const { type } = game._pendingBroadcast;
+                for (const player of Object.values(game.getPlayersAndSpectators())) {
+                    if (!player.left && !player.disconnectedAt && player.socket) {
+                        player.socket.send(type);
+                    }
+                }
+                game._pendingBroadcast = null;
+            }
 
             this.sendGameState(game);
         });
