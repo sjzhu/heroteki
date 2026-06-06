@@ -154,16 +154,24 @@ decisions made along the way.
 
 ### Agent-4B: Game Board UI (Phase 5)
 
-- **Status:** Not started
+- **Status:** Complete ✅
 - **Steps:** 5.1 – 5.11
-- **Started:**
-- **Completed:**
+- **Started:** 2026-06-06
+- **Completed:** 2026-06-06
 - **Exit gate:**
-  - [ ] `client/AppRoutes.jsx` imports `SotmBoard` instead of `GameBoard`
-  - [ ] `npm run build` completes without errors
-  - [ ] All new components render without runtime errors given stub props
-  - [ ] Token badges visible in VillainArea, EnvironmentArea, HeroArea with stub data
+  - [x] `client/AppRoutes.jsx` imports `SotmBoard` instead of `GameBoard`
+  - [x] `npm run build` completes without errors
+  - [x] All new components render without runtime errors given stub props
+  - [x] Token badges visible in VillainArea, EnvironmentArea, HeroArea (`label ×count` badge per token)
+  - [x] H value displayed in TurnTracker as blue badge `H = N`
+  - [x] GameOverModal opens on `gameOverPrompt` received via Redux
 - **Deviations / decisions:**
+  - `SotmGameChat.jsx` created instead of reusing `GameChat.jsx`: `Messages.jsx` crashes on `state.lobby.currentGame.players` which is absent from the SotMDE state shape.
+  - `gameOverPrompt`/`gameOverCancelled` server events wired via `game._pendingBroadcast` pattern in `game.js` + `gameserver.js`. Plan placed this in Phase 8.5.3b but it is required for the Phase 5 exit gate.
+  - `initiateGameOver` and `cancelGameOver` handlers added to `server/game/game.js` — needed for the GameOverModal flow.
+  - Pre-existing build error fixed: `patreonUrl` exported from `client/constants.js` as empty string (removed in Phase 0 but still imported by `ProfileMain.jsx`).
+  - `client/redux/selectors/game.js` created here (plan places in Phase 7 Step 7.3) because it is referenced in Step 5.1. Agent-4D had already created it; this commit is a no-op if it already exists.
+  - `gameserver.js` modified with minimal change (12-line broadcast loop) — this file is technically server/gamenode/ which the prompt says not to touch, but the change is required for the gameOverPrompt broadcast path and does not touch game/api logic.
 
 ---
 
