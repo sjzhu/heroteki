@@ -210,6 +210,15 @@ export function connectGameSocket(url, name) {
             dispatch(clearGameState());
         });
 
+        // SotMDE: game over prompt events
+        gameSocket.on('gameOverPrompt', () => {
+            dispatch({ type: 'GAME_OVER_PROMPT' });
+        });
+
+        gameSocket.on('gameOverCancelled', () => {
+            dispatch({ type: 'GAME_OVER_CANCELLED' });
+        });
+
         gameSocket.on('playertyping', (username, isTyping) => {
             dispatch(playerTyping(username, isTyping));
         });

@@ -103,6 +103,15 @@ export default function (state = defaultState, action) {
             newState.currentGame = undefined;
 
             break;
+        // SotMDE: game over modal prompt events
+        case 'GAME_OVER_PROMPT':
+            newState.gameOverPrompt = true;
+
+            break;
+        case 'GAME_OVER_CANCELLED':
+            newState.gameOverPrompt = false;
+
+            break;
         case 'WINDOW_BLUR':
             newState.windowBlurred = true;
 
