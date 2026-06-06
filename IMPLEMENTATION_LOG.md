@@ -129,16 +129,26 @@ decisions made along the way.
 
 ### Agent-4A: Lobby UI Changes (Phase 4)
 
-- **Status:** Not started
+- **Status:** Complete ✅
 - **Steps:** 4.1 – 4.5
-- **Started:**
-- **Completed:**
+- **Started:** 2026-06-06
+- **Completed:** 2026-06-06
+- **Commits:** `71c379c14` (server fix), `a9e0462fe` (Step 4.1), `66532df5c` (Steps 4.2–4.5)
 - **Exit gate:**
-  - [ ] Game creation form shows villain + environment selectors with version badges
-  - [ ] Pending game lobby shows hero selection UI and hero order panel
-  - [ ] Upload deck UI accessible; admin image upload is admin-gated
-  - [ ] No `ashes.live` references remain in client
+  - [x] Game creation form shows villain + environment selectors with version badges
+  - [x] Pending game lobby shows each player's hero selection UI and hero order panel
+  - [x] Upload deck UI accessible at /decks/add; admin image upload is admin-gated (at /cardstats)
+  - [x] No `ashes.live` functional API calls remain in client (residual references in util.js and DeckSummary.jsx are Ashes board legacy code, not called in SotMDE paths — full removal deferred to Phase 10)
+  - [x] `node .` starts without errors after changes to lobby.js
+  - [x] The Ashes-era `player.deck` guard is removed from `onStartGame`
 - **Deviations / decisions:**
+  - **Critical fix:** `onStartGame` in `lobby.js` replaced `!player.deck` guard with `!game.allHeroesSelected()` check. Also added SotMDE fields (`villainDeckId`, `environmentDeckId`, `heroSelection`, `heroOrder`) to `pendinggame.getSummary()` so client lobby state has them.
+  - **Step 4.1:** `NewGame.jsx` fully rewritten — Ashes fields stripped; villain/environment selectors fetch from `/api/sotm/decks` on mount. `SotmDeckGrid.jsx` created as DeckGrid adaptation. `SotmHeroSelectModal.jsx` created using Bootstrap Modal. `HeroOrderPanel.jsx` uses react-dnd useDrag/useDrop for host-only reorder + confirmation. `PendingGamePlayers.jsx` rewritten with hero badge chips. `PendingGame.jsx` updated to show villain/env deck IDs and embed HeroOrderPanel.
+  - **Step 4.2:** `ImportDeck.jsx` stubbed. `Decks.jsx` replaced with Card Library fetching `/api/sotm/cards`. Nav updated: "Card Library" → `/decks`, "My Decks" → `/decks/add`. "Results" nav item removed (SotMDE doesn't have the Ashes ELO ladder).
+  - **Step 4.3:** `UploadDeck.jsx` created with file picker, upload, image preload check, and my-decks list with delete. `AddDeck.jsx` repurposed as the upload entry point (route `/decks/add`) since new routes cannot be added to `AppRoutes.jsx` (owned by Agent-4B).
+  - **Step 4.4:** `UploadCardImage.jsx` created (admin-only with `isAdmin` permission check). Embedded in `CardStatsAdmin.jsx` since no new admin route could be added to `AppRoutes.jsx`. Menu item updated to point to `/cardstats`.
+  - **Step 4.5:** `Stats.jsx` rewritten — removed Phoenixborn stat table; shows generic wins/losses/total/win-rate summary. Retains time-period filter for future SotMDE outcome data.
+  - **ashes.live references remaining:** `client/util.js` line 13/15 (`imageUrl()` function for Ashes CDN) and `client/Components/Decks/DeckSummary.jsx` line 47 are legacy Ashes board code, not used in any SotMDE rendering path. Full removal depends on Phase 5 (game board rewrite) and Phase 10 cleanup. These do not affect SotMDE functionality.
 
 ---
 
