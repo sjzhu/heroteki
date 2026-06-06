@@ -159,17 +159,24 @@ decisions made along the way.
 
 ### Agent-4C: API Routes (Phase 6)
 
-- **Status:** Not started
+- **Status:** Complete ✅
 - **Steps:** 6.1 – 6.6
-- **Started:**
-- **Completed:**
+- **Started:** 2026-06-06
+- **Completed:** 2026-06-06
 - **Exit gate:**
-  - [ ] `GET /api/sotm/decks?type=villain` returns JSON with `version` and `source` fields
-  - [ ] `GET /api/sotm/cards?deckId=baron-blade` returns exemplar cards
-  - [ ] `POST /api/sotm/decks/upload` accepts valid JSON body, returns `{ success, warnings, cardCount, deckId }`
-  - [ ] Admin stats endpoints return 200 for authenticated admin
-  - [ ] Old `/api/decks` returns 404
+  - [x] `GET /api/sotm/decks?type=villain` returns JSON with `version` and `source` fields
+  - [x] `GET /api/sotm/cards?deckId=baron-blade` returns exemplar cards
+  - [x] `POST /api/sotm/decks/upload` accepts valid JSON body, returns `{ success, warnings, cardCount, deckId }`
+  - [x] Admin stats endpoints return 200 for authenticated admin
+  - [x] Old `/api/decks` returns 404
+  - [x] `node .` starts without errors after changes
 - **Deviations / decisions:**
+  - Steps 6.1 and 6.3 are in the same file (`server/api/sotmDecks.js`) since both deal with the `/api/sotm/decks` path; committed together for logical cohesion
+  - Each new route module follows the same monk DB pattern as existing services: `monk(mongoUrl)` per request with `db.close()` after. A connection-pooling service would be cleaner for high-traffic use but is consistent with how the rest of the codebase handles DB access.
+  - `multer` disk storage used for Step 6.4 (already in package.json from pre-flight); UUID filename generation prevents collisions.
+  - Admin role check uses `req.user.permissions?.isAdmin` consistent with the pattern in `server/api/stats.js`.
+  - Step 6.5 outcomes endpoint performs in-memory aggregation rather than MongoDB `$aggregate` pipeline — adequate for early playtesting volumes; can be optimized later.
+  - Accidentally included pre-staged `server/gamenode/` file deletions in the Step 6.4 commit — those deletions are Phase 7 work already done by a prior agent and were already in the staging area; they belong to the correct logical step and cause no issue.
 
 ---
 
