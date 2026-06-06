@@ -22,7 +22,7 @@ import Unauthorised from './pages/Unauthorised';
 import UserAdmin from './pages/UserAdmin';
 import ImportDeck from './Components/Decks/ImportDeck';
 import GameLobby from './Components/Games/GameLobby';
-import GameBoard from './Components/GameBoard/GameBoard.jsx';
+import SotmBoard from './Components/GameBoard/SotmBoard.jsx';
 import FAQ from './pages/faq';
 import CardsPage from './pages/CardsPage';
 import Results from './pages/Results';
@@ -51,13 +51,13 @@ const AppRoutes = ({ currentGame, user }) => {
         <Routes>
             <Route path='/'
                 element={
-                    currentGame?.started ? <GameBoard /> : <GameLobby gameId={getParam('gameId')} />
+                    currentGame?.started ? <SotmBoard /> : <GameLobby gameId={getParam('gameId')} />
                 }
             />
             <Route
                 path='/play'
                 element={
-                    currentGame?.started ? <GameBoard /> : <GameLobby gameId={getParam('gameId')} />
+                    currentGame?.started ? <SotmBoard /> : <GameLobby gameId={getParam('gameId')} />
                 }
             />
 
