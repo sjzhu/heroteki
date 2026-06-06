@@ -582,9 +582,15 @@ class Game extends EventEmitter {
         );
     }
 
+    initiateGameOver(playerName) {
+        // Broadcast gameOverPrompt to all connected clients via gameserver.js
+        // gameserver.js reads this flag after the handler returns and emits the event
+        this._pendingBroadcast = { type: 'gameOverPrompt' };
+    }
+
     cancelGameOver(playerName) {
-        // Broadcast to all clients that game over was cancelled
-        // In Phase 7 this will be properly wired; for now just log
+        // Broadcast gameOverCancelled to all connected clients
+        this._pendingBroadcast = { type: 'gameOverCancelled' };
         this.gameChat.addMessage('Game over cancelled.');
     }
 
