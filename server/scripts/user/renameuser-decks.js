@@ -39,15 +39,10 @@ if (process.argv[3] !== '') {
     console.log('updating deck username for : ' + oldName + ' to: ' + newName);
     const colGames2 = db.get('decks');
     colGames2
-        .update(
-            { username: oldName },
-            { $set: { username: newName } },
-            { multi: true }
-        )
+        .update({ username: oldName }, { $set: { username: newName } }, { multi: true })
         .then((result) => {
             // Updated the document with the field a equal to 2
             console.log(result);
         })
         .then(() => db.close());
-
 }

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHand, faLink } from '@fortawesome/free-solid-svg-icons';
@@ -45,7 +46,7 @@ const CardListText = ({ deckCards, highlight, onFFClick }) => {
             if (!groupedCards[key] || groupedCards[key].length < 1) {
                 continue;
             }
-            let cardList = groupedCards[key].sort((a, b) => a.id > b.id ? 1 : -1);
+            let cardList = groupedCards[key].sort((a, b) => (a.id > b.id ? 1 : -1));
 
             let cards = [];
             let count = 0;
@@ -62,7 +63,8 @@ const CardListText = ({ deckCards, highlight, onFFClick }) => {
                     highlight: usesHighlightMagic(card),
                     ff: card.ff
                 });
-                const countClass = card.count > 3 && !card.card?.type.includes('Conjur') ? 'invalidCount' : '';
+                const countClass =
+                    card.count > 3 && !card.card?.type.includes('Conjur') ? 'invalidCount' : '';
 
                 cards.push(
                     <div className='card-list-text' key={'text-' + card.card.id}>

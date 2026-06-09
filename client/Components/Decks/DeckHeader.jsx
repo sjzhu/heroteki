@@ -16,7 +16,9 @@ const DeckHeader = ({ deck, onDieHover, allowFave }) => {
 
     return (
         <div className='deck-header'>
-            <div className={`decklist-entry-image ${deck?.listClass || deck?.phoenixborn[0]?.id}`}></div>
+            <div
+                className={`decklist-entry-image ${deck?.listClass || deck?.phoenixborn[0]?.id}`}
+            ></div>
             <div>
                 <div className='deck-title'>{deck?.name}</div>
                 <div className='deck-pb-name'>

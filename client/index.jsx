@@ -23,4 +23,3 @@ if (import.meta.env.PROD) {
 } else {
     import('./index.dev.jsx');
 }
-

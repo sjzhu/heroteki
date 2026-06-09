@@ -48,6 +48,7 @@ async function sendEmail(address, subject, email) {
     await mailjetSender.sendEmail(address, subject, email);
 }
 
+// eslint-disable-next-line no-unused-vars
 async function sendViaSendgrid(address, subject, email) {
     let emailKey =
         process.env.SENDGRID_API_KEY || configService.getValueForSection('lobby', 'emailKey');
@@ -114,6 +115,7 @@ function validatePassword(password) {
     return undefined;
 }
 
+// eslint-disable-next-line no-unused-vars
 function writeFile(path, data, opts = 'utf8') {
     return new Promise((resolve, reject) => {
         fs.writeFile(path, data, opts, (err) => {
@@ -138,7 +140,10 @@ async function getRandomAvatar(user) {
     );
 
     const base64Data = Buffer.from(avatar).toString('base64');
-    const uploadResult = await storageService.uploadImage(`avatars/${user.username}.png`, base64Data);
+    const uploadResult = await storageService.uploadImage(
+        `avatars/${user.username}.png`,
+        base64Data
+    );
 
     if (!uploadResult.success) {
         logger.error('Failed to upload random avatar:', uploadResult.error);
@@ -403,8 +408,9 @@ module.exports.init = function (server, options) {
             user = await userService.addUser(newUser);
 
             if (configService.getValueForSection('lobby', 'requireActivation')) {
-                let url = `${req.protocol}://${req.get('host')}/activation?id=${user.id}&token=${newUser.activationToken
-                    }`;
+                let url = `${req.protocol}://${req.get('host')}/activation?id=${user.id}&token=${
+                    newUser.activationToken
+                }`;
                 let emailText =
                     `Hi,\n\nSomeone, hopefully you, has requested an account to be created on SotMDE Online.  If this was you, click this link: \n ${url} \n to complete the process.\n\n` +
                     'If you did not request this please disregard this email.\n' +
@@ -762,9 +768,9 @@ module.exports.init = function (server, options) {
             let resetToken = hmac
                 .update(
                     'RESET ' +
-                    user.username +
-                    ' ' +
-                    moment(user.tokenExpires).format('YYYYMMDD-HH:mm:ss')
+                        user.username +
+                        ' ' +
+                        moment(user.tokenExpires).format('YYYYMMDD-HH:mm:ss')
                 )
                 .digest('hex');
             logger.info(
@@ -800,8 +806,8 @@ module.exports.init = function (server, options) {
         wrapAsync(async (req, res) => {
             let resetToken;
             if (process.env.NODE_ENV === 'production') {
-
-                let captchaSecret = process.env.CAPTCHA_SECRET || configService.getValue('captchaKey');
+                let captchaSecret =
+                    process.env.CAPTCHA_SECRET || configService.getValue('captchaKey');
                 let response = await util.httpRequest(
                     `https://www.google.com/recaptcha/api/siteverify?secret=${captchaSecret}&response=${req.body.captcha}`
                 );
@@ -844,8 +850,9 @@ module.exports.init = function (server, options) {
                 return;
             }
 
-            let url = `${req.protocol}://${req.get('host')}/reset-password?id=${user._id
-                }&token=${resetToken}`;
+            let url = `${req.protocol}://${req.get('host')}/reset-password?id=${
+                user._id
+            }&token=${resetToken}`;
             let emailText =
                 `Hi,\n\nSomeone, hopefully you, has requested their password on SotMDE Online to be reset.  If this was you, click this link to complete the process:\n\n ${url}` +
                 '\n\nIf you did not request this reset, do not worry, your account has not been affected and your password has not been changed, just ignore this email.\n' +
@@ -1143,7 +1150,7 @@ module.exports.init = function (server, options) {
                     user.permissions.isSupporter = req.user.permissions.isSupporter = false;
                 }
                 // eslint-disable-next-line no-empty
-            } catch (err) { }
+            } catch (err) {}
 
             return res.send({ success: true, user: user, status: status });
         })

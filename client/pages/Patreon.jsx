@@ -22,7 +22,9 @@ function Patreon({ code }) {
     useEffect(() => {
         let t;
         if (accountLinked) {
-            setSuccessMessage('Your account was linked successfully. Please wait while you are redirected.');
+            setSuccessMessage(
+                'Your account was linked successfully. Please wait while you are redirected.'
+            );
 
             t = setTimeout(() => {
                 dispatch(actions.clearLinkStatus());

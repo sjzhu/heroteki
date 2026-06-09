@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const GameService = require('../../services/AshesGameService.js');
 const ConfigService = require('../../services/ConfigService.js');
 

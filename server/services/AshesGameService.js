@@ -120,7 +120,7 @@ class GameService {
             })
             .then((results) => {
                 const output = results.reduce((agg, game) => {
-                    game.players.forEach(p => {
+                    game.players.forEach((p) => {
                         let player = agg.find((pl) => pl.name === p.name);
                         if (player) {
                             player.count += 1;
@@ -135,7 +135,7 @@ class GameService {
                     });
                     return agg;
                 }, []);
-                return output.sort((a, b) => a.wins > b.wins ? -1 : 1);
+                return output.sort((a, b) => (a.wins > b.wins ? -1 : 1));
             })
             .catch((err) => {
                 logger.error('Unable to get TAG REPORT ', tag, err);
@@ -210,7 +210,7 @@ class GameService {
                     }
 
                     game.chat = !!game.chat;
-                };
+                }
 
                 return games;
             });
@@ -316,7 +316,6 @@ class GameService {
                             }
                         }
                     }
-
                 });
                 return aspectRecords;
             });

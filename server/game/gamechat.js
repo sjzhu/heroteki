@@ -15,6 +15,7 @@ class GameChat {
 
     getMessageAsText(message) {
         const messageParts = [];
+        // eslint-disable-next-line no-unused-vars
         for (const [key, fragment] of Object.entries(message)) {
             if (fragment === null || fragment === undefined) {
                 continue;

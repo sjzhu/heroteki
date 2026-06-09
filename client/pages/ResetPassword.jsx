@@ -57,7 +57,9 @@ function ResetPassword({ id, token }) {
     }
 
     const errorBar = apiSuccess === false ? <AlertPanel type='error' message={apiMessage} /> : null;
-    const successBar = successMessage ? <AlertPanel type='success' message={successMessage} /> : null;
+    const successBar = successMessage ? (
+        <AlertPanel type='success' message={successMessage} />
+    ) : null;
 
     return (
         <div>
@@ -65,7 +67,12 @@ function ResetPassword({ id, token }) {
                 {errorBar}
                 {successBar}
                 <Panel title='Reset password'>
-                    <Form name='resetpassword' apiLoading={apiLoading} buttonText='Submit' onSubmit={onSubmit} />
+                    <Form
+                        name='resetpassword'
+                        apiLoading={apiLoading}
+                        buttonText='Submit'
+                        onSubmit={onSubmit}
+                    />
                 </Panel>
             </div>
         </div>

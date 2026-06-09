@@ -16,7 +16,7 @@ function makeCard(id, type, keywords, hp) {
         keywords: keywords || [],
         text: '',
         hp: hp || null,
-        imageUrl: null,
+        imageUrl: null
     });
 }
 
@@ -165,7 +165,13 @@ describe('HeroPlayer', () => {
             const charCard = makeCharCard('char-legacy');
             const oneShotCard = makeCard('shot-1', 'heroCard', ['one-shot'], null);
             const normalCard = makeCard('normal-1', 'heroCard', [], null);
-            const hero = new HeroPlayer('player1', 'Alice', 'legacy', [oneShotCard, normalCard], charCard);
+            const hero = new HeroPlayer(
+                'player1',
+                'Alice',
+                'legacy',
+                [oneShotCard, normalCard],
+                charCard
+            );
             hero.shuffleDeck();
             // Put one-shot card in hand directly
             hero.deck.splice(hero.deck.indexOf(oneShotCard), 1);

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const AbilityTargetAbility = require('./AbilityTargets/AbilityTargetAbility');
 const AbilityTargetCard = require('./AbilityTargets/AbilityTargetCard');
 const AbilityTargetSelect = require('./AbilityTargets/AbilityTargetSelect');
@@ -76,7 +77,6 @@ class BaseAbility {
             }
         }
 
-
         if (properties.mode === 'select') {
             return new AbilityTargetSelect(name, properties, this);
         } else if (properties.mode === 'ability') {
@@ -120,7 +120,7 @@ class BaseAbility {
         ) {
             return '';
         } else if (this.targets.length > 0) {
-            return (this.ignoreTargetCheck || this.canResolveTargets(context)) ? '' : 'target';
+            return this.ignoreTargetCheck || this.canResolveTargets(context) ? '' : 'target';
         }
 
         return this.gameAction.length > 0 ? 'condition' : '';
@@ -184,8 +184,10 @@ class BaseAbility {
      * @returns {Boolean}
      */
     canResolveTargets(context) {
-        return (!this.targetCondition || this.targetCondition(context)) &&
-            this.nonDependentTargets.some((target) => target.canResolve(context));
+        return (
+            (!this.targetCondition || this.targetCondition(context)) &&
+            this.nonDependentTargets.some((target) => target.canResolve(context))
+        );
     }
 
     /**
@@ -223,7 +225,7 @@ class BaseAbility {
     }
 
     // eslint-disable-next-line no-unused-vars
-    displayMessage(context) { }
+    displayMessage(context) {}
 
     /**
      * Executes the ability once all costs have been paid. Inheriting classes
@@ -231,7 +233,7 @@ class BaseAbility {
      * does nothing.
      */
     // eslint-disable-next-line no-unused-vars
-    executeHandler(context) { }
+    executeHandler(context) {}
 
     isAction() {
         return false;

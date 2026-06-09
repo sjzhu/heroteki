@@ -11,10 +11,9 @@ function UserAlts() {
         return <Alert variant='danger'>{'You need to be logged in to view your details'}</Alert>;
     }
 
-    var allAlts = Object.values(user.altArts || [])
-        .reduce(function (prev, next) {
-            return prev.concat(next);
-        }, []);
+    var allAlts = Object.values(user.altArts || []).reduce(function (prev, next) {
+        return prev.concat(next);
+    }, []);
 
     const altCards = allAlts.map((a) => ({ imageStub: a }));
     return (
@@ -26,6 +25,6 @@ function UserAlts() {
             </Col>
         </>
     );
-};
+}
 
 export default UserAlts;

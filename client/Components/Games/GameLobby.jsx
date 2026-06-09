@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
@@ -35,6 +36,7 @@ const GameLobby = ({ gameId }) => {
         filterDefaults[filter.name] = true;
     }
 
+    // eslint-disable-next-line no-unused-vars
     const { games, newGame, newGameType, currentGame, passwordGame } = useSelector((state) => ({
         games: state.lobby.games,
         newGame: state.lobby.newGame,
@@ -51,7 +53,7 @@ const GameLobby = ({ gameId }) => {
     useEffect(() => {
         if ('Notification' in window) {
             if (Notification.permission !== 'granted' && Notification.requestPermission) {
-                Notification.requestPermission(() => { });
+                Notification.requestPermission(() => {});
             }
         }
 
@@ -104,7 +106,7 @@ const GameLobby = ({ gameId }) => {
         }
 
         setReplayLoad(true);
-    }
+    };
 
     const hidePairings = () => {
         setShowPairings(false);
@@ -113,7 +115,7 @@ const GameLobby = ({ gameId }) => {
     const newGameText = currentGame?.started === false ? currentGame.name : 'Start a new game';
     const homeDisplay = !newGame && !replayLoad && !showPairings && currentGame?.started !== false;
     return (
-        <div className="container">
+        <div className='container'>
             <Row>
                 <Col md='6'>
                     <div className={!homeDisplay && 'lobby-card'}>
@@ -124,7 +126,9 @@ const GameLobby = ({ gameId }) => {
                                 </AlertPanel>
                             </div>
                         )}
-                        {!homeDisplay && !showPairings && <div className='lobby-header'>{newGameText}</div>}
+                        {!homeDisplay && !showPairings && (
+                            <div className='lobby-header'>{newGameText}</div>
+                        )}
                         {homeDisplay && (
                             <>
                                 <div className='game-buttons'>
@@ -164,21 +168,22 @@ const GameLobby = ({ gameId }) => {
                                     />
                                 </div>
                             </>
-
                         )}
 
                         {replayLoad && <LoadReplay onCancel={() => setReplayLoad(false)} />}
                         {newGame && <NewGame />}
                         {currentGame?.started === false && <PendingGame />}
                         {showPairings && (
-                            <LeaguePairings onCancelClick={hidePairings} onPlayClick={hidePairings} />
+                            <LeaguePairings
+                                onCancelClick={hidePairings}
+                                onPlayClick={hidePairings}
+                            />
                         )}
                     </div>
                     <div ref={topRef}>{passwordGame && <PasswordGame />}</div>
                 </Col>
                 <Col md='6'>
                     <div className='lobby-card'>
-
                         <div className='lobby-header'>Game List</div>
 
                         <div className='game-list'>
@@ -223,7 +228,7 @@ const GameLobby = ({ gameId }) => {
                     </div>
                 </Col>
             </Row>
-        </div >
+        </div>
     );
 };
 

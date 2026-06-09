@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const _ = require('underscore');
 
 const AbilityDsl = require('./abilitydsl.js');
@@ -118,9 +119,7 @@ class Card extends PlayableObject {
     }
 
     get discardLocation() {
-        return ConjuredCardTypes.includes(this.type)
-            ? 'archives'
-            : 'discard';
+        return ConjuredCardTypes.includes(this.type) ? 'archives' : 'discard';
     }
 
     isConjuration() {
@@ -165,8 +164,7 @@ class Card extends PlayableObject {
      * @param ability - object containing limits, costs, effects, and game actions
      */
     // eslint-disable-next-line no-unused-vars
-    setupCardAbilities(ability) { }
-
+    setupCardAbilities(ability) {}
 
     // These are ACQUIRED triggered abilities that are NUMERIC and therefore need to stack
     // They are set up here to prevent multiple gainAbility triggers
@@ -220,7 +218,9 @@ class Card extends PlayableObject {
                     preferActionPromptMessage: true,
                     autoResolve: true,
                     inexhaustible: true,
-                    condition: (context) => context.event.preventable && context.source.anyEffect('preventAllDamage', context),
+                    condition: (context) =>
+                        context.event.preventable &&
+                        context.source.anyEffect('preventAllDamage', context),
                     when: {
                         onDamageApplied: (event, context) => event.card === context.source
                     },
@@ -259,8 +259,12 @@ class Card extends PlayableObject {
                 this.forcedReaction({
                     title: 'Group Tactics',
                     condition: (context) => context.source.getKeywordValue('grouptactics'),
-                    may: (context) => 'add ' + context.source.getKeywordValue('grouptactics') + " to this unit's attack",
-                    skipMay: (context) => context.game.activePlayer.optionSettings.alwaysGroupTactics,
+                    may: (context) =>
+                        'add ' +
+                        context.source.getKeywordValue('grouptactics') +
+                        " to this unit's attack",
+                    skipMay: (context) =>
+                        context.game.activePlayer.optionSettings.alwaysGroupTactics,
                     when: {
                         onAttackersDeclared: (event, context) => {
                             return (
@@ -271,7 +275,9 @@ class Card extends PlayableObject {
                     },
                     gameAction: AbilityDsl.actions.cardLastingEffect((context) => ({
                         target: this,
-                        effect: AbilityDsl.effects.modifyAttack(context.source.getKeywordValue('grouptactics')),
+                        effect: AbilityDsl.effects.modifyAttack(
+                            context.source.getKeywordValue('grouptactics')
+                        ),
                         duration: 'untilEndOfTurn'
                     })),
                     effect: 'increase its attack value by {0}',
@@ -382,8 +388,8 @@ class Card extends PlayableObject {
                             event.triggeringEvent &&
                             event.triggeringEvent.name === 'onCardDestroyed',
 
-                        onCardDiscarded: (event, context) => event.card === context.source &&
-                            event.clone.location === 'play area'
+                        onCardDiscarded: (event, context) =>
+                            event.card === context.source && event.clone.location === 'play area'
                     },
                     destroyed: true
                 },
@@ -462,22 +468,18 @@ class Card extends PlayableObject {
                             // after card destroyed event
                             event.triggeringEvent &&
                             event.triggeringEvent.name === 'onCardDestroyed' &&
-                            (
-                                // destroy ability
-                                event.triggeringEvent.context.source === context.source ||
-                                (
-                                    // destroyed through damage taken (e.g. fight)
-                                    event.triggeringEvent.damageEvent &&
-                                    event.triggeringEvent.damageEvent.damageSource === context.source
-                                )
-                            )
+                            // destroy ability
+                            (event.triggeringEvent.context.source === context.source ||
+                                // destroyed through damage taken (e.g. fight)
+                                (event.triggeringEvent.damageEvent &&
+                                    event.triggeringEvent.damageEvent.damageSource ===
+                                        context.source))
                     }
                 },
                 properties
             )
         );
     }
-
 
     afterSelfOrAdjacentDestroysFighting(properties) {
         return this.forcedInterrupt(
@@ -523,7 +525,7 @@ class Card extends PlayableObject {
                             event.triggeringEvent.damageEvent &&
                             event.triggeringEvent.damageEvent.fightEvent &&
                             event.triggeringEvent.damageEvent.fightEvent.attacker.controller ===
-                            context.player.opponent //opponent attacked
+                                context.player.opponent //opponent attacked
                     }
                 },
                 properties
@@ -679,7 +681,8 @@ class Card extends PlayableObject {
     getMenu() {
         const thisMenu = [];
         // Move
-        if (this.isMovable) { // e.g. PBs can't move
+        if (this.isMovable) {
+            // e.g. PBs can't move
             thisMenu.push(
                 { command: 'moves', text: 'Move', menu: 'main' },
                 { command: 'main', text: 'Back', menu: 'moves' }
@@ -718,7 +721,6 @@ class Card extends PlayableObject {
         if (BattlefieldTypes.includes(this.type)) {
             thisMenu.push({ command: 'control', text: 'Give control', menu: 'main' });
         }
-
 
         if (!thisMenu.length || !this.game.manualMode) {
             return undefined;
@@ -838,8 +840,8 @@ class Card extends PlayableObject {
         return !this.tokens
             ? 0
             : Object.keys(this.tokens)
-                .map((key) => this.tokens[key])
-                .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+                  .map((key) => this.tokens[key])
+                  .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
     }
 
     removeAllTokens() {
@@ -1447,11 +1449,11 @@ class Card extends PlayableObject {
     }
 
     get hasStatusAbility() {
-        return !!this.abilities.reactions.find(a => a.properties.status);
+        return !!this.abilities.reactions.find((a) => a.properties.status);
     }
 
     getStatusAbility() {
-        return this.abilities.reactions.find(a => a.properties.status);
+        return this.abilities.reactions.find((a) => a.properties.status);
     }
 
     getModifiedController() {

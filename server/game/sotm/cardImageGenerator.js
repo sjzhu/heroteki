@@ -44,8 +44,7 @@ async function generatePlaceholder(card) {
  * @returns {boolean}
  */
 function shouldGeneratePlaceholder(card) {
-    return !card.imageUrl
-        || card.imageUrl.startsWith('/card-images/placeholders/');
+    return !card.imageUrl || card.imageUrl.startsWith('/card-images/placeholders/');
 }
 
 module.exports = { generatePlaceholder, shouldGeneratePlaceholder };

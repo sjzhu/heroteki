@@ -1,3 +1,4 @@
+/* global Set */
 /**
  * Unit tests for finaliseGame() and related logic in game.js.
  *
@@ -24,7 +25,7 @@ function makeHeroPlayer(deckId, deckVersion, charId, charVersion) {
         deckVersion: deckVersion || null,
         characterCard,
         hp: 30,
-        isIncapacitated: false,
+        isIncapacitated: false
     };
 }
 
@@ -34,14 +35,14 @@ function makeVillain(deckId, deckVersion, charId, charVersion) {
         deckVersion: deckVersion || null,
         characterCard: charId ? { id: charId, version: charVersion || null } : null,
         hp: 40,
-        isFlipped: false,
+        isFlipped: false
     };
 }
 
 function makeEnvironment(deckId, deckVersion) {
     return {
         deckId,
-        deckVersion: deckVersion || null,
+        deckVersion: deckVersion || null
     };
 }
 
@@ -59,7 +60,9 @@ function makeMinimalGame(opts = {}) {
     const turnManager = {
         phase,
         round: opts.round || 1,
-        setGameOver() { this.phase = TurnPhase.GAME_OVER; },
+        setGameOver() {
+            this.phase = TurnPhase.GAME_OVER;
+        }
     };
 
     // Replicate _deriveVersionTags exactly as in game.js
@@ -90,14 +93,14 @@ function makeMinimalGame(opts = {}) {
         villain,
         environment,
         _deriveVersionTags,
-        TurnPhase,
+        TurnPhase
     };
 }
 
 describe('_deriveVersionTags()', () => {
     it('generates deck:{id}@{version} for hero deck', () => {
         const game = makeMinimalGame({
-            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', null, null)],
+            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', null, null)]
         });
         const tags = game._deriveVersionTags();
         expect(tags).toContain('deck:legacy@1.0.0');
@@ -105,7 +108,7 @@ describe('_deriveVersionTags()', () => {
 
     it('generates char:{id}@{version} for hero character card', () => {
         const game = makeMinimalGame({
-            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', 'legacy-char', '1.2.0')],
+            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', 'legacy-char', '1.2.0')]
         });
         const tags = game._deriveVersionTags();
         expect(tags).toContain('char:legacy-char@1.2.0');
@@ -114,7 +117,7 @@ describe('_deriveVersionTags()', () => {
     it('generates deck tag for villain deck', () => {
         const game = makeMinimalGame({
             heroPlayers: [],
-            villain: makeVillain('baron-blade', '2.1.0', null, null),
+            villain: makeVillain('baron-blade', '2.1.0', null, null)
         });
         const tags = game._deriveVersionTags();
         expect(tags).toContain('deck:baron-blade@2.1.0');
@@ -123,7 +126,7 @@ describe('_deriveVersionTags()', () => {
     it('generates char tag for villain character card', () => {
         const game = makeMinimalGame({
             heroPlayers: [],
-            villain: makeVillain('baron-blade', '2.1.0', 'baron-blade-char', '2.0.0'),
+            villain: makeVillain('baron-blade', '2.1.0', 'baron-blade-char', '2.0.0')
         });
         const tags = game._deriveVersionTags();
         expect(tags).toContain('char:baron-blade-char@2.0.0');
@@ -132,7 +135,7 @@ describe('_deriveVersionTags()', () => {
     it('generates deck tag for environment deck', () => {
         const game = makeMinimalGame({
             heroPlayers: [],
-            environment: makeEnvironment('megalopolis', '1.0.1'),
+            environment: makeEnvironment('megalopolis', '1.0.1')
         });
         const tags = game._deriveVersionTags();
         expect(tags).toContain('deck:megalopolis@1.0.1');
@@ -142,10 +145,10 @@ describe('_deriveVersionTags()', () => {
         const game = makeMinimalGame({
             heroPlayers: [
                 makeHeroPlayer('legacy', '1.0.0', 'legacy-char', '1.0.0'),
-                makeHeroPlayer('wraith', '1.1.0', 'wraith-char', '1.1.0'),
+                makeHeroPlayer('wraith', '1.1.0', 'wraith-char', '1.1.0')
             ],
             villain: makeVillain('baron-blade', '2.0.0', 'baron-blade-char', '2.0.0'),
-            environment: makeEnvironment('megalopolis', '1.0.0'),
+            environment: makeEnvironment('megalopolis', '1.0.0')
         });
         const tags = game._deriveVersionTags();
         expect(tags).toContain('deck:legacy@1.0.0');
@@ -159,26 +162,26 @@ describe('_deriveVersionTags()', () => {
 
     it('skips deck tag when deckVersion is null', () => {
         const game = makeMinimalGame({
-            heroPlayers: [makeHeroPlayer('legacy', null, null, null)],
+            heroPlayers: [makeHeroPlayer('legacy', null, null, null)]
         });
         const tags = game._deriveVersionTags();
-        expect(tags.filter(t => t.startsWith('deck:legacy'))).toHaveSize(0);
+        expect(tags.filter((t) => t.startsWith('deck:legacy'))).toHaveSize(0);
     });
 
     it('skips char tag when characterCard version is null', () => {
         const game = makeMinimalGame({
-            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', 'legacy-char', null)],
+            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', 'legacy-char', null)]
         });
         const tags = game._deriveVersionTags();
-        expect(tags.filter(t => t.startsWith('char:'))).toHaveSize(0);
+        expect(tags.filter((t) => t.startsWith('char:'))).toHaveSize(0);
     });
 
     it('skips char tag when characterCard is null', () => {
         const game = makeMinimalGame({
-            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', null, null)],
+            heroPlayers: [makeHeroPlayer('legacy', '1.0.0', null, null)]
         });
         const tags = game._deriveVersionTags();
-        expect(tags.filter(t => t.startsWith('char:'))).toHaveSize(0);
+        expect(tags.filter((t) => t.startsWith('char:'))).toHaveSize(0);
     });
 
     it('skips villain tag when villain is null', () => {
@@ -196,7 +199,7 @@ describe('_deriveVersionTags() deduplication', () => {
         const userTags = ['deck:legacy@1.0.0', 'my-custom-tag'];
         const merged = [...new Set([...autoTags, ...userTags])];
 
-        expect(merged.filter(t => t === 'deck:legacy@1.0.0').length).toBe(1);
+        expect(merged.filter((t) => t === 'deck:legacy@1.0.0').length).toBe(1);
         expect(merged).toContain('my-custom-tag');
         expect(merged).toContain('char:legacy-char@1.0.0');
     });
@@ -217,7 +220,7 @@ describe('GAME_OVER phase guard', () => {
         // Simulate the guard from finaliseGame():
         // if (!this.turnManager || this.turnManager.phase === TurnPhase.GAME_OVER) return;
         const game = makeMinimalGame({
-            phase: TurnPhase.GAME_OVER,
+            phase: TurnPhase.GAME_OVER
         });
 
         let deriveCalled = false;
@@ -240,7 +243,7 @@ describe('GAME_OVER phase guard', () => {
 
     it('_deriveVersionTags IS called when phase is not GAME_OVER', () => {
         const game = makeMinimalGame({
-            phase: TurnPhase.VILLAIN_PLAY,
+            phase: TurnPhase.VILLAIN_PLAY
         });
 
         let deriveCalled = false;
@@ -262,7 +265,7 @@ describe('GAME_OVER phase guard', () => {
 
     it('phase is set to GAME_OVER after finaliseGame runs', () => {
         const game = makeMinimalGame({
-            phase: TurnPhase.HERO_PLAY,
+            phase: TurnPhase.HERO_PLAY
         });
 
         function simulateFinaliseGame(g) {
@@ -276,7 +279,7 @@ describe('GAME_OVER phase guard', () => {
 
     it('calling finaliseGame twice is idempotent (second call is no-op)', () => {
         const game = makeMinimalGame({
-            phase: TurnPhase.ENV_END,
+            phase: TurnPhase.ENV_END
         });
 
         let callCount = 0;

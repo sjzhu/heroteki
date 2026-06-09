@@ -44,16 +44,13 @@ gameService.getAllGames(start, end).then((games) => {
     const collection = db.get('users');
     _.each(players, (player) => {
         console.log(player);
-        collection
-            .update(
-                { username: player.name },
-                {
-                    $set: {
-                        gamesPlayed: player.played
-                    }
+        collection.update(
+            { username: player.name },
+            {
+                $set: {
+                    gamesPlayed: player.played
                 }
-            )
-    })
-
-
+            }
+        );
+    });
 });

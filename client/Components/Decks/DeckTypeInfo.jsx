@@ -13,7 +13,8 @@ const DeckTypeInfo = ({ deckType }) => {
                     <a
                         className='format-info-link'
                         target='blank'
-                        href='https://jaysonsethlindley.medium.com/first-adventure-dueling-decks-from-the-ashes-reborn-master-set-1d82917881fb'>
+                        href='https://jaysonsethlindley.medium.com/first-adventure-dueling-decks-from-the-ashes-reborn-master-set-1d82917881fb'
+                    >
                         this article
                     </a>
                 </AlertPanel>
@@ -35,19 +36,22 @@ const DeckTypeInfo = ({ deckType }) => {
         case 'precon':
             return (
                 <AlertPanel type='info'>
-                    <strong>Reborn Precons</strong> These are the preconstructed decks as released in each Ashes Reborn product by PHG.
+                    <strong>Reborn Precons</strong> These are the preconstructed decks as released
+                    in each Ashes Reborn product by PHG.
                 </AlertPanel>
             );
         case 'ascendancy':
             return (
                 <AlertPanel type='info'>
-                    <strong>Ascendancy Precons</strong> These are the preconstructed decks as released in each Ashes Ascendancy product by PHG.
+                    <strong>Ascendancy Precons</strong> These are the preconstructed decks as
+                    released in each Ashes Ascendancy product by PHG.
                 </AlertPanel>
             );
         case 'pveDecks':
             return (
                 <AlertPanel type='info'>
-                    <strong>Red Rains Precons</strong> These are preconstructed decks as released in each Red Rains product by PHG.
+                    <strong>Red Rains Precons</strong> These are preconstructed decks as released in
+                    each Red Rains product by PHG.
                 </AlertPanel>
             );
         case 'dualduel':
@@ -61,7 +65,9 @@ const DeckTypeInfo = ({ deckType }) => {
         case 'onecollection':
             return (
                 <AlertPanel type='info'>
-                    <strong>One Collection Battlebox</strong> Decks from NoSuchMethod&apos;s format that use one collection up to the Red Rains cycle and allow both uniques for each Phoenixborn.
+                    <strong>One Collection Battlebox</strong> Decks from NoSuchMethod&apos;s format
+                    that use one collection up to the Red Rains cycle and allow both uniques for
+                    each Phoenixborn.
                 </AlertPanel>
             );
     }

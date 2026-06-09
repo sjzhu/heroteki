@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, no-unused-vars */
 import React from 'react';
 import classNames from 'classnames';
 
@@ -52,7 +53,6 @@ const CardPile = ({
     const updatePopupVisibility = useCallback(
         (value) => {
             setShowPopup(value);
-
         },
         [source]
     );

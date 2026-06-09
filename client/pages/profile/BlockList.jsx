@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form, Col, Button, Table, Row } from 'react-bootstrap';
@@ -144,19 +145,14 @@ const BlockList = () => {
                             >
                                 <p>
                                     <Trans i18nKey='blocklist.explain'>
-                                        It can sometimes become necessary to prevent
-                                        someone joining your games, or stop seeing their
-                                        messages, or both. Users on this list will not
-                                        be able to join your games, and you will not see
-                                        their chat messages or their games.
+                                        It can sometimes become necessary to prevent someone joining
+                                        your games, or stop seeing their messages, or both. Users on
+                                        this list will not be able to join your games, and you will
+                                        not see their chat messages or their games.
                                     </Trans>
                                 </p>
                                 <Row>
-                                    <Form.Group
-                                        as={Col}
-                                        xs='9'
-                                        controlId='formGridblockee'
-                                    >
+                                    <Form.Group as={Col} xs='9' controlId='formGridblockee'>
                                         <Form.Label>{t('Username')}</Form.Label>
                                         <Form.Control
                                             name='blockee'

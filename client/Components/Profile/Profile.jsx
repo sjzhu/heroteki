@@ -11,9 +11,9 @@ import ProfileBackground from './ProfileBackground';
 import InGameSettings from './InGameSettings';
 import ProfileCardSize from './ProfileCardSize';
 import BlankBg from '../../assets/img/bgs/blank.png';
-const AshesRebornBg = new URL('../../assets/img/bgs/lobby_screen_ascendancy.jpg', import.meta.url).href;
+const AshesRebornBg = new URL('../../assets/img/bgs/lobby_screen_ascendancy.jpg', import.meta.url)
+    .href;
 import { toBase64 } from '../../util.js';
-
 
 import './Profile.scss';
 
@@ -84,7 +84,6 @@ const initialValues = {
     }
 };
 
-
 /**
  * @param {ProfileProps} props
  */
@@ -124,7 +123,7 @@ const Profile = ({ onSubmit, isLoading }) => {
 
     const handleEloChange = (event) => {
         setEloOptOut(event.target.checked);
-    }
+    };
 
     const schema = yup.object({
         avatar: yup
@@ -214,7 +213,11 @@ const Profile = ({ onSubmit, isLoading }) => {
                     <Row ref={topRowRef}>
                         <Col sm='12'>
                             <EloContext.Provider value={eloOptOut}>
-                                <ProfileMain formProps={formProps} user={user} handleEloChange={handleEloChange} />
+                                <ProfileMain
+                                    formProps={formProps}
+                                    user={user}
+                                    handleEloChange={handleEloChange}
+                                />
                             </EloContext.Provider>
                         </Col>
                     </Row>
@@ -256,7 +259,6 @@ const Profile = ({ onSubmit, isLoading }) => {
                         </Col>
                         <Col sm='6'>
                             <InGameSettings formProps={formProps} user={user} />
-
                             <Panel title='Alert timer'>
                                 <Form.Range
                                     min='0'
@@ -267,7 +269,8 @@ const Profile = ({ onSubmit, isLoading }) => {
                                 />
                                 <br />
                                 {alertTimer} seconds
-                            </Panel>                        </Col>
+                            </Panel>{' '}
+                        </Col>
                     </Row>
                     <div className='text-center profile-submit'>
                         <Button variant='primary' type='submit' disabled={isLoading}>

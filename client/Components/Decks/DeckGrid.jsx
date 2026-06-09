@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
@@ -70,7 +71,6 @@ const DeckGrid = ({ decks, onDeckSelected, showWinRate }) => {
                                 (of {d.played})
                             </div>
                         )}
-
                     </div>
                 );
             })}

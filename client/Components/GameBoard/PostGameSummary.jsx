@@ -20,7 +20,10 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
     const resultMsg = chatLog
         .slice()
         .reverse()
-        .find((m) => m && m.text && (m.text.includes('heroVictory') || m.text.includes('villainVictory')));
+        .find(
+            (m) =>
+                m && m.text && (m.text.includes('heroVictory') || m.text.includes('villainVictory'))
+        );
     const result = resultMsg
         ? resultMsg.text.includes('heroVictory')
             ? 'Heroes Won'
@@ -34,11 +37,11 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
         padding: '24px',
         maxWidth: '700px',
         margin: '0 auto',
-        color: '#f8f9fa',
+        color: '#f8f9fa'
     };
 
     const sectionStyle = {
-        marginBottom: '16px',
+        marginBottom: '16px'
     };
 
     const labelStyle = {
@@ -46,7 +49,7 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
         color: '#adb5bd',
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
-        marginBottom: '4px',
+        marginBottom: '4px'
     };
 
     return (
@@ -57,7 +60,13 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
                 <div>
                     <div style={labelStyle}>Result</div>
                     <Badge
-                        bg={result === 'Heroes Won' ? 'success' : result === 'Villain Won' ? 'danger' : 'secondary'}
+                        bg={
+                            result === 'Heroes Won'
+                                ? 'success'
+                                : result === 'Villain Won'
+                                ? 'danger'
+                                : 'secondary'
+                        }
                         style={{ fontSize: '0.9rem', padding: '6px 12px' }}
                     >
                         {result}
@@ -81,17 +90,29 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
                         <Card.Body style={{ padding: '8px 12px' }}>
                             <strong>{villain.deckId}</strong>
                             {villain.deckVersion && (
-                                <Badge bg='secondary' className='ms-2' style={{ fontSize: '0.7rem' }}>
+                                <Badge
+                                    bg='secondary'
+                                    className='ms-2'
+                                    style={{ fontSize: '0.7rem' }}
+                                >
                                     v{villain.deckVersion}
                                 </Badge>
                             )}
                             {villain.hp !== undefined && villain.hp !== null && (
-                                <span className='ms-3' style={{ fontSize: '0.85rem', color: '#adb5bd' }}>
+                                <span
+                                    className='ms-3'
+                                    style={{ fontSize: '0.85rem', color: '#adb5bd' }}
+                                >
                                     Final HP: {villain.hp} / {villain.maxHp}
                                 </span>
                             )}
                             {villain.isFlipped && (
-                                <Badge bg='warning' text='dark' className='ms-2' style={{ fontSize: '0.7rem' }}>
+                                <Badge
+                                    bg='warning'
+                                    text='dark'
+                                    className='ms-2'
+                                    style={{ fontSize: '0.7rem' }}
+                                >
                                     FLIPPED
                                 </Badge>
                             )}
@@ -108,7 +129,11 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
                         <Card.Body style={{ padding: '8px 12px' }}>
                             <strong>{environment.deckId}</strong>
                             {environment.deckVersion && (
-                                <Badge bg='secondary' className='ms-2' style={{ fontSize: '0.7rem' }}>
+                                <Badge
+                                    bg='secondary'
+                                    className='ms-2'
+                                    style={{ fontSize: '0.7rem' }}
+                                >
                                     v{environment.deckVersion}
                                 </Badge>
                             )}
@@ -136,7 +161,11 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
                                     <td>
                                         {hero.name || hero.deckId}
                                         {hero.deckVersion && (
-                                            <Badge bg='secondary' className='ms-1' style={{ fontSize: '0.65rem' }}>
+                                            <Badge
+                                                bg='secondary'
+                                                className='ms-1'
+                                                style={{ fontSize: '0.65rem' }}
+                                            >
                                                 v{hero.deckVersion}
                                             </Badge>
                                         )}
@@ -151,9 +180,13 @@ const PostGameSummary = ({ currentGame, onReturnToLobby }) => {
                                     </td>
                                     <td>
                                         {hero.isIncapacitated ? (
-                                            <Badge bg='danger' style={{ fontSize: '0.7rem' }}>Incapacitated</Badge>
+                                            <Badge bg='danger' style={{ fontSize: '0.7rem' }}>
+                                                Incapacitated
+                                            </Badge>
                                         ) : (
-                                            <Badge bg='success' style={{ fontSize: '0.7rem' }}>Active</Badge>
+                                            <Badge bg='success' style={{ fontSize: '0.7rem' }}>
+                                                Active
+                                            </Badge>
                                         )}
                                     </td>
                                 </tr>

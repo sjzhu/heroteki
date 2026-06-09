@@ -19,7 +19,6 @@ class UnlimitedDieSelector extends BaseDieSelector {
             return false;
         }
 
-
         return super.canTarget(die, context);
     }
 }

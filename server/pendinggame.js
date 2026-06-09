@@ -6,7 +6,8 @@ const GameChat = require('./game/gamechat.js');
 const logger = require('./log');
 const PendingPlayer = require('./models/PendingPlayer.js');
 const DummyUser = require('./models/DummyUser.js');
-const { GameTypes } = require('./constants.js');
+// eslint-disable-next-line no-unused-vars
+const { GameTypes } = require('./constants.js'); // retained for backward compat
 
 class PendingGame {
     constructor(owner, details) {
@@ -293,7 +294,9 @@ class PendingGame {
      */
     removeHeroDeck(playerName, deckId) {
         if (!this.heroSelection[playerName]) return;
-        this.heroSelection[playerName] = this.heroSelection[playerName].filter(id => id !== deckId);
+        this.heroSelection[playerName] = this.heroSelection[playerName].filter(
+            (id) => id !== deckId
+        );
         if (this.heroSelection[playerName].length === 0) {
             delete this.heroSelection[playerName];
         }
@@ -330,7 +333,7 @@ class PendingGame {
             }
         }
 
-        this.heroOrder = orderedDeckIds.map(deckId => ({
+        this.heroOrder = orderedDeckIds.map((deckId) => ({
             heroId: deckId,
             controllerPlayerId: deckToPlayer[deckId]
         }));
@@ -549,7 +552,7 @@ class PendingGame {
             villainDeckId: this.villainDeckId,
             environmentDeckId: this.environmentDeckId,
             heroSelection: this.heroSelection,
-            heroOrder: this.heroOrder,
+            heroOrder: this.heroOrder
         };
     }
 }

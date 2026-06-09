@@ -92,6 +92,7 @@ class Player {
         this.inspectionCard = null;
     }
 
+    // eslint-disable-next-line no-unused-vars
     getState(activePlayer) {
         let cardSummary = (card) => {
             if (!card || typeof card !== 'object') return card;

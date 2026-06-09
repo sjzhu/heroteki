@@ -50,7 +50,8 @@ const AppRoutes = ({ currentGame, user }) => {
 
     return (
         <Routes>
-            <Route path='/'
+            <Route
+                path='/'
                 element={
                     currentGame?.started ? <SotmBoard /> : <GameLobby gameId={getParam('gameId')} />
                 }

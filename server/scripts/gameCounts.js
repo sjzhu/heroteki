@@ -48,9 +48,8 @@ gameService
         console.info('Name | Number of games\n-----|----------------');
 
         _.each(winners, (winner) => {
-            console.info(winner.name, ' | ', (winner.wins + winner.losses));
+            console.info(winner.name, ' | ', winner.wins + winner.losses);
         });
-
     })
     .catch((error) => {
         console.log(error);

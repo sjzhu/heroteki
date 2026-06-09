@@ -7,8 +7,8 @@ const DieUpgrades = ({ card, onDieClick }) => {
     const dice =
         card.dieUpgrades && card.dieUpgrades.length > 0
             ? card.dieUpgrades.map((d) => (
-                <Die key={'dup-' + d.uuid} die={d} onClick={onDieClick} />
-            ))
+                  <Die key={'dup-' + d.uuid} die={d} onClick={onDieClick} />
+              ))
             : null;
 
     const classes = classNames('die-upgrades', {

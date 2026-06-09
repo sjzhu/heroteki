@@ -56,7 +56,8 @@ const Sidebar = ({
                     <TimeLimitClock
                         timeLimitStarted={currentGame.gameTimeLimitStarted}
                         timeLimitStartedAt={currentGame.gameTimeLimitStartedAt}
-                        timeLimit={currentGame.gameTimeLimit} />
+                        timeLimit={currentGame.gameTimeLimit}
+                    />
                 );
             }
             if (player.clock) {
@@ -65,7 +66,8 @@ const Sidebar = ({
                         secondsLeft={player.clock.timeLeft}
                         mode={player.clock.mode}
                         stateId={player.clock.stateId}
-                        onClockZero={onClockZero} />
+                        onClockZero={onClockZero}
+                    />
                 );
             }
         }
@@ -76,7 +78,7 @@ const Sidebar = ({
 
     const panelClass = classNames('prompt-area', 'panel', {
         manual: manualMode
-    })
+    });
     return (
         <div className={panelClass}>
             {leftMode && (
@@ -88,16 +90,19 @@ const Sidebar = ({
             )}
             {logArea}
             <div className='inset-pane'>
-                {hideContent ? null : (<ActivePlayerPrompt
+                {hideContent ? null : (
+                    <ActivePlayerPrompt
                         promptState={thisPlayer.promptState}
                         onButtonClick={onCommand}
                         onMouseOver={onMouseOver}
                         onMouseOut={onMouseOut}
                         onTimerExpired={onTimerExpired}
                         phase={currentGame.currentPhase}
-                    />)}
-                {clocks.length > 0 && <div className='time-limit-clock card bg-dark border-primary'>{clocks}</div>
-                }
+                    />
+                )}
+                {clocks.length > 0 && (
+                    <div className='time-limit-clock card bg-dark border-primary'>{clocks}</div>
+                )}
             </div>
         </div>
     );

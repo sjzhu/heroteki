@@ -25,7 +25,7 @@ const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
                 {formatplayerNameFragment(fragment)}
             </div>
         );
-    }
+    };
 
     const formatplayerNameFragment = (fragment) => {
         const user = getUserDetails(fragment.name);
@@ -47,29 +47,31 @@ const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
     const getActionFragment = (fragment) => {
         const result = [];
         if (fragment.main) {
-            result.push(
-                <span className='phg-main-action chat-action' title='main action'></span>
-            );
+            result.push(<span className='phg-main-action chat-action' title='main action'></span>);
         }
         if (fragment.side) {
-            result.push(
-                <span className='phg-side-action chat-action' title='side action'></span>
-            );
+            result.push(<span className='phg-side-action chat-action' title='side action'></span>);
         }
 
         return result;
-    }
+    };
 
     const getBehaviourFragment = (fragment) => {
         const result = [];
         if (fragment.data.text.side) {
             result.push(
-                <div><span className='phg-side-action chat-action' title='side action'></span>:{fragment.data.text.side}</div>
+                <div>
+                    <span className='phg-side-action chat-action' title='side action'></span>:
+                    {fragment.data.text.side}
+                </div>
             );
         }
         if (fragment.data.text.main) {
             result.push(
-                <div><span className='phg-main-action chat-action' title='main action'></span>:{fragment.data.text.main}</div>
+                <div>
+                    <span className='phg-main-action chat-action' title='main action'></span>:
+                    {fragment.data.text.main}
+                </div>
             );
         }
 
@@ -78,7 +80,7 @@ const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
         }
 
         return result;
-    }
+    };
 
     const formatMessageText = (message, index) => {
         let messages = [];
@@ -99,7 +101,8 @@ const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
                         messages.push(
                             <div
                                 className={'fw-bold text-white separator ' + fragment.type}
-                                key={'m-' + index}>
+                                key={'m-' + index}
+                            >
                                 <hr className={'mt-2 mb-2' + fragment.type} />
                                 {message}
                             </div>
@@ -181,14 +184,14 @@ const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
                 let dieClass = classNames('chat-die', fragment.magic, fragment.level);
 
                 messages.push(
-                    <span key={index++} className={dieClass}><span className={diceFont} title={`${fragment.name}`}><span className="sr-only">{fragment.code}</span></span></span>
-                );
-            } else if (fragment.argType === 'actions') {
-                messages.push(
-                    <span key={index++} >
-                        {getActionFragment(fragment)}
+                    <span key={index++} className={dieClass}>
+                        <span className={diceFont} title={`${fragment.name}`}>
+                            <span className='sr-only'>{fragment.code}</span>
+                        </span>
                     </span>
                 );
+            } else if (fragment.argType === 'actions') {
+                messages.push(<span key={index++}>{getActionFragment(fragment)}</span>);
             } else if (fragment.argType === 'behaviour') {
                 messages.push(
                     <span key={index++} className='message-fragment'>
@@ -218,9 +221,11 @@ const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
                     'message-system': msgType === 'system',
                     'message-action': msgType === 'action',
                     'message-chat': msgType === 'chat' || !msgType,
-                    'chat-bubble': message.message && Object.values(message.message).some(
-                        (m) => m && m.name && m.argType === 'player'
-                    )
+                    'chat-bubble':
+                        message.message &&
+                        Object.values(message.message).some(
+                            (m) => m && m.name && m.argType === 'player'
+                        )
                 });
                 return (
                     <div key={message.mid} className={className}>

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * SotMDE Card Library page (replaces Ashes Decks page).
  * Fetches cards from /api/sotm/cards with filtering by source and deck.
@@ -66,10 +67,14 @@ const CardLibrary = () => {
 
     const sourceColor = (source) => {
         switch (source) {
-            case 'official': return 'primary';
-            case 'manual': return 'warning';
-            case 'user': return 'secondary';
-            default: return 'light';
+            case 'official':
+                return 'primary';
+            case 'manual':
+                return 'warning';
+            case 'user':
+                return 'secondary';
+            default:
+                return 'light';
         }
     };
 
@@ -89,7 +94,10 @@ const CardLibrary = () => {
                         />
                     </Col>
                     <Col md={3}>
-                        <Form.Select value={filterDeck} onChange={(e) => setFilterDeck(e.target.value)}>
+                        <Form.Select
+                            value={filterDeck}
+                            onChange={(e) => setFilterDeck(e.target.value)}
+                        >
                             <option value=''>All Decks</option>
                             {decks.map((d) => (
                                 <option key={d.id} value={d.id}>
@@ -99,7 +107,10 @@ const CardLibrary = () => {
                         </Form.Select>
                     </Col>
                     <Col md={3}>
-                        <Form.Select value={filterSource} onChange={(e) => setFilterSource(e.target.value)}>
+                        <Form.Select
+                            value={filterSource}
+                            onChange={(e) => setFilterSource(e.target.value)}
+                        >
                             <option value=''>All Sources</option>
                             <option value='official'>Official</option>
                             <option value='manual'>Manual (admin)</option>
@@ -120,9 +131,7 @@ const CardLibrary = () => {
                     </div>
                 )}
 
-                {error && (
-                    <div className='alert alert-warning'>{error}</div>
-                )}
+                {error && <div className='alert alert-warning'>{error}</div>}
 
                 {!loading && !error && filteredCards.length === 0 && (
                     <div className='text-muted p-3'>
@@ -169,7 +178,12 @@ const CardLibrary = () => {
                                         <td>{card.deckId}</td>
                                         <td>
                                             {(card.keywords || []).map((kw) => (
-                                                <Badge key={kw} bg='info' className='me-1' style={{ fontSize: '0.75em' }}>
+                                                <Badge
+                                                    key={kw}
+                                                    bg='info'
+                                                    className='me-1'
+                                                    style={{ fontSize: '0.75em' }}
+                                                >
                                                     {kw}
                                                 </Badge>
                                             ))}
@@ -177,24 +191,36 @@ const CardLibrary = () => {
                                         <td>{card.hp ?? '—'}</td>
                                         <td>
                                             {card.version && (
-                                                <Badge bg='secondary' style={{ fontSize: '0.75em' }}>
+                                                <Badge
+                                                    bg='secondary'
+                                                    style={{ fontSize: '0.75em' }}
+                                                >
                                                     v{card.version}
                                                 </Badge>
                                             )}
                                         </td>
                                         <td>
-                                            <Badge bg={sourceColor(card.source)} style={{ fontSize: '0.75em' }}>
+                                            <Badge
+                                                bg={sourceColor(card.source)}
+                                                style={{ fontSize: '0.75em' }}
+                                            >
                                                 {card.source}
                                             </Badge>
                                         </td>
                                         {user?.permissions?.isAdmin && (
                                             <td>
                                                 {card.imageUrl ? (
-                                                    <a href='/admin/upload-image' style={{ fontSize: '0.8em' }}>
+                                                    <a
+                                                        href='/admin/upload-image'
+                                                        style={{ fontSize: '0.8em' }}
+                                                    >
                                                         Replace
                                                     </a>
                                                 ) : (
-                                                    <a href='/admin/upload-image' style={{ fontSize: '0.8em' }}>
+                                                    <a
+                                                        href='/admin/upload-image'
+                                                        style={{ fontSize: '0.8em' }}
+                                                    >
                                                         Upload
                                                     </a>
                                                 )}

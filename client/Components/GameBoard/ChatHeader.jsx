@@ -34,7 +34,8 @@ const ChatHeader = ({ muteSpectators, onMuteClick }) => {
                     icon={muteSpectators ? faCommentSlash : faComment}
                     onClick={onMuteClick}
                 ></FontAwesomeIcon>
-            </a>|&nbsp;
+            </a>
+            |&nbsp;
             <a
                 href='#'
                 className='pr-1 pl-1'

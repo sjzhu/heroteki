@@ -11,14 +11,14 @@ class VillainController {
         this.deckId = deckId;
         this.deckVersion = null; // set by game.js after construction
 
-        this.deck = cards.filter(c => c.type !== 'villainCharacter');
+        this.deck = cards.filter((c) => c.type !== 'villainCharacter');
         this.trash = [];
         this.playArea = [];
         this.characterCard = characterCard;
         this.auxiliaryZones = [];
 
-        this.hp = characterCard ? (characterCard.hp ?? 0) : 0;
-        this.maxHp = characterCard ? (characterCard.maxHp ?? 0) : 0;
+        this.hp = characterCard ? characterCard.hp ?? 0 : 0;
+        this.maxHp = characterCard ? characterCard.maxHp ?? 0 : 0;
         this.isFlipped = false;
 
         // Mark card zones
@@ -71,7 +71,7 @@ class VillainController {
      * @returns {import('./SotmCard')|null}
      */
     discardFromPlay(cardId) {
-        const idx = this.playArea.findIndex(c => c.id === cardId);
+        const idx = this.playArea.findIndex((c) => c.id === cardId);
         if (idx === -1) return null;
 
         const card = this.playArea.splice(idx, 1)[0];
@@ -98,20 +98,20 @@ class VillainController {
         return {
             deckId: this.deckId,
             deckVersion: this.deckVersion,
-            deck: this.deck.map(c => c.getSummary()),
+            deck: this.deck.map((c) => c.getSummary()),
             deckCount: this.deck.length,
-            trash: this.trash.map(c => c.getSummary()),
-            playArea: this.playArea.map(c => c.getSummary()),
+            trash: this.trash.map((c) => c.getSummary()),
+            playArea: this.playArea.map((c) => c.getSummary()),
             characterCard: this.characterCard ? this.characterCard.getSummary() : null,
-            auxiliaryZones: this.auxiliaryZones.map(az => ({
+            auxiliaryZones: this.auxiliaryZones.map((az) => ({
                 id: az.id,
                 name: az.name,
-                deck: az.deck.map(c => c.getSummary()),
-                trash: az.trash.map(c => c.getSummary()),
+                deck: az.deck.map((c) => c.getSummary()),
+                trash: az.trash.map((c) => c.getSummary())
             })),
             hp: this.hp,
             maxHp: this.maxHp,
-            isFlipped: this.isFlipped,
+            isFlipped: this.isFlipped
         };
     }
 }

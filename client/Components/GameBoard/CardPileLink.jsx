@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, no-unused-vars */
 import React, { useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
 
@@ -84,7 +85,6 @@ const CardPileLink = ({
                     disableMouseOver={disableMouseOver}
                     manualMode={manualMode}
                     showAlphaSort={showAlphaSort}
-
                     onCardClick={(card) => {
                         if (closeOnClick) {
                             updatePopupVisibility(false);

@@ -13,7 +13,6 @@ if (_.size(args) > 0) {
     supporters = args.includes('supporters');
 }
 
-
 userService
     .getAllUsers()
     .then((users) => {

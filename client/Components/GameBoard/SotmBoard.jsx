@@ -18,7 +18,7 @@ import {
     selectTurnState,
     selectIsGameOver,
     selectGameOverPrompt,
-    selectCurrentGame,
+    selectCurrentGame
 } from '../../redux/selectors/game';
 
 import TurnTracker from './TurnTracker';
@@ -89,11 +89,7 @@ const SotmBoard = () => {
     }, []);
 
     if (!currentGame) {
-        return (
-            <div style={loadingStyle}>
-                Waiting for game state…
-            </div>
-        );
+        return <div style={loadingStyle}>Waiting for game state…</div>;
     }
 
     if (isGameOver) {
@@ -139,9 +135,7 @@ const SotmBoard = () => {
                 {/* Three-row board — wrapped for game-over overlay */}
                 <div style={{ ...boardContentStyle, position: 'relative' }}>
                     {/* Phase 8.5.3d: non-interactive overlay when game is over */}
-                    {isGameOver && (
-                        <div style={gameOverOverlayStyle} aria-hidden='true' />
-                    )}
+                    {isGameOver && <div style={gameOverOverlayStyle} aria-hidden='true' />}
 
                     {/* Row 1: Villain */}
                     <VillainArea
@@ -220,13 +214,13 @@ const boardStyle = {
     height: '100vh',
     backgroundColor: '#0d1117',
     color: '#f8f9fa',
-    overflow: 'hidden',
+    overflow: 'hidden'
 };
 
 const mainAreaStyle = {
     display: 'flex',
     flex: 1,
-    overflow: 'hidden',
+    overflow: 'hidden'
 };
 
 const boardContentStyle = {
@@ -235,7 +229,7 @@ const boardContentStyle = {
     flexDirection: 'column',
     overflowY: 'auto',
     padding: '8px',
-    gap: '4px',
+    gap: '4px'
 };
 
 const heroRowStyle = {
@@ -245,7 +239,7 @@ const heroRowStyle = {
     overflowX: 'auto',
     alignItems: 'flex-start',
     paddingBottom: '8px',
-    minHeight: '200px',
+    minHeight: '200px'
 };
 
 const chatPanelStyle = {
@@ -254,7 +248,7 @@ const chatPanelStyle = {
     borderLeft: '1px solid #343a40',
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
+    overflow: 'hidden'
 };
 
 const chatToggleStyle = {
@@ -268,7 +262,7 @@ const chatToggleStyle = {
     padding: '4px 10px',
     cursor: 'pointer',
     fontSize: '0.75rem',
-    zIndex: 200,
+    zIndex: 200
 };
 
 // Phase 8.5.3d: overlay that blocks pointer events on play areas when game is over
@@ -278,7 +272,7 @@ const gameOverOverlayStyle = {
     backgroundColor: 'rgba(0,0,0,0.45)',
     zIndex: 10,
     pointerEvents: 'all', // absorb all clicks/hovers so play areas become non-interactive
-    cursor: 'not-allowed',
+    cursor: 'not-allowed'
 };
 
 const loadingStyle = {
@@ -288,7 +282,7 @@ const loadingStyle = {
     height: '100vh',
     color: '#6c757d',
     fontSize: '1rem',
-    backgroundColor: '#0d1117',
+    backgroundColor: '#0d1117'
 };
 
 SotmBoard.displayName = 'SotmBoard';

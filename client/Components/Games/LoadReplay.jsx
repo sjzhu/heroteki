@@ -122,13 +122,20 @@ const LoadReplay = ({ onCancel }) => {
                             {recentGames.map((game) => {
                                 let soloLevel = '';
                                 if (game.solo && game.players[1]?.level) {
-                                    soloLevel = ' (' + game.players[1]?.level + game.players[1]?.stage + ')';
+                                    soloLevel =
+                                        ' (' +
+                                        game.players[1]?.level +
+                                        game.players[1]?.stage +
+                                        ')';
                                 }
 
                                 return (
                                     <tr key={game.gameId}>
-                                        <td>{moment(game.startedAt).format('MMM-DD HH:mm')}<br />
-                                            <b>{game.label}</b></td>
+                                        <td>
+                                            {moment(game.startedAt).format('MMM-DD HH:mm')}
+                                            <br />
+                                            <b>{game.label}</b>
+                                        </td>
                                         <td>{game.players[0].deck}</td>
                                         <td style={{ whiteSpace: 'nowrap' }}>
                                             {game.players[1]?.name} {soloLevel}
@@ -166,6 +173,6 @@ const LoadReplay = ({ onCancel }) => {
             ) : null}
         </div>
     );
-}
+};
 
 export default LoadReplay;

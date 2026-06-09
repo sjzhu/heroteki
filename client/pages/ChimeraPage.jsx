@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -73,7 +74,6 @@ const ChimeraPage = ({ onDeckSelected, tab = 0 }) => {
 
         dispatch(loadMyChimeraDecks(pagingDetails));
         setTabIndex(tab);
-
     }, [nameFilter, pbFilter, showFaves, dispatch, deckReload, chimeraDecks, pageNumber]);
 
     let onNameChange = debounce((event) => {
@@ -138,7 +138,7 @@ const ChimeraPage = ({ onDeckSelected, tab = 0 }) => {
                         <Row>
                             <Col lg={6}>
                                 <DeckList decks={myChimeraDecks} allowInvalidSelection={true} />
-                                {(myChimeraDecks?.length > 0) && (
+                                {myChimeraDecks?.length > 0 && (
                                     <div className='pagination-wrapper'>
                                         <PaginationControl
                                             page={pageNumber}
@@ -153,21 +153,33 @@ const ChimeraPage = ({ onDeckSelected, tab = 0 }) => {
                                     </div>
                                 )}
                             </Col>
-                            <Col lg={6}>{selectedDeck && <ViewDeck deck={selectedDeck} onDuplicate={onDuplicate} allowEdit={true} />}</Col>
+                            <Col lg={6}>
+                                {selectedDeck && (
+                                    <ViewDeck
+                                        deck={selectedDeck}
+                                        onDuplicate={onDuplicate}
+                                        allowEdit={true}
+                                    />
+                                )}
+                            </Col>
                         </Row>
                     </TabPanel>
                     <TabPanel>
                         <Row>
-                            <Col>
-                            </Col>
+                            <Col></Col>
                         </Row>
                         <Row>
                             <Col lg={6}>
                                 <DeckTypeInfo deckType='precon' />
                                 <div className='lobby-card'>
-                                    <DeckGrid decks={chimeraDecks} /></div>
+                                    <DeckGrid decks={chimeraDecks} />
+                                </div>
                             </Col>
-                            <Col lg={6}>{selectedDeck && <ViewDeck deck={selectedDeck} onDuplicate={onDuplicate} />}</Col>
+                            <Col lg={6}>
+                                {selectedDeck && (
+                                    <ViewDeck deck={selectedDeck} onDuplicate={onDuplicate} />
+                                )}
+                            </Col>
                         </Row>
                     </TabPanel>
                 </Tabs>

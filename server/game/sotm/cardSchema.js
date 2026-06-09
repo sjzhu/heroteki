@@ -7,8 +7,11 @@
  * and to match the template registry keys.
  */
 const CARD_TYPES = [
-  'heroCard', 'villainCard', 'environmentCard',
-  'heroCharacter', 'villainCharacter'
+    'heroCard',
+    'villainCard',
+    'environmentCard',
+    'heroCharacter',
+    'villainCharacter'
 ];
 const KEYWORDS = ['one-shot', 'ongoing', 'equipment', 'limited', 'power'];
 

@@ -100,20 +100,30 @@ module.exports.init = function (server) {
             }
 
             const totalGames = games.length;
-            const heroWins = games.filter(g => g.result === 'heroVictory').length;
-            const villainWins = games.filter(g => g.result === 'villainVictory').length;
+            const heroWins = games.filter((g) => g.result === 'heroVictory').length;
+            const villainWins = games.filter((g) => g.result === 'villainVictory').length;
 
             // Average duration
-            const durationsWithData = games.filter(g => typeof g.durationMinutes === 'number');
-            const avgDurationMinutes = durationsWithData.length > 0
-                ? Math.round(durationsWithData.reduce((sum, g) => sum + g.durationMinutes, 0) / durationsWithData.length)
-                : null;
+            const durationsWithData = games.filter((g) => typeof g.durationMinutes === 'number');
+            const avgDurationMinutes =
+                durationsWithData.length > 0
+                    ? Math.round(
+                          durationsWithData.reduce((sum, g) => sum + g.durationMinutes, 0) /
+                              durationsWithData.length
+                      )
+                    : null;
 
             // Win rate by villain deck+version
             const villainBuckets = {};
             for (const g of games) {
                 const key = `${g.villainDeckId}@${g.villainDeckVersion || 'unknown'}`;
-                if (!villainBuckets[key]) villainBuckets[key] = { wins: 0, total: 0, deckId: g.villainDeckId, version: g.villainDeckVersion };
+                if (!villainBuckets[key])
+                    villainBuckets[key] = {
+                        wins: 0,
+                        total: 0,
+                        deckId: g.villainDeckId,
+                        version: g.villainDeckVersion
+                    };
                 villainBuckets[key].total++;
                 if (g.result === 'heroVictory') villainBuckets[key].wins++;
             }
@@ -131,9 +141,15 @@ module.exports.init = function (server) {
             // Win rate by hero deck+version
             const heroBuckets = {};
             for (const g of games) {
-                for (const h of (g.heroes || [])) {
+                for (const h of g.heroes || []) {
                     const key = `${h.heroDeckId}@${h.heroDeckVersion || 'unknown'}`;
-                    if (!heroBuckets[key]) heroBuckets[key] = { wins: 0, total: 0, deckId: h.heroDeckId, version: h.heroDeckVersion };
+                    if (!heroBuckets[key])
+                        heroBuckets[key] = {
+                            wins: 0,
+                            total: 0,
+                            deckId: h.heroDeckId,
+                            version: h.heroDeckVersion
+                        };
                     heroBuckets[key].total++;
                     if (g.result === 'heroVictory') heroBuckets[key].wins++;
                 }
@@ -152,7 +168,10 @@ module.exports.init = function (server) {
             // Most common hero combinations (top 10)
             const comboCounts = {};
             for (const g of games) {
-                const heroIds = (g.heroes || []).map(h => h.heroDeckId).sort().join(',');
+                const heroIds = (g.heroes || [])
+                    .map((h) => h.heroDeckId)
+                    .sort()
+                    .join(',');
                 if (heroIds) {
                     comboCounts[heroIds] = (comboCounts[heroIds] || 0) + 1;
                 }
@@ -227,7 +246,7 @@ module.exports.init = function (server) {
                 page,
                 pageSize,
                 totalPages: Math.ceil(total / pageSize),
-                games: games.map(g => ({
+                games: games.map((g) => ({
                     gameId: g.gameId,
                     result: g.result,
                     villain: { deckId: g.villainDeckId, version: g.villainDeckVersion },

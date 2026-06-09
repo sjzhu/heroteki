@@ -1,14 +1,32 @@
+/* eslint-disable no-unused-vars */
 import React, { useCallback } from 'react';
 import _ from 'underscore';
 
-function Select({ name, label, labelClass, fieldClass, value, onChange, onBlur, blankOption, options, validationMessage, button, valueKey, nameKey }) {
-    const handleChange = useCallback((event) => {
-        let selectedValue = _.find(options, (option) => {
-            return option[valueKey || 'value'] === event.target.value;
-        });
+function Select({
+    name,
+    label,
+    labelClass,
+    fieldClass,
+    value,
+    onChange,
+    onBlur,
+    blankOption,
+    options,
+    validationMessage,
+    button,
+    valueKey,
+    nameKey
+}) {
+    const handleChange = useCallback(
+        (event) => {
+            let selectedValue = _.find(options, (option) => {
+                return option[valueKey || 'value'] === event.target.value;
+            });
 
-        onChange(selectedValue);
-    }, [options, onChange, valueKey]);
+            onChange(selectedValue);
+        },
+        [options, onChange, valueKey]
+    );
 
     var selectOptions = [];
 
@@ -46,10 +64,7 @@ function Select({ name, label, labelClass, fieldClass, value, onChange, onBlur, 
 
     return (
         <div className='form-group'>
-            <label
-                htmlFor={name}
-                className={labelClass + ' control-label'}
-            >
+            <label htmlFor={name} className={labelClass + ' control-label'}>
                 {label}
             </label>
             <div className={fieldClass}>
@@ -68,10 +83,7 @@ function Select({ name, label, labelClass, fieldClass, value, onChange, onBlur, 
                     <span className='help-block'>{validationMessage} </span>
                 ) : null}
                 {button ? (
-                    <button
-                        className='btn btn-default select-button'
-                        onClick={button.onClick}
-                    >
+                    <button className='btn btn-default select-button' onClick={button.onClick}>
                         {button.text}
                     </button>
                 ) : null}
@@ -81,6 +93,5 @@ function Select({ name, label, labelClass, fieldClass, value, onChange, onBlur, 
 }
 
 Select.displayName = 'Select';
-};
 
 export default Select;

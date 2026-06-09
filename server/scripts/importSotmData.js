@@ -27,7 +27,10 @@ const config = require('config');
 
 const { CARD_TYPES } = require('../game/sotm/cardSchema.js');
 const { EXPECTED_DECK_SIZES } = require('../game/sotm/deckSchema.js');
-const { generatePlaceholder, shouldGeneratePlaceholder } = require('../game/sotm/cardImageGenerator');
+const {
+    generatePlaceholder,
+    shouldGeneratePlaceholder
+} = require('../game/sotm/cardImageGenerator');
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -120,7 +123,11 @@ function validateCard(card, filePath) {
         errors.push(`${filePath}: card '${card.id}' missing required string 'deckId'`);
     }
     if (!card.type || !CARD_TYPES.includes(card.type)) {
-        errors.push(`${filePath}: card '${card.id}' has invalid type '${card.type}' (must be one of: ${CARD_TYPES.join(', ')})`);
+        errors.push(
+            `${filePath}: card '${card.id}' has invalid type '${
+                card.type
+            }' (must be one of: ${CARD_TYPES.join(', ')})`
+        );
     }
     if (!Array.isArray(card.keywords)) {
         errors.push(`${filePath}: card '${card.id}' missing required array 'keywords'`);
@@ -129,7 +136,9 @@ function validateCard(card, filePath) {
         errors.push(`${filePath}: card '${card.id}' missing required string 'text'`);
     }
     if (!('hp' in card)) {
-        errors.push(`${filePath}: card '${card.id}' missing required field 'hp' (use null for non-character cards)`);
+        errors.push(
+            `${filePath}: card '${card.id}' missing required field 'hp' (use null for non-character cards)`
+        );
     }
     return errors;
 }
@@ -142,7 +151,9 @@ async function main() {
     console.log('=== SotMDE Import Script ===');
     console.log(`MongoDB: ${mongoUrl}`);
     if (SKIP_COUNT_VALIDATION) {
-        console.log('[INFO] --skip-count-validation flag set; deck size validation will be skipped.');
+        console.log(
+            '[INFO] --skip-count-validation flag set; deck size validation will be skipped.'
+        );
     }
 
     // -----------------------------------------------------------------------
@@ -224,7 +235,9 @@ async function main() {
         if (existing) {
             if (existing.version !== card.version) {
                 const diffs = fieldDiff(existing, cardDoc);
-                console.log(`[UPDATE] Card '${card.id}': version ${existing.version} → ${card.version}`);
+                console.log(
+                    `[UPDATE] Card '${card.id}': version ${existing.version} → ${card.version}`
+                );
                 if (diffs.length > 0) {
                     console.log('  Field-level diff:');
                     for (const d of diffs) console.log(d);
@@ -245,7 +258,9 @@ async function main() {
         );
     }
 
-    console.log(`[Step 2] Cards: ${cardsInserted} inserted, ${cardsUpdated} updated, ${cardsUnchanged} unchanged.`);
+    console.log(
+        `[Step 2] Cards: ${cardsInserted} inserted, ${cardsUpdated} updated, ${cardsUnchanged} unchanged.`
+    );
 
     // -----------------------------------------------------------------------
     // Step 3 — Load and upsert decks
@@ -264,15 +279,21 @@ async function main() {
                 continue;
             }
             if (!deck.name || typeof deck.name !== 'string') {
-                deckValidationErrors.push(`${filePath}: deck '${deck.id}' missing required string 'name'`);
+                deckValidationErrors.push(
+                    `${filePath}: deck '${deck.id}' missing required string 'name'`
+                );
                 continue;
             }
             if (!['hero', 'villain', 'environment'].includes(deck.deckType)) {
-                deckValidationErrors.push(`${filePath}: deck '${deck.id}' has invalid deckType '${deck.deckType}'`);
+                deckValidationErrors.push(
+                    `${filePath}: deck '${deck.id}' has invalid deckType '${deck.deckType}'`
+                );
                 continue;
             }
             if (!deck.version || typeof deck.version !== 'string') {
-                deckValidationErrors.push(`${filePath}: deck '${deck.id}' missing required string 'version' (no default — must be explicit)`);
+                deckValidationErrors.push(
+                    `${filePath}: deck '${deck.id}' missing required string 'version' (no default — must be explicit)`
+                );
                 continue;
             }
             if (allDecks.has(deck.id)) {
@@ -305,7 +326,11 @@ async function main() {
         // (excluding character cards, which are stored separately)
         let count = 0;
         for (const [, card] of allCards) {
-            if (card.deckId === deckId && card.type !== 'heroCharacter' && card.type !== 'villainCharacter') {
+            if (
+                card.deckId === deckId &&
+                card.type !== 'heroCharacter' &&
+                card.type !== 'villainCharacter'
+            ) {
                 count++;
             }
         }
@@ -317,13 +342,22 @@ async function main() {
             if (count !== expectedSize) {
                 // Compute missing/surplus for the error log
                 const deckCardIds = [...allCards.entries()]
-                    .filter(([, c]) => c.deckId === deckId && c.type !== 'heroCharacter' && c.type !== 'villainCharacter')
+                    .filter(
+                        ([, c]) =>
+                            c.deckId === deckId &&
+                            c.type !== 'heroCharacter' &&
+                            c.type !== 'villainCharacter'
+                    )
                     .map(([id]) => id);
 
                 countValidationErrors.push(
                     `Deck '${deckId}' (${deck.deckType}) has ${count} card(s) but expected ${expectedSize}. ` +
-                    `Diff: ${count < expectedSize ? `missing ${expectedSize - count} card(s)` : `surplus ${count - expectedSize} card(s)`}. ` +
-                    `Present card IDs: [${deckCardIds.join(', ')}]`
+                        `Diff: ${
+                            count < expectedSize
+                                ? `missing ${expectedSize - count} card(s)`
+                                : `surplus ${count - expectedSize} card(s)`
+                        }. ` +
+                        `Present card IDs: [${deckCardIds.join(', ')}]`
                 );
             } else {
                 console.log(`[OK] Deck '${deckId}' has correct card count: ${count}`);
@@ -334,7 +368,9 @@ async function main() {
     }
 
     if (countValidationErrors.length > 0) {
-        console.error('\n[ERROR] Deck size validation failed (use --skip-count-validation to bypass during development):');
+        console.error(
+            '\n[ERROR] Deck size validation failed (use --skip-count-validation to bypass during development):'
+        );
         for (const err of countValidationErrors) {
             console.error(' ', err);
         }
@@ -403,7 +439,9 @@ async function main() {
         if (existing) {
             if (existing.version !== deck.version) {
                 const diffs = fieldDiff(existing, deckDoc);
-                console.log(`[UPDATE] Deck '${deck.id}': version ${existing.version} → ${deck.version}`);
+                console.log(
+                    `[UPDATE] Deck '${deck.id}': version ${existing.version} → ${deck.version}`
+                );
                 if (diffs.length > 0) {
                     console.log('  Field-level diff:');
                     for (const d of diffs) console.log(d);
@@ -424,7 +462,9 @@ async function main() {
         );
     }
 
-    console.log(`[Step 6] Decks: ${decksInserted} inserted, ${decksUpdated} updated, ${decksUnchanged} unchanged.`);
+    console.log(
+        `[Step 6] Decks: ${decksInserted} inserted, ${decksUpdated} updated, ${decksUnchanged} unchanged.`
+    );
 
     // -----------------------------------------------------------------------
     // Step 7 — Placeholder image generation
@@ -457,12 +497,16 @@ async function main() {
             console.log(`[GEN] Placeholder generated for '${cardForCheck.id}' → ${generatedPath}`);
             placeholdersGenerated++;
         } catch (err) {
-            console.error(`[ERROR] Placeholder generation failed for '${cardForCheck.id}': ${err.message}`);
+            console.error(
+                `[ERROR] Placeholder generation failed for '${cardForCheck.id}': ${err.message}`
+            );
             placeholdersFailed++;
         }
     }
 
-    console.log(`[Step 7] Placeholders: ${placeholdersGenerated} generated, ${placeholdersSkipped} skipped (had imageUrl), ${placeholdersFailed} failed.`);
+    console.log(
+        `[Step 7] Placeholders: ${placeholdersGenerated} generated, ${placeholdersSkipped} skipped (had imageUrl), ${placeholdersFailed} failed.`
+    );
 
     // -----------------------------------------------------------------------
     // Done

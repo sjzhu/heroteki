@@ -12,7 +12,7 @@ const GameFormats = ({ formProps, solo }) => {
         <>
             <Row>
                 <h3> Format</h3>
-                <Form.Group >
+                <Form.Group>
                     {formats.map((format) => {
                         const checkClasses = classNames('game-format', format.name);
 
@@ -41,7 +41,6 @@ const GameFormats = ({ formProps, solo }) => {
                     <GameFormatInfo gameType={formProps.values.gameFormat} />
                 </Col>
             </Row>
-
         </>
     );
 };
@@ -54,4 +53,3 @@ function getFormats(solo) {
 
     return [...gameFormats];
 }
-

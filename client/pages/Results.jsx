@@ -31,8 +31,8 @@ const Results = () => {
                     <EloLadder key='elo' />
                 </TabPanel>
             </Tabs>
-        </div >
-    )
+        </div>
+    );
 };
 
 export default Results;

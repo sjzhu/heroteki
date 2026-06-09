@@ -59,10 +59,10 @@ class Game extends EventEmitter {
         this.startedAt = null;
         this.finishedAt = null;
 
-        this.heroPlayers = [];    // HeroPlayer[]
-        this.villain = null;      // VillainController
-        this.environment = null;  // EnvironmentController
-        this.turnManager = null;  // TurnManager
+        this.heroPlayers = []; // HeroPlayer[]
+        this.villain = null; // VillainController
+        this.environment = null; // EnvironmentController
+        this.turnManager = null; // TurnManager
         this.setupInstructions = null;
 
         // Populate playersAndSpectators from details
@@ -163,6 +163,7 @@ class Game extends EventEmitter {
         return true;
     }
 
+    // eslint-disable-next-line no-unused-vars
     join(socketId, user) {
         if (this.started || this.getPlayers().length >= 8) {
             return false;
@@ -259,7 +260,9 @@ class Game extends EventEmitter {
     // No-op stubs expected by gameserver.js
     setWins() {}
     stopClocks() {}
-    getPlainTextLog() { return []; }
+    getPlainTextLog() {
+        return [];
+    }
 
     // ---- Initialise from pendingGame details ----
 
@@ -279,31 +282,39 @@ class Game extends EventEmitter {
         const cardData = this._cardData || {};
 
         // heroOrder and heroSelection come from the pendingGame's getStartGameDetails()
-        const heroOrder = this._details ? (this._details.heroOrder || []) : [];
-        const heroSelection = this._details ? (this._details.heroSelection || {}) : {};
+        const heroOrder = this._details ? this._details.heroOrder || [] : [];
+        /* eslint-disable-next-line no-unused-vars */
+        const heroSelection = this._details ? this._details.heroSelection || {} : {}; // available for future use
         const villainDeckId = this._details ? this._details.villainDeckId : null;
         const environmentDeckId = this._details ? this._details.environmentDeckId : null;
 
         // Build HeroPlayers in heroOrder sequence
-        this.heroPlayers = heroOrder.map(slot => {
+        this.heroPlayers = heroOrder.map((slot) => {
             const deckId = slot.heroId;
             const controllerPlayerId = slot.controllerPlayerId;
             const playerName = controllerPlayerId;
 
             // Separate character card from play cards
             const characterCardData = Object.values(cardData).find(
-                cd => cd.deckId === deckId && cd.type === 'heroCharacter'
+                (cd) => cd.deckId === deckId && cd.type === 'heroCharacter'
             );
             const characterCard = characterCardData ? new SotmCard(characterCardData) : null;
 
             const playCards = Object.values(cardData)
-                .filter(cd => cd.deckId === deckId && cd.type === 'heroCard')
-                .map(cd => new SotmCard(cd));
+                .filter((cd) => cd.deckId === deckId && cd.type === 'heroCard')
+                .map((cd) => new SotmCard(cd));
 
-            const hero = new HeroPlayer(controllerPlayerId, playerName, deckId, playCards, characterCard);
+            const hero = new HeroPlayer(
+                controllerPlayerId,
+                playerName,
+                deckId,
+                playCards,
+                characterCard
+            );
             // Capture deck version from any card in this deck
-            const anyCard = characterCardData || Object.values(cardData).find(cd => cd.deckId === deckId);
-            hero.deckVersion = anyCard ? (anyCard.version || null) : null;
+            const anyCard =
+                characterCardData || Object.values(cardData).find((cd) => cd.deckId === deckId);
+            hero.deckVersion = anyCard ? anyCard.version || null : null;
 
             return hero;
         });
@@ -313,34 +324,36 @@ class Game extends EventEmitter {
         // Build VillainController
         if (villainDeckId) {
             const villainCharData = Object.values(cardData).find(
-                cd => cd.deckId === villainDeckId && cd.type === 'villainCharacter'
+                (cd) => cd.deckId === villainDeckId && cd.type === 'villainCharacter'
             );
             const villainChar = villainCharData ? new SotmCard(villainCharData) : null;
             const villainCards = Object.values(cardData)
-                .filter(cd => cd.deckId === villainDeckId && cd.type === 'villainCard')
-                .map(cd => new SotmCard(cd));
+                .filter((cd) => cd.deckId === villainDeckId && cd.type === 'villainCard')
+                .map((cd) => new SotmCard(cd));
 
             this.villain = new VillainController(villainDeckId, villainCards, villainChar);
-            const anyVCard = villainCharData || Object.values(cardData).find(cd => cd.deckId === villainDeckId);
-            this.villain.deckVersion = anyVCard ? (anyVCard.version || null) : null;
+            const anyVCard =
+                villainCharData ||
+                Object.values(cardData).find((cd) => cd.deckId === villainDeckId);
+            this.villain.deckVersion = anyVCard ? anyVCard.version || null : null;
         }
 
         // Build EnvironmentController
         if (environmentDeckId) {
             const envCards = Object.values(cardData)
-                .filter(cd => cd.deckId === environmentDeckId && cd.type === 'environmentCard')
-                .map(cd => new SotmCard(cd));
+                .filter((cd) => cd.deckId === environmentDeckId && cd.type === 'environmentCard')
+                .map((cd) => new SotmCard(cd));
 
             this.environment = new EnvironmentController(environmentDeckId, envCards);
-            const anyECard = Object.values(cardData).find(cd => cd.deckId === environmentDeckId);
-            this.environment.deckVersion = anyECard ? (anyECard.version || null) : null;
+            const anyECard = Object.values(cardData).find((cd) => cd.deckId === environmentDeckId);
+            this.environment.deckVersion = anyECard ? anyECard.version || null : null;
         }
 
         // Wire TurnManager
         this.turnManager = new TurnManager(H, heroOrder, {
             onHeroStart: (slot) => this._onHeroStart(slot),
             // Phase 8.2: push system message to chat log on each phase advance
-            onAdvance: (label) => this._pushSystemMessage(label),
+            onAdvance: (label) => this._pushSystemMessage(label)
         });
 
         // Shuffle all decks
@@ -358,18 +371,20 @@ class Game extends EventEmitter {
         // Setup instructions from any deck that has them
         const setupMessages = [];
         for (const hero of this.heroPlayers) {
-            const deckCardData = Object.values(cardData).find(cd => cd.deckId === hero.deckId);
+            const deckCardData = Object.values(cardData).find((cd) => cd.deckId === hero.deckId);
             if (deckCardData && deckCardData.setupInstructions) {
                 setupMessages.push(`${hero.deckId}: ${deckCardData.setupInstructions}`);
             }
         }
         if (this.villain) {
-            const vcd = Object.values(cardData).find(cd => cd.deckId === this.villain.deckId);
-            if (vcd && vcd.setupInstructions) setupMessages.push(`Villain: ${vcd.setupInstructions}`);
+            const vcd = Object.values(cardData).find((cd) => cd.deckId === this.villain.deckId);
+            if (vcd && vcd.setupInstructions)
+                setupMessages.push(`Villain: ${vcd.setupInstructions}`);
         }
         if (this.environment) {
-            const ecd = Object.values(cardData).find(cd => cd.deckId === this.environment.deckId);
-            if (ecd && ecd.setupInstructions) setupMessages.push(`Environment: ${ecd.setupInstructions}`);
+            const ecd = Object.values(cardData).find((cd) => cd.deckId === this.environment.deckId);
+            if (ecd && ecd.setupInstructions)
+                setupMessages.push(`Environment: ${ecd.setupInstructions}`);
         }
         if (setupMessages.length > 0) {
             this.setupInstructions = setupMessages.join('\n');
@@ -385,7 +400,7 @@ class Game extends EventEmitter {
         });
 
         // Save initial state (fire-and-forget)
-        this.saveState().catch(err => logger.error('saveState failed on init', err));
+        this.saveState().catch((err) => logger.error('saveState failed on init', err));
     }
 
     // ---- Turn notification (wired to TurnManager onHeroStart callback) ----
@@ -400,20 +415,21 @@ class Game extends EventEmitter {
             const transporter = nodemailer.createTransport({
                 host: notifConfig.smtpHost,
                 port: notifConfig.smtpPort,
-                from: notifConfig.fromAddress,
+                from: notifConfig.fromAddress
             });
 
             const playerName = slot.controllerPlayerId;
             const subject = `[SotMDE] It's your turn — ${slot.heroId}`;
             const text = `It is now ${slot.heroId}'s turn in game "${this.name}" (Round ${this.turnManager.round}). Log in to take your turn.`;
 
-            transporter.sendMail({
-                from: notifConfig.fromAddress,
-                to: playerName, // best effort; will fail if not an email address
-                subject,
-                text
-            }).catch(err => logger.warn('Turn notification email failed:', err));
-
+            transporter
+                .sendMail({
+                    from: notifConfig.fromAddress,
+                    to: playerName, // best effort; will fail if not an email address
+                    subject,
+                    text
+                })
+                .catch((err) => logger.warn('Turn notification email failed:', err));
         } catch (err) {
             logger.warn('Turn notification setup failed:', err);
         }
@@ -438,7 +454,7 @@ class Game extends EventEmitter {
             date: new Date(),
             type: 'chat',
             text: `${playerName}: ${text}`,
-            message: { '0': `${playerName}: ${text}` },
+            message: { 0: `${playerName}: ${text}` }
         });
     }
 
@@ -451,7 +467,7 @@ class Game extends EventEmitter {
             phase: this.turnManager.phase,
             round: this.turnManager.round
         });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     playCard(playerName, { cardId } = {}) {
@@ -464,10 +480,11 @@ class Game extends EventEmitter {
         const card = hero.playCard(cardId);
         if (!card) return;
 
-        const dest = card.keywords && card.keywords.includes('one-shot') ? 'trash (one-shot)' : 'play area';
+        const dest =
+            card.keywords && card.keywords.includes('one-shot') ? 'trash (one-shot)' : 'play area';
         this._pushActionMessage(`${playerName}: played ${card.name} → ${dest}`);
         this.logEvent(EVENT_TYPES.PLAY_CARD, playerName, { cardId, heroId: hero.deckId });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     discardCard(playerName, { cardId, zone } = {}) {
@@ -479,9 +496,11 @@ class Game extends EventEmitter {
         const cardName = card.name || cardId;
         // Find the controller that holds this card
         this._moveCardToTrash(cardId, zone, playerName);
-        this._pushActionMessage(`${playerName}: discarded ${cardName} from ${zone || 'unknown zone'}`);
+        this._pushActionMessage(
+            `${playerName}: discarded ${cardName} from ${zone || 'unknown zone'}`
+        );
         this.logEvent(EVENT_TYPES.DISCARD_CARD, playerName, { cardId, zone });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     moveCard(playerName, { cardId, fromZone, toZone, controllerId } = {}) {
@@ -489,15 +508,20 @@ class Game extends EventEmitter {
 
         // Call clearPlayState if leaving playArea or character zone
         const { card } = this._findCardInGame(cardId);
-        const cardName = card ? (card.name || cardId) : cardId;
+        const cardName = card ? card.name || cardId : cardId;
         if (card && (fromZone === 'playArea' || fromZone === 'character')) {
             card.clearPlayState();
         }
 
         this._genericMoveCard(cardId, fromZone, toZone, controllerId);
         this._pushActionMessage(`${playerName}: moved ${cardName} from ${fromZone} → ${toZone}`);
-        this.logEvent(EVENT_TYPES.MOVE_CARD, playerName, { cardId, fromZone, toZone, controllerId });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.logEvent(EVENT_TYPES.MOVE_CARD, playerName, {
+            cardId,
+            fromZone,
+            toZone,
+            controllerId
+        });
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     shuffleDeck(playerName, { controllerId, zoneId } = {}) {
@@ -509,7 +533,7 @@ class Game extends EventEmitter {
         }
 
         this.logEvent(EVENT_TYPES.SHUFFLE_DECK, playerName, { controllerId, zoneId });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     playTopCard(playerName, { controllerId } = {}) {
@@ -518,17 +542,19 @@ class Game extends EventEmitter {
 
         const card = controller.playTopCard();
         if (card) {
-            this._pushActionMessage(`${playerName}: played top card of ${controllerId} — ${card.name}`);
+            this._pushActionMessage(
+                `${playerName}: played top card of ${controllerId} — ${card.name}`
+            );
         }
         this.logEvent(EVENT_TYPES.PLAY_TOP_CARD, playerName, { controllerId });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     flipVillain(playerName) {
         if (!this.villain) return;
         this.villain.flip();
         this.logEvent(EVENT_TYPES.FLIP_VILLAIN, playerName, { isFlipped: this.villain.isFlipped });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     adjustHp(playerName, { controllerId, delta } = {}) {
@@ -539,24 +565,26 @@ class Game extends EventEmitter {
 
         controller.adjustHp(delta);
         const sign = delta >= 0 ? '+' : '';
-        this._pushActionMessage(`${playerName}: adjusted HP of ${controllerId} by ${sign}${delta} → ${controller.hp}`);
+        this._pushActionMessage(
+            `${playerName}: adjusted HP of ${controllerId} by ${sign}${delta} → ${controller.hp}`
+        );
         this.logEvent(EVENT_TYPES.ADJUST_HP, playerName, { controllerId, delta });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     drawCard(playerName, { heroId, count = 1 } = {}) {
-        const hero = this.heroPlayers.find(h => h.deckId === heroId);
+        const hero = this.heroPlayers.find((h) => h.deckId === heroId);
         if (!hero) return;
 
         hero.drawCard(count, this.logEvent.bind(this));
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     modifyCard(playerName, { cardId, controllerId, updates } = {}) {
         if (!cardId || !updates) return;
 
         // Validate keys
-        const invalidKeys = Object.keys(updates).filter(k => !MODIFY_CARD_ALLOWED_KEYS.has(k));
+        const invalidKeys = Object.keys(updates).filter((k) => !MODIFY_CARD_ALLOWED_KEYS.has(k));
         if (invalidKeys.length > 0) {
             logger.warn(`modifyCard: invalid update keys: ${invalidKeys.join(', ')}`);
             return;
@@ -567,7 +595,7 @@ class Game extends EventEmitter {
 
         card.applyUpdates(updates);
         this.logEvent(EVENT_TYPES.MODIFY_CARD, playerName, { cardId, controllerId, updates });
-        this.saveState().catch(err => logger.error('saveState failed', err));
+        this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
     searchDeck(playerName, { controllerId, zoneId } = {}, socket) {
@@ -575,7 +603,7 @@ class Game extends EventEmitter {
         if (!controller) return;
 
         const deck = controller.deck || [];
-        const deckContents = deck.map(c => c.getSummary());
+        const deckContents = deck.map((c) => c.getSummary());
 
         this.logEvent(EVENT_TYPES.SEARCH_DECK, playerName, { controllerId, zoneId });
 
@@ -592,17 +620,19 @@ class Game extends EventEmitter {
         if (!this.turnManager || this.turnManager.phase === TurnPhase.GAME_OVER) return;
 
         this.logEvent(EVENT_TYPES.GAME_OVER, playerName, { result });
-        this.finaliseGame(result, notes, tags).catch(err =>
+        this.finaliseGame(result, notes, tags).catch((err) =>
             logger.error('finaliseGame failed', err)
         );
     }
 
+    // eslint-disable-next-line no-unused-vars
     initiateGameOver(playerName) {
         // Broadcast gameOverPrompt to all connected clients via gameserver.js
         // gameserver.js reads this flag after the handler returns and emits the event
         this._pendingBroadcast = { type: 'gameOverPrompt' };
     }
 
+    // eslint-disable-next-line no-unused-vars
     cancelGameOver(playerName) {
         // Broadcast gameOverCancelled to all connected clients
         this._pendingBroadcast = { type: 'gameOverCancelled' };
@@ -611,7 +641,7 @@ class Game extends EventEmitter {
 
     endSession(playerName) {
         this.logEvent(EVENT_TYPES.SESSION_END, playerName, { result: 'abandoned' });
-        this.finaliseGame('abandoned', '', []).catch(err =>
+        this.finaliseGame('abandoned', '', []).catch((err) =>
             logger.error('finaliseGame failed on endSession', err)
         );
     }
@@ -622,6 +652,7 @@ class Game extends EventEmitter {
         this.endSession(playerName);
     }
 
+    // eslint-disable-next-line no-unused-vars
     selectDeck(playerName, deck) {
         // no-op in SotMDE; deck selection happens in lobby
     }
@@ -648,12 +679,13 @@ class Game extends EventEmitter {
             activeControllerPlayerId: tm ? tm.activeControllerPlayerId : null,
             villain: this.villain ? this.villain.getState() : null,
             environment: this.environment ? this.environment.getState() : null,
-            heroes: this.heroPlayers.map(h => h.getState(forPlayerName)),
+            heroes: this.heroPlayers.map((h) => h.getState(forPlayerName)),
             chatLog: this.gameChat.messages,
-            setupInstructions: this.turnManager && this.turnManager.phase === 'setup'
-                ? this.setupInstructions
-                : null,
-            isGameOver: tm ? tm.phase === TurnPhase.GAME_OVER : false,
+            setupInstructions:
+                this.turnManager && this.turnManager.phase === 'setup'
+                    ? this.setupInstructions
+                    : null,
+            isGameOver: tm ? tm.phase === TurnPhase.GAME_OVER : false
         };
     }
 
@@ -671,12 +703,16 @@ class Game extends EventEmitter {
 
             await gameStates.update(
                 { gameId: this.id },
-                { $set: {
-                    gameId: this.id,
-                    updatedAt: new Date(),
-                    state,
-                    lastActivityAt: this.turnManager ? this.turnManager.lastActivityAt : new Date()
-                }},
+                {
+                    $set: {
+                        gameId: this.id,
+                        updatedAt: new Date(),
+                        state,
+                        lastActivityAt: this.turnManager
+                            ? this.turnManager.lastActivityAt
+                            : new Date()
+                    }
+                },
                 { upsert: true }
             );
         } catch (err) {
@@ -719,16 +755,18 @@ class Game extends EventEmitter {
             const gameEvents = db.get('gameEvents');
             const tm = this.turnManager;
 
-            gameEvents.insert({
-                gameId: this.id,
-                round: tm ? tm.round : 0,
-                phase: tm ? tm.phase : 'setup',
-                timestamp: new Date(),
-                actorId,
-                actorName: this.getPlayerName(actorId),
-                eventType,
-                payload,
-            }).catch(err => logger.error('gameEvents insert failed', err));
+            gameEvents
+                .insert({
+                    gameId: this.id,
+                    round: tm ? tm.round : 0,
+                    phase: tm ? tm.phase : 'setup',
+                    timestamp: new Date(),
+                    actorId,
+                    actorName: this.getPlayerName(actorId),
+                    eventType,
+                    payload
+                })
+                .catch((err) => logger.error('gameEvents insert failed', err));
         } catch (err) {
             logger.error('logEvent setup failed', err);
         }
@@ -777,25 +815,30 @@ class Game extends EventEmitter {
                 result,
                 villainDeckId: this.villain ? this.villain.deckId : null,
                 villainDeckVersion: this.villain ? this.villain.deckVersion : null,
-                villainCharacterVersion: this.villain && this.villain.characterCard
-                    ? (this.villain.characterCard.version || null)
-                    : null,
+                villainCharacterVersion:
+                    this.villain && this.villain.characterCard
+                        ? this.villain.characterCard.version || null
+                        : null,
                 villainFinalHp: this.villain ? this.villain.hp : null,
                 villainWasFlipped: this.villain ? this.villain.isFlipped : false,
                 environmentDeckId: this.environment ? this.environment.deckId : null,
                 environmentDeckVersion: this.environment ? this.environment.deckVersion : null,
-                heroes: await Promise.all(this.heroPlayers.map(async h => ({
-                    playerId: h.id,
-                    playerName: h.name,
-                    heroDeckId: h.deckId,
-                    heroDeckVersion: h.deckVersion,
-                    heroCharacterVersion: h.characterCard ? (h.characterCard.version || null) : null,
-                    finalHp: h.hp,
-                    wasIncapacitated: h.isIncapacitated,
-                    cardsPlayed: await this.countEventsForPlayer(h.id, EVENT_TYPES.PLAY_CARD),
-                }))),
+                heroes: await Promise.all(
+                    this.heroPlayers.map(async (h) => ({
+                        playerId: h.id,
+                        playerName: h.name,
+                        heroDeckId: h.deckId,
+                        heroDeckVersion: h.deckVersion,
+                        heroCharacterVersion: h.characterCard
+                            ? h.characterCard.version || null
+                            : null,
+                        finalHp: h.hp,
+                        wasIncapacitated: h.isIncapacitated,
+                        cardsPlayed: await this.countEventsForPlayer(h.id, EVENT_TYPES.PLAY_CARD)
+                    }))
+                ),
                 notes,
-                tags: mergedTags,
+                tags: mergedTags
             });
         } catch (err) {
             logger.error('finaliseGame DB write failed', err);
@@ -805,7 +848,7 @@ class Game extends EventEmitter {
         this.turnManager.setGameOver();
         this.finishedAt = new Date();
 
-        this.saveState().catch(err => logger.error('saveState on finalise failed', err));
+        this.saveState().catch((err) => logger.error('saveState on finalise failed', err));
     }
 
     /**
@@ -820,9 +863,12 @@ class Game extends EventEmitter {
             }
         }
         if (this.villain) {
-            if (this.villain.deckVersion) tags.push(`deck:${this.villain.deckId}@${this.villain.deckVersion}`);
+            if (this.villain.deckVersion)
+                tags.push(`deck:${this.villain.deckId}@${this.villain.deckVersion}`);
             if (this.villain.characterCard && this.villain.characterCard.version) {
-                tags.push(`char:${this.villain.characterCard.id}@${this.villain.characterCard.version}`);
+                tags.push(
+                    `char:${this.villain.characterCard.id}@${this.villain.characterCard.version}`
+                );
             }
         }
         if (this.environment && this.environment.deckVersion) {
@@ -843,7 +889,7 @@ class Game extends EventEmitter {
             date: new Date(),
             type: 'system',
             text,
-            message: { '0': text },
+            message: { 0: text }
         });
     }
 
@@ -857,7 +903,7 @@ class Game extends EventEmitter {
             date: new Date(),
             type: 'action',
             text,
-            message: { '0': text },
+            message: { 0: text }
         });
     }
 
@@ -871,14 +917,14 @@ class Game extends EventEmitter {
     _findActiveHeroForPlayer(playerName) {
         if (this.turnManager && this.turnManager.activeHeroId) {
             const activeHero = this.heroPlayers.find(
-                h => h.deckId === this.turnManager.activeHeroId
+                (h) => h.deckId === this.turnManager.activeHeroId
             );
             if (activeHero && activeHero.id === playerName) {
                 return activeHero;
             }
         }
         // Fallback: any hero controlled by this player
-        return this.heroPlayers.find(h => h.id === playerName);
+        return this.heroPlayers.find((h) => h.id === playerName);
     }
 
     /**
@@ -889,10 +935,15 @@ class Game extends EventEmitter {
         if (controllerId === 'villain' || (this.villain && controllerId === this.villain.deckId)) {
             return this.villain;
         }
-        if (controllerId === 'environment' || (this.environment && controllerId === this.environment.deckId)) {
+        if (
+            controllerId === 'environment' ||
+            (this.environment && controllerId === this.environment.deckId)
+        ) {
             return this.environment;
         }
-        return this.heroPlayers.find(h => h.deckId === controllerId || h.id === controllerId) || null;
+        return (
+            this.heroPlayers.find((h) => h.deckId === controllerId || h.id === controllerId) || null
+        );
     }
 
     /**
@@ -903,7 +954,7 @@ class Game extends EventEmitter {
         // Hero zones
         for (const hero of this.heroPlayers) {
             for (const zone of ['hand', 'deck', 'trash', 'playArea']) {
-                const card = hero[zone].find(c => c.id === cardId);
+                const card = hero[zone].find((c) => c.id === cardId);
                 if (card) return { card, controller: hero, zone };
             }
             if (hero.characterCard && hero.characterCard.id === cardId) {
@@ -913,17 +964,21 @@ class Game extends EventEmitter {
         // Villain zones
         if (this.villain) {
             for (const zone of ['deck', 'trash', 'playArea']) {
-                const card = this.villain[zone].find(c => c.id === cardId);
+                const card = this.villain[zone].find((c) => c.id === cardId);
                 if (card) return { card, controller: this.villain, zone };
             }
             if (this.villain.characterCard && this.villain.characterCard.id === cardId) {
-                return { card: this.villain.characterCard, controller: this.villain, zone: 'character' };
+                return {
+                    card: this.villain.characterCard,
+                    controller: this.villain,
+                    zone: 'character'
+                };
             }
         }
         // Environment zones
         if (this.environment) {
             for (const zone of ['deck', 'trash', 'playArea']) {
-                const card = this.environment[zone].find(c => c.id === cardId);
+                const card = this.environment[zone].find((c) => c.id === cardId);
                 if (card) return { card, controller: this.environment, zone };
             }
         }
@@ -933,6 +988,7 @@ class Game extends EventEmitter {
     /**
      * Move a card from one zone to trash within its controller.
      */
+    // eslint-disable-next-line no-unused-vars
     _moveCardToTrash(cardId, fromZone, playerName) {
         for (const hero of this.heroPlayers) {
             if (hero.discardCard(cardId, fromZone)) return;
@@ -957,7 +1013,7 @@ class Game extends EventEmitter {
         // Remove from source zone
         const sourceArr = controller[fromZone];
         if (!Array.isArray(sourceArr)) return;
-        const idx = sourceArr.findIndex(c => c.id === cardId);
+        const idx = sourceArr.findIndex((c) => c.id === cardId);
         if (idx === -1) return;
         sourceArr.splice(idx, 1);
 
@@ -984,13 +1040,14 @@ class Game extends EventEmitter {
             gamePrivate: this.gamePrivate,
             gameType: this.gameType,
             label: this.label,
-            players: this.getPlayers().map(p => ({ name: p.name, wins: p.wins || 0 })),
+            players: this.getPlayers().map((p) => ({ name: p.name, wins: p.wins || 0 })),
             startedAt: this.startedAt,
             finishedAt: this.finishedAt,
-            round: this.turnManager ? this.turnManager.round : 0,
+            round: this.turnManager ? this.turnManager.round : 0
         };
     }
 
+    // eslint-disable-next-line no-unused-vars
     getSummary(options = {}) {
         let playerSummaries = {};
 
@@ -1002,7 +1059,7 @@ class Game extends EventEmitter {
                 lobbyId: player.lobbyId,
                 name: player.name,
                 owner: player.owner,
-                wins: player.wins || 0,
+                wins: player.wins || 0
             };
         }
 
@@ -1018,14 +1075,14 @@ class Game extends EventEmitter {
             name: this.name,
             owner: this.owner,
             players: playerSummaries,
-            spectators: this.getSpectators().map(spectator => ({
+            spectators: this.getSpectators().map((spectator) => ({
                 id: spectator.id,
                 lobbyId: spectator.lobbyId,
                 name: spectator.name
             })),
             started: this.started,
             startedAt: this.startedAt,
-            finishedAt: this.finishedAt,
+            finishedAt: this.finishedAt
         };
     }
 }

@@ -17,7 +17,9 @@ const GameCountMenu = () => {
         return null;
     }
     const gameCount = games.length;
-    const emptyGame = games.some((g) => !g.started && Object.values(g.players).length === 1) ? 'empty-game' : '';
+    const emptyGame = games.some((g) => !g.started && Object.values(g.players).length === 1)
+        ? 'empty-game'
+        : '';
     const gameList = games.map((game) => {
         const players = Object.values(game.players);
         if (!players.length) {
@@ -26,7 +28,11 @@ const GameCountMenu = () => {
         const p1Name = players[0].name;
         const p2Name = players.length > 1 ? players[1].name : '??';
         const liClass = 'game-count-list-item';
-        return <li key={game.id} className={liClass}>{p1Name} vs {p2Name}</li>;
+        return (
+            <li key={game.id} className={liClass}>
+                {p1Name} vs {p2Name}
+            </li>
+        );
     });
     const linkClass = classNames({ 'empty-game': emptyGame });
     let gamesPopup = <ul className='games-popup absolute-panel'>{gameList}</ul>;

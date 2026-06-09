@@ -27,26 +27,29 @@ function Security({ t }) {
         }
     }, [user, detailsLoaded, dispatch]);
 
-    const handleRemoveClick = useCallback((session, event) => {
-        event.preventDefault();
+    const handleRemoveClick = useCallback(
+        (session, event) => {
+            event.preventDefault();
 
-        if (!user) {
-            return;
-        }
-
-        toastr.confirm(
-            t(
-                'Are you sure you want to remove this session?  It will be logged out and any games in progress may be abandonded.'
-            ),
-            {
-                okText: t('Ok'),
-                cancelText: t('Cancel'),
-                onOk: () => {
-                    dispatch(actions.removeSession(user.username, session.id));
-                }
+            if (!user) {
+                return;
             }
-        );
-    }, [user, t, dispatch]);
+
+            toastr.confirm(
+                t(
+                    'Are you sure you want to remove this session?  It will be logged out and any games in progress may be abandonded.'
+                ),
+                {
+                    okText: t('Ok'),
+                    cancelText: t('Cancel'),
+                    onOk: () => {
+                        dispatch(actions.removeSession(user.username, session.id));
+                    }
+                }
+            );
+        },
+        [user, t, dispatch]
+    );
 
     useEffect(() => {
         if (sessionRemoved) {
@@ -61,29 +64,27 @@ function Security({ t }) {
     let successPanel;
 
     if (sessionRemoved) {
-        successPanel = (
-            <AlertPanel message={t('Session removed successfully')} type={'success'} />
-        );
+        successPanel = <AlertPanel message={t('Session removed successfully')} type={'success'} />;
     }
 
     let sessionRows = sessions
         ? sessions.map((session) => {
-            return (
-                <tr key={session.id}>
-                    <td>{session.ip}</td>
-                    <td>{moment(session.lastUsed).format('YYYY-MM-DD HH:mm')}</td>
-                    <td>
-                        <a
-                            href='#'
-                            onClick={(event) => handleRemoveClick(session, event)}
-                            className='text-danger'
-                        >
-                            <FontAwesomeIcon icon={faTimes} />
-                        </a>
-                    </td>
-                </tr>
-            );
-        })
+              return (
+                  <tr key={session.id}>
+                      <td>{session.ip}</td>
+                      <td>{moment(session.lastUsed).format('YYYY-MM-DD HH:mm')}</td>
+                      <td>
+                          <a
+                              href='#'
+                              onClick={(event) => handleRemoveClick(session, event)}
+                              className='text-danger'
+                          >
+                              <FontAwesomeIcon icon={faTimes} />
+                          </a>
+                      </td>
+                  </tr>
+              );
+          })
         : null;
     let table =
         sessions && sessions.length === 0 ? (
@@ -122,9 +123,9 @@ function Security({ t }) {
                 <Panel title={t('Active Sessions')}>
                     <p className='help-block'>
                         <Trans i18nKey='security.note'>
-                            Below you will see the active &quot;sessions&quot; that you have on
-                            the website. If you see any unexpected activity on your account,
-                            remove the session and consider changing your password.
+                            Below you will see the active &quot;sessions&quot; that you have on the
+                            website. If you see any unexpected activity on your account, remove the
+                            session and consider changing your password.
                         </Trans>
                     </p>
                     {table}

@@ -32,7 +32,12 @@ class MenuCommands {
                 card.addToken('gravityFlux', 1);
                 break;
             case 'remGravityFlux':
-                game.addAlert('danger', '{0} removes gravity flux exhaustion from {1}', player, card);
+                game.addAlert(
+                    'danger',
+                    '{0} removes gravity flux exhaustion from {1}',
+                    player,
+                    card
+                );
                 card.removeToken('gravityFlux', 1);
                 break;
             case 'remEffects':
@@ -41,32 +46,62 @@ class MenuCommands {
                 break;
             case 'move-hand':
                 if (player.mayMoveCard(card, true)) {
-                    game.addAlert('danger', '{0} moves {1} from the {2} to hand', player, card, card.location);
+                    game.addAlert(
+                        'danger',
+                        '{0} moves {1} from the {2} to hand',
+                        player,
+                        card,
+                        card.location
+                    );
                     card.owner.moveCard(card, 'hand');
                 }
                 break;
             case 'move-deck':
                 if (player.mayMoveCard(card, true)) {
-                    game.addAlert('danger', '{0} moves {1} from their {2} to their draw pile', player, card, card.location);
+                    game.addAlert(
+                        'danger',
+                        '{0} moves {1} from their {2} to their draw pile',
+                        player,
+                        card,
+                        card.location
+                    );
                     card.owner.moveCard(card, 'deck');
                 }
                 break;
             case 'move-discard':
                 if (player.mayMoveCard(card, true)) {
-                    game.addAlert('danger', '{0} moves {1} from their {2} to their discard pile', player, card, card.location);
+                    game.addAlert(
+                        'danger',
+                        '{0} moves {1} from their {2} to their discard pile',
+                        player,
+                        card,
+                        card.location
+                    );
                     card.owner.moveCard(card, 'discard');
                 }
                 break;
             case 'move-play area':
                 if (player.mayMoveCard(card, true)) {
-                    game.addAlert('danger', '{0} moves {1} from their {2} to play', player, card, card.location);
+                    game.addAlert(
+                        'danger',
+                        '{0} moves {1} from their {2} to play',
+                        player,
+                        card,
+                        card.location
+                    );
                     card.owner.moveCard(card, 'play area');
                 }
                 break;
 
             case 'move-spellboard':
                 if (player.mayMoveCard(card, true)) {
-                    game.addAlert('danger', '{0} moves {1} from their {2} to their spellboard', player, card, card.location);
+                    game.addAlert(
+                        'danger',
+                        '{0} moves {1} from their {2} to their spellboard',
+                        player,
+                        card,
+                        card.location
+                    );
                     card.owner.moveCard(card, 'spellboard');
                 }
                 break;
@@ -74,7 +109,13 @@ class MenuCommands {
             case 'move-archives':
             case 'moveConjuration':
                 if (player.mayMoveCard(card, true)) {
-                    game.addAlert('danger', '{0} moves {1} from their {2} to their conjuration pile', player, card, card.location);
+                    game.addAlert(
+                        'danger',
+                        '{0} moves {1} from their {2} to their conjuration pile',
+                        player,
+                        card,
+                        card.location
+                    );
                     card.owner.moveCard(card, 'archives');
                 }
                 break;

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, no-unused-vars */
 import React, { useState, useEffect, useRef } from 'react';
 import _ from 'underscore';
 import $ from 'jquery';
@@ -340,9 +341,9 @@ function DeckEditor({ deck, onDeckSave, isChimera }) {
     }
 
     function getCard(searchText) {
-        const exactMatch = getAllCards().find((card) =>
-            card.stub === searchText ||
-            card.name.toLowerCase() === searchText.toLowerCase()
+        const exactMatch = getAllCards().find(
+            (card) =>
+                card.stub === searchText || card.name.toLowerCase() === searchText.toLowerCase()
         );
 
         if (exactMatch) {

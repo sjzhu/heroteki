@@ -11,7 +11,7 @@ const DiceRack = ({ dice }) => {
             exhausted: true,
             location: 'dicepool'
         };
-        if (dice.some(die => die.magic === mt)) {
+        if (dice.some((die) => die.magic === mt)) {
             d.exhausted = false;
         }
         return <DieIcon key={'cld-' + d.uuid} die={d} simpleText='true' />;

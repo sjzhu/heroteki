@@ -19,7 +19,8 @@ const SpectatorIcon = () => {
                 onMouseOver={() => setShowPopup(currentGame.spectators.length > 0 && true)}
                 onMouseOut={() => setShowPopup(false)}
             >
-                <FontAwesomeIcon icon={faEye} /> {spectatorCount}</span>
+                <FontAwesomeIcon icon={faEye} /> {spectatorCount}
+            </span>
             {showPopup && spectatorPopup}
         </>
     );

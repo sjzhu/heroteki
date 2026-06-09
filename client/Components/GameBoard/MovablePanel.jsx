@@ -1,8 +1,16 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import $ from 'jquery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMinusCircle, faPlusCircle, faSortAlphaAsc, faSortAlphaDown, faSortNumericDown, faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+    faMinusCircle,
+    faPlusCircle,
+    faSortAlphaAsc,
+    faSortAlphaDown,
+    faSortNumericDown,
+    faTimes
+} from '@fortawesome/free-solid-svg-icons';
 
 import { ItemTypes } from '../../constants';
 import PopupDefaults from './PopupDefaults';
@@ -10,7 +18,18 @@ import PopupDefaults from './PopupDefaults';
 import './MovablePanel.scss';
 import { Resizable } from 're-resizable';
 
-const MovablePanel = ({ children, name, alphaSort, onAlphaClick, showAlphaSort, onCloseClick, onPlusClick, onMinusClick, side, title }) => {
+const MovablePanel = ({
+    children,
+    name,
+    alphaSort,
+    onAlphaClick,
+    showAlphaSort,
+    onCloseClick,
+    onPlusClick,
+    onMinusClick,
+    side,
+    title
+}) => {
     const key = `${name}-${side}`;
     const savedStyle = localStorage.getItem(key);
     const style = (savedStyle && JSON.parse(savedStyle)) || PopupDefaults[key];
@@ -96,8 +115,12 @@ const MovablePanel = ({ children, name, alphaSort, onAlphaClick, showAlphaSort, 
                 minWidth={200}
                 minHeight={150}
             >
-                <div ref={drag} className='panel-heading' onClick={(event) => event.stopPropagation()}>
-                    {onMinusClick &&
+                <div
+                    ref={drag}
+                    className='panel-heading'
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    {onMinusClick && (
                         <span className='zoom-buttons'>
                             <a className='zoom-minus' onClick={onMinusClick}>
                                 <FontAwesomeIcon icon={faMinusCircle} />
@@ -106,18 +129,17 @@ const MovablePanel = ({ children, name, alphaSort, onAlphaClick, showAlphaSort, 
                             <a className='zoom-plus' onClick={onPlusClick}>
                                 <FontAwesomeIcon icon={faPlusCircle} />
                             </a>
-
                         </span>
-                    }
-                    {
-                        showAlphaSort &&
+                    )}
+                    {showAlphaSort && (
                         <span className='alpha-buttons'>
-
                             <a className='alpha-button' onClick={onAlphaClick}>
-                                <FontAwesomeIcon icon={alphaSort ? faSortNumericDown : faSortAlphaDown} />
+                                <FontAwesomeIcon
+                                    icon={alphaSort ? faSortNumericDown : faSortAlphaDown}
+                                />
                             </a>
                         </span>
-                    }
+                    )}
                     <span className='text-center'>{title}</span>
                     <span className='float-end'>
                         <a className='close-button' onClick={onCloseClick}>

@@ -8,10 +8,7 @@ const Player = require('../../server/game/player.js');
 function formatObject(...keys) {
     return function () {
         let properties = _.pick(this, ...keys);
-        let formattedProperties = _.map(
-            _.pairs(properties),
-            ([key, value]) => key + ': ' + value
-        );
+        let formattedProperties = _.map(_.pairs(properties), ([key, value]) => key + ': ' + value);
         return this.constructor.name + '({ ' + formattedProperties.join(', ') + ' })';
     };
 }

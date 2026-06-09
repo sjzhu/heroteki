@@ -29,9 +29,7 @@ function CardTiledList(props) {
             );
         });
 
-    return (
-        <div className='card-list-cards'>{cardList}</div>
-    );
+    return <div className='card-list-cards'>{cardList}</div>;
 }
 
 CardTiledList.propTypes = {

@@ -94,8 +94,8 @@ class GameRouter extends EventEmitter {
                 status: worker.disconnceted
                     ? 'disconnected'
                     : worker.disabled
-                        ? 'disabled'
-                        : 'active',
+                    ? 'disabled'
+                    : 'active',
                 version: worker.version
             };
         });
@@ -331,6 +331,7 @@ class GameRouter extends EventEmitter {
         return object[key];
     }
     getOtherProperty(object, key) {
+        // eslint-disable-next-line no-unused-vars
         return Object.entries(object).find(([k, v]) => k !== key)[1];
     }
 

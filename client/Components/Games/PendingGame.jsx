@@ -64,7 +64,7 @@ const PendingGame = () => {
             let promise = notification.current?.play();
 
             if (promise !== undefined) {
-                promise.catch(() => { }).then(() => { });
+                promise.catch(() => {}).then(() => {});
             }
 
             let otherPlayer = Object.values(currentGame.players).find(
@@ -188,8 +188,7 @@ const PendingGame = () => {
         navigator.clipboard
             .writeText(gameLink)
             .then(() => toastr.success('Copied game link to clipboard'))
-            .catch(() => toastr.error('Could not copy game link to clipboard'))
-
+            .catch(() => toastr.error('Could not copy game link to clipboard'));
     };
 
     return (
@@ -228,7 +227,6 @@ const PendingGame = () => {
                             Start
                         </Button>
                     </div>
-
                 </div>
             </div>
             <div className='game-status'>{getGameStatus()}</div>
@@ -241,18 +239,12 @@ const PendingGame = () => {
             {/* SotMDE game details sidebar */}
             {currentGame.villainDeckId && (
                 <h4>
-                    Villain:{' '}
-                    <span className='unbold'>
-                        {currentGame.villainDeckId}
-                    </span>
+                    Villain: <span className='unbold'>{currentGame.villainDeckId}</span>
                 </h4>
             )}
             {currentGame.environmentDeckId && (
                 <h4>
-                    Environment:{' '}
-                    <span className='unbold'>
-                        {currentGame.environmentDeckId}
-                    </span>
+                    Environment: <span className='unbold'>{currentGame.environmentDeckId}</span>
                 </h4>
             )}
 
@@ -274,8 +266,8 @@ const PendingGame = () => {
                             if (
                                 messageRef.current?.scrollTop >=
                                 messageRef.current.scrollHeight -
-                                messageRef.current.offsetHeight -
-                                20
+                                    messageRef.current.offsetHeight -
+                                    20
                             ) {
                                 setCanScroll(true);
                             } else {

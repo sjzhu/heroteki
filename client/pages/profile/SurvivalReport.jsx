@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -7,9 +8,15 @@ import moment from 'moment';
 
 function SurvivalReport() {
     const survivalStats = useSelector((state) => state.stats && state.stats.survivalStats);
-    const apiLoading = useSelector((state) => state.api.REQUEST_SURVIVALSTATS ? state.api.REQUEST_SURVIVALSTATS.loading : undefined);
-    const apiMessage = useSelector((state) => state.api.REQUEST_SURVIVALSTATS ? state.api.REQUEST_SURVIVALSTATS.message : undefined);
-    const apiSuccess = useSelector((state) => state.api.REQUEST_SURVIVALSTATS ? state.api.REQUEST_SURVIVALSTATS.success : undefined);
+    const apiLoading = useSelector((state) =>
+        state.api.REQUEST_SURVIVALSTATS ? state.api.REQUEST_SURVIVALSTATS.loading : undefined
+    );
+    const apiMessage = useSelector((state) =>
+        state.api.REQUEST_SURVIVALSTATS ? state.api.REQUEST_SURVIVALSTATS.message : undefined
+    );
+    const apiSuccess = useSelector((state) =>
+        state.api.REQUEST_SURVIVALSTATS ? state.api.REQUEST_SURVIVALSTATS.success : undefined
+    );
     const dispatch = useDispatch();
 
     const loadSurvivalStats = useCallback(() => {
@@ -41,12 +48,14 @@ function SurvivalReport() {
     const gameRecord = (score) => {
         return (
             <tr>
-                <td style={{ whiteSpace: 'nowrap' }} className='inset'>{score.phoenixborn}</td>
+                <td style={{ whiteSpace: 'nowrap' }} className='inset'>
+                    {score.phoenixborn}
+                </td>
                 <td style={{ whiteSpace: 'nowrap' }}>{score.deckName}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>{score.score}</td>
                 <td style={{ whiteSpace: 'nowrap' }}>{moment(score.date).format('DD-MMM-yy')}</td>
             </tr>
-        )
+        );
     };
 
     const AspectSection = (key, stat) => {
@@ -66,15 +75,10 @@ function SurvivalReport() {
     };
 
     if (apiLoading) {
-        return (
-            <div>
-                Loading games from the server...
-            </div>
-        );
+        return <div>Loading games from the server...</div>;
     } else if (!apiSuccess) {
         return <AlertPanel type='error' message={apiMessage} />;
     }
-
 
     let statisticRows = [];
     if (survivalStats) {
@@ -92,30 +96,19 @@ function SurvivalReport() {
             <table className='table table-striped table-dark'>
                 <thead>
                     <tr>
-                        <th className='inset'>
-                            Phoenixborn
-                        </th>
-                        <th>
-                            Deck
-                        </th>
+                        <th className='inset'>Phoenixborn</th>
+                        <th>Deck</th>
 
-                        <th>
-                            Score
-                        </th>
+                        <th>Score</th>
 
-                        <th>
-                            Date
-                        </th>
-
+                        <th>Date</th>
                     </tr>
                 </thead>
                 <tbody>{statisticRows}</tbody>
             </table>
         );
 
-    return (
-        <div className='profile full-height'>{table}</div>
-    );
+    return <div className='profile full-height'>{table}</div>;
 }
 
 SurvivalReport.displayName = 'SurvivalReport';

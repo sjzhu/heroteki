@@ -54,7 +54,9 @@ const UploadDeck = () => {
                     const img = new Image();
                     img.onload = resolve;
                     img.onerror = () => {
-                        warnings.push(`Image failed to load for card "${card.name}": ${card.imageUrl}`);
+                        warnings.push(
+                            `Image failed to load for card "${card.name}": ${card.imageUrl}`
+                        );
                         resolve();
                     };
                     img.src = card.imageUrl;
@@ -93,7 +95,9 @@ const UploadDeck = () => {
             const result = await res.json();
 
             if (!res.ok) {
-                setUploadError(result.error || result.message || `Upload failed (HTTP ${res.status})`);
+                setUploadError(
+                    result.error || result.message || `Upload failed (HTTP ${res.status})`
+                );
                 setUploading(false);
                 return;
             }
@@ -101,10 +105,7 @@ const UploadDeck = () => {
             setUploadResult(result);
 
             // Client-side image preload check
-            const allCards = [
-                ...(payload.cards || []),
-                payload.characterCard
-            ].filter(Boolean);
+            const allCards = [...(payload.cards || []), payload.characterCard].filter(Boolean);
             await checkImages(allCards);
 
             // Reload deck list
@@ -184,8 +185,8 @@ const UploadDeck = () => {
                         <div className='mt-3'>
                             <div className='alert alert-success'>
                                 <strong>Success!</strong> Imported deck{' '}
-                                <code>{uploadResult.deckId}</code> with{' '}
-                                {uploadResult.cardCount} card(s).
+                                <code>{uploadResult.deckId}</code> with {uploadResult.cardCount}{' '}
+                                card(s).
                             </div>
                             {uploadResult.warnings && uploadResult.warnings.length > 0 && (
                                 <div className='alert alert-warning'>
@@ -213,9 +214,7 @@ const UploadDeck = () => {
 
                 {/* My Uploaded Decks list */}
                 <Panel title='My Uploaded Decks' className='mt-4'>
-                    {deleteError && (
-                        <div className='alert alert-danger'>{deleteError}</div>
-                    )}
+                    {deleteError && <div className='alert alert-danger'>{deleteError}</div>}
                     {decksLoading ? (
                         <div className='text-center p-3'>
                             <Spinner animation='border' size='sm' /> Loading...

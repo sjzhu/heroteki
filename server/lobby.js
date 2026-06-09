@@ -279,7 +279,8 @@ class Lobby {
         }
 
         for (let player of Object.values(game.getPlayersAndSpectators())) {
-            if (player.id === 0) { // dummy user
+            if (player.id === 0) {
+                // dummy user
                 continue;
             }
             if (!this.sockets[player.id]) {
@@ -533,7 +534,10 @@ class Lobby {
 
         // SotMDE: replaced Ashes-era player.deck guard with allHeroesSelected() check
         if (!game.allHeroesSelected()) {
-            socket.send('gameerror', 'All players must select heroes and the hero order must be confirmed before starting');
+            socket.send(
+                'gameerror',
+                'All players must select heroes and the hero order must be confirmed before starting'
+            );
             return;
         }
 
@@ -554,7 +558,8 @@ class Lobby {
         this.broadcastGameMessage('updategame', game);
 
         for (let player of Object.values(game.getPlayersAndSpectators())) {
-            if (player.id === 0) { // dummy user
+            if (player.id === 0) {
+                // dummy user
                 continue;
             }
 
@@ -682,7 +687,7 @@ class Lobby {
             deck = await this.deckService.getChimeraDeck();
         } else {
             switch (deckId) {
-                case -1: // random choice 
+                case -1: // random choice
                     deck = await this.deckService.getRandomChoice(user, chooseForMeType);
                     break;
                 default:
@@ -741,8 +746,12 @@ class Lobby {
         const maxThree = !deck.cards.some((c) => c.count > 3);
         let aspectCheck = true;
         if (deck.mode === 'chimera') {
-            const oneCount = deck.cards.filter(c => c.card.blood === 1).reduce((acc, c) => acc + c.count, 0);
-            const twoCount = deck.cards.filter(c => c.card.blood === 2).reduce((acc, c) => acc + c.count, 0);
+            const oneCount = deck.cards
+                .filter((c) => c.card.blood === 1)
+                .reduce((acc, c) => acc + c.count, 0);
+            const twoCount = deck.cards
+                .filter((c) => c.card.blood === 2)
+                .reduce((acc, c) => acc + c.count, 0);
             aspectCheck = oneCount === 9 && twoCount === 9;
         }
 
@@ -784,8 +793,7 @@ class Lobby {
         if (level === 'V') {
             game.soloStage = 1;
             game.gameFormat = 'survival';
-        }
-        else {
+        } else {
             game.gameFormat = 'standard';
         }
         this.sendGameState(game);
@@ -895,7 +903,7 @@ class Lobby {
         game.finishedAt = new Date();
         this.broadcastGameMessage('updategame', game);
 
-        // refresh the userlist with the latest player record (with game count incremented) 
+        // refresh the userlist with the latest player record (with game count incremented)
         const promises = [];
         for (const p in game.players) {
             const socket = this.socketsByName[game.players[p].name];
@@ -984,7 +992,13 @@ class Lobby {
 
             newGame.join(socket.id, player.user);
             promises.push(
-                this.onSelectDeck(socket, newGame.id, true, player.deck._id, !!player.deck.precon_id)
+                this.onSelectDeck(
+                    socket,
+                    newGame.id,
+                    true,
+                    player.deck._id,
+                    !!player.deck.precon_id
+                )
             );
         }
 
@@ -1055,7 +1069,7 @@ class Lobby {
         this.clearGamesForNode(nodeName);
     }
 
-    onWorkerStarted() { }
+    onWorkerStarted() {}
 
     onClearSessions(socket, username) {
         this.userService.clearUserSessions(username).then((success) => {

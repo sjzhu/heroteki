@@ -111,7 +111,14 @@ const GameOverModal = ({ show, onClose }) => {
 
                     <Form.Group className='mb-3'>
                         <Form.Label>Tags</Form.Label>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginBottom: '6px' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                flexWrap: 'wrap',
+                                gap: '4px',
+                                marginBottom: '6px'
+                            }}
+                        >
                             {autoTags.map((tag) => (
                                 <Badge key={tag} bg='secondary' style={{ fontSize: '0.75rem' }}>
                                     {tag}
@@ -146,11 +153,7 @@ const GameOverModal = ({ show, onClose }) => {
                 <Button variant='secondary' onClick={handleCancel}>
                     Cancel
                 </Button>
-                <Button
-                    variant='danger'
-                    disabled={!result}
-                    onClick={handleSubmit}
-                >
+                <Button variant='danger' disabled={!result} onClick={handleSubmit}>
                     End Game &amp; Record
                 </Button>
             </Modal.Footer>

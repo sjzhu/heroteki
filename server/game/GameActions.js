@@ -51,7 +51,8 @@ const Actions = {
     removeToken: (propertyFactory, type) =>
         new GameActions.RemoveTokenAction(propertyFactory, type),
     resolveAbility: (propertyFactory) => new GameActions.ResolveAbilityAction(propertyFactory), // ability
-    resolveStatusAbility: (propertyFactory) => new GameActions.ResolveStatusAbilityAction(propertyFactory), // ability
+    resolveStatusAbility: (propertyFactory) =>
+        new GameActions.ResolveStatusAbilityAction(propertyFactory), // ability
     returnToDeck: (propertyFactory) => new GameActions.ReturnToDeckAction(propertyFactory), // bottom = false
     returnToHand: (propertyFactory) => new GameActions.ReturnToHandAction(propertyFactory),
     reveal: (propertyFactory) => new GameActions.RevealAction(propertyFactory),
@@ -88,12 +89,14 @@ const Actions = {
     chosenDiscard: (propertyFactory) => new GameActions.ChosenDiscardAction(propertyFactory), // amount = 1
     chosenExhaust: (propertyFactory) => new GameActions.ChosenExhaustAction(propertyFactory), // amount = 1
     chosenUnexhaust: (propertyFactory) => new GameActions.ChosenUnexhaustAction(propertyFactory),
-    collectStatusTokens: (propertyFactory) => new GameActions.CollectStatusTokenAction(propertyFactory),
+    collectStatusTokens: (propertyFactory) =>
+        new GameActions.CollectStatusTokenAction(propertyFactory),
     discardAtRandom: (propertyFactory) => new GameActions.RandomDiscardAction(propertyFactory), // amount = 1
     discardTopOfDeck: (propertyFactory) => new GameActions.DiscardTopOfDeckAction(propertyFactory), // amount = 1
     draw: (propertyFactory) => new GameActions.DrawAction(propertyFactory), // amount = 1
     exposeRandom: (propertyFactory) => new GameActions.RandomExposeAction(propertyFactory), // amount = 1
-    exposeRandomDiscard: (propertyFactory) => new GameActions.RandomExposeDiscardAction(propertyFactory), // amount = 1
+    exposeRandomDiscard: (propertyFactory) =>
+        new GameActions.RandomExposeDiscardAction(propertyFactory), // amount = 1
     filterDeck: (propertyFactory) => new GameActions.FilterDeckAction(propertyFactory),
     forRemainderOfTurn: (propertyFactory) =>
         new GameActions.LastingEffectAction(propertyFactory, 1),
@@ -102,8 +105,10 @@ const Actions = {
     playerChosenAmountDraw: (propertyFactory) =>
         new GameActions.PlayerChosenAmountDrawAction(propertyFactory),
     makeChimeraHand: (propertyFactory) => new GameActions.MakeChimeraHandAction(propertyFactory),
-    releaseChimeraHand: (propertyFactory) => new GameActions.ReleaseChimeraHandAction(propertyFactory),
-    resolveBehaviourSide: (propertyFactory) => new GameActions.ResolveBehaviourSideAction(propertyFactory),
+    releaseChimeraHand: (propertyFactory) =>
+        new GameActions.ReleaseChimeraHandAction(propertyFactory),
+    resolveBehaviourSide: (propertyFactory) =>
+        new GameActions.ResolveBehaviourSideAction(propertyFactory),
     rearrangeCards: (propertyFactory) => new GameActions.RearrangeCardsAction(propertyFactory),
     rollBehaviourDie: (propertyFactory) => new GameActions.RollBehaviourDieAction(propertyFactory),
     search: (propertyFactory) => new GameActions.SearchAction(propertyFactory), // name
@@ -124,7 +129,8 @@ const Actions = {
     preventDamage: (propertyFactory) => new GameActions.PreventDamageAction(propertyFactory),
     resolveBattle: (propertyFactory) => new GameActions.ResolveBattleAction(propertyFactory), // battle
     sequential: (gameActions) => new GameActions.SequentialAction(gameActions), // takes an array of gameActions, not a propertyFactory
-    sequentialForEach: (propertyFactory) => new GameActions.SequentialForEachAction(propertyFactory),
+    sequentialForEach: (propertyFactory) =>
+        new GameActions.SequentialForEachAction(propertyFactory),
     raiseEvent: (propertyFactory) => new GameActions.RaiseEventAction(propertyFactory)
 };
 

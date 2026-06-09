@@ -262,9 +262,7 @@ function handleMessage(action, state) {
 
             break;
         case 'removemessage':
-            var message = newState.messages.find(
-                (message) => message._id === action.args[0]
-            );
+            var message = newState.messages.find((message) => message._id === action.args[0]);
             message.deletedBy = action.args[1];
             message.deleted = true;
 
@@ -397,7 +395,7 @@ function handleReplayTurnBack(action, state) {
 
     let newState = updateReplayState(state, newStepIndex);
     return newState;
-};
+}
 
 function handleReplayRoundBack(action, state) {
     if (state.stepIndex === 0) {
@@ -415,4 +413,4 @@ function handleReplayRoundBack(action, state) {
 
     let newState = updateReplayState(state, newStepIndex);
     return newState;
-};
+}

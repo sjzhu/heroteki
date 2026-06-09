@@ -1,7 +1,18 @@
 import React from 'react';
 import { Form, Col, Row } from 'react-bootstrap';
 
-function TextArea({ name, label, fieldClass, rows, placeholder, value, onChange, onBlur, validationMessage, children }) {
+function TextArea({
+    name,
+    label,
+    fieldClass,
+    rows,
+    placeholder,
+    value,
+    onChange,
+    onBlur,
+    validationMessage,
+    children
+}) {
     return (
         <Form.Group as={Row}>
             <Form.Label column sm='3' htmlFor={name}>

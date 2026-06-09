@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -35,7 +36,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
         if (onJoinOrWatchClick) {
             onJoinOrWatchClick();
         }
-    }
+    };
 
     const watchGame = (event, game) => {
         event.preventDefault();
@@ -54,7 +55,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
         if (onJoinOrWatchClick) {
             onJoinOrWatchClick();
         }
-    }
+    };
 
     const removeGame = (event, game) => {
         event.preventDefault();
@@ -66,7 +67,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
                 lobbySocket.emit('removegame', game.id);
             }
         });
-    }
+    };
 
     const canJoin = (game) => {
         if (currentGame || game.started || game.full || game.solo) {
@@ -74,7 +75,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
         }
 
         return true;
-    }
+    };
 
     const getPlayerNameAndAvatar = (player, firstPlayer) => {
         let userStyle = {};
@@ -87,7 +88,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
                 <PlayerName player={player} />
             </div>
         );
-    }
+    };
 
     const canWatch = (game) => {
         return (
@@ -95,7 +96,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
             (game.allowSpectators || user?.permissions?.canManageGames) &&
             !(game.started && Object.keys(game.players).length < 2)
         );
-    }
+    };
 
     const getPlayerCard = (player, firstPlayer, gameStarted, showPhoenixborn) => {
         const showPics = gameStarted && showPhoenixborn && player.deck;
@@ -159,7 +160,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
         }
 
         return players;
-    }
+    };
 
     let players = getPlayers(game);
 
@@ -172,8 +173,8 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
     const startTime = game.finishedAt
         ? game.finishedAt
         : game.startedAt
-            ? game.startedAt
-            : game.createdAt;
+        ? game.startedAt
+        : game.createdAt;
     const timeAdvice = game.finishedAt ? 'Finished' : game.started ? 'Started' : 'Created';
     let timeDifference = moment().diff(moment(startTime));
     if (timeDifference < 0) {
@@ -250,7 +251,7 @@ const GameListItem = ({ game, onJoinOrWatchClick }) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default GameListItem;

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import CardImage from './CardImage';
 import attackIcon from '../../assets/img/attack-icon.png';
@@ -32,7 +33,11 @@ const CardLogEx = ({ items, onMouseOut, onMouseOver }) => {
             return (
                 <div key={item.id} className='log-card'>
                     <div className='x-large cardlog-icon'>
-                        <img className='log-icon' title={item.obj.name + ' meditates'} src={medIcon} />
+                        <img
+                            className='log-icon'
+                            title={item.obj.name + ' meditates'}
+                            src={medIcon}
+                        />
                     </div>
                     <div className='log-info'>
                         {item.obj.name} <span className={actionClass}>meditates</span>
@@ -45,7 +50,11 @@ const CardLogEx = ({ items, onMouseOut, onMouseOver }) => {
             return (
                 <div key={item.id} className='log-card'>
                     <div className='x-large cardlog-icon'>
-                        <img className='log-icon' title={item.obj.name + ' passes'} src={passIcon} />
+                        <img
+                            className='log-icon'
+                            title={item.obj.name + ' passes'}
+                            src={passIcon}
+                        />
                     </div>
                     <div className='log-info'>
                         {item.obj.name} <span className={actionClass}>passes</span>
@@ -65,19 +74,23 @@ const CardLogEx = ({ items, onMouseOut, onMouseOver }) => {
                         {item.p} <span className={actionClass}>uses</span> dice power
                     </div>
                 </div>
-            )
+            );
         }
 
         if (['des', 'dis'].includes(item.type)) {
             const card = item.obj;
             return (
                 <>
-                    <div key={item.id} className='log-card dx'
+                    <div
+                        key={item.id}
+                        className='log-card dx'
                         onMouseOut={() => onMouseOut && onMouseOut(item.obj)}
                         onMouseOver={() => onMouseOver && onMouseOver(item.obj)}
                     >
                         <CardImage card={item.obj} noIndex={true} />
-                        <div className='log-info'>{card.name} is {item.type === 'des' ? 'destroyed' : 'discarded'}</div>
+                        <div className='log-info'>
+                            {card.name} is {item.type === 'des' ? 'destroyed' : 'discarded'}
+                        </div>
                     </div>
                 </>
             );
@@ -96,7 +109,8 @@ const CardLogEx = ({ items, onMouseOut, onMouseOver }) => {
                 onMouseOver={() => onMouseOver && onMouseOver(item.obj)}
             >
                 <CardImage card={item.obj} noIndex={true} />
-                <div className='log-info'>{item.p} <span className={actionClass}>{actionText}</span>  {item.obj.name}
+                <div className='log-info'>
+                    {item.p} <span className={actionClass}>{actionText}</span> {item.obj.name}
                 </div>
             </div>
         );

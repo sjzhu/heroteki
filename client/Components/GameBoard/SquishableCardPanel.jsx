@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, no-unused-vars */
 import React, { useMemo, useCallback } from 'react';
 import classNames from 'classnames';
 import { withTranslation } from 'react-i18next';
@@ -57,76 +58,96 @@ function SquishableCardPanel({
     }, [maxCards, getCardDimensions]);
 
     const hasMixOfVisibleCards = useCallback(() => {
-        return (
-            cards.some((card) => !!card.code) &&
-            cards.some((card) => !card.code)
-        );
+        return cards.some((card) => !!card.code) && cards.some((card) => !card.code);
     }, [cards]);
 
-    const getCards = useCallback((needsSquish) => {
-        let overallDimensions = getOverallDimensions();
-        let dimensions = getCardDimensions();
+    const getCards = useCallback(
+        (needsSquish) => {
+            let overallDimensions = getOverallDimensions();
+            let dimensions = getCardDimensions();
 
-        let cardList = [...cards];
-        let cardIndex = 0;
-        let handLength = cardList ? cardList.length : 0;
-        let cardWidth = dimensions.width;
+            let cardList = [...cards];
+            let cardIndex = 0;
+            let handLength = cardList ? cardList.length : 0;
+            let cardWidth = dimensions.width;
 
-        let requiredWidth = handLength * cardWidth;
-        let overflow = requiredWidth - overallDimensions.width;
-        let offset = overflow / (handLength - 1);
+            let requiredWidth = handLength * cardWidth;
+            let overflow = requiredWidth - overallDimensions.width;
+            let offset = overflow / (handLength - 1);
 
-        cardList = cardList.sort((a, b) => (a.cardSlot < b.cardSlot ? -1 : 1));
-        if (groupVisibleCards && hasMixOfVisibleCards()) {
-            cardList = cardList.sort((a, b) => (a.facedown && !b.facedown ? -1 : 1));
-        }
-
-        let lastCardSlot = '';
-        let focusLeftDelta = 0;
-        let hand = cardList.map((card, i) => {
-            if (focusDupes && lastCardSlot === card.cardSlot) {
-                focusLeftDelta += -47;
-            }
-            lastCardSlot = card.cardSlot;
-            let left = 0;
-            if (needsSquish) {
-                left = (cardWidth - offset) * cardIndex++;
-            }
-            left = left + focusLeftDelta;
-
-            let style = {};
-            if (needsSquish || focusLeftDelta !== 0) {
-                style = {
-                    left: left + 'px'
-                };
+            cardList = cardList.sort((a, b) => (a.cardSlot < b.cardSlot ? -1 : 1));
+            if (groupVisibleCards && hasMixOfVisibleCards()) {
+                cardList = cardList.sort((a, b) => (a.facedown && !b.facedown ? -1 : 1));
             }
 
-            if (reverse) {
-                style.zIndex = -i;
-            }
-            return (
-                <Card
-                    key={card.uuid}
-                    card={card}
-                    disableMouseOver={!card.name}
-                    canDrag={manualMode}
-                    onClick={onCardClick}
-                    onAltClick={onCardAltClick}
-                    onDieClick={onDieClick}
-                    onMouseOver={onMouseOver}
-                    onMouseOut={onMouseOut}
-                    onMenuItemClick={onMenuItemClick}
-                    side={side}
-                    size={cardSize}
-                    style={style}
-                    language={i18n.language}
-                    source={source}
-                />
-            );
-        });
+            let lastCardSlot = '';
+            let focusLeftDelta = 0;
+            let hand = cardList.map((card, i) => {
+                if (focusDupes && lastCardSlot === card.cardSlot) {
+                    focusLeftDelta += -47;
+                }
+                lastCardSlot = card.cardSlot;
+                let left = 0;
+                if (needsSquish) {
+                    left = (cardWidth - offset) * cardIndex++;
+                }
+                left = left + focusLeftDelta;
 
-        return hand;
-    }, [cards, maxCards, cardSize, manualMode, onCardClick, onCardAltClick, onDieClick, onMouseOver, onMouseOut, onMenuItemClick, side, focusDupes, groupVisibleCards, reverse, source, i18n, hasMixOfVisibleCards, getOverallDimensions, getCardDimensions]);
+                let style = {};
+                if (needsSquish || focusLeftDelta !== 0) {
+                    style = {
+                        left: left + 'px'
+                    };
+                }
+
+                if (reverse) {
+                    style.zIndex = -i;
+                }
+                return (
+                    <Card
+                        key={card.uuid}
+                        card={card}
+                        disableMouseOver={!card.name}
+                        canDrag={manualMode}
+                        onClick={onCardClick}
+                        onAltClick={onCardAltClick}
+                        onDieClick={onDieClick}
+                        onMouseOver={onMouseOver}
+                        onMouseOut={onMouseOut}
+                        onMenuItemClick={onMenuItemClick}
+                        side={side}
+                        size={cardSize}
+                        style={style}
+                        language={i18n.language}
+                        source={source}
+                    />
+                );
+            });
+
+            return hand;
+        },
+        [
+            cards,
+            maxCards,
+            cardSize,
+            manualMode,
+            onCardClick,
+            onCardAltClick,
+            onDieClick,
+            onMouseOver,
+            onMouseOut,
+            onMenuItemClick,
+            side,
+            focusDupes,
+            groupVisibleCards,
+            reverse,
+            source,
+            i18n,
+            hasMixOfVisibleCards,
+            getOverallDimensions,
+            getCardDimensions
+        ]
+    );
 
     let dimensions = getOverallDimensions();
     let needsSquish = cards && cards.length > maxCards;

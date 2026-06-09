@@ -12,7 +12,10 @@ const passport = require('passport');
 const monk = require('monk');
 const { wrapAsync } = require('../util.js');
 const logger = require('../log.js');
-const { generatePlaceholder, shouldGeneratePlaceholder } = require('../game/sotm/cardImageGenerator');
+const {
+    generatePlaceholder,
+    shouldGeneratePlaceholder
+} = require('../game/sotm/cardImageGenerator');
 
 const DECK_SIZES = { hero: 40, villain: 25, environment: 15 };
 const REQUIRED_CARD_FIELDS = ['id', 'name', 'deckId', 'type', 'keywords', 'text'];
@@ -66,16 +69,18 @@ module.exports.init = function (server) {
 
             await db.close();
 
-            res.send(decks.map(d => ({
-                id: d.id,
-                name: d.name,
-                deckType: d.deckType,
-                version: d.version,
-                characterVersion: d.characterVersion || null,
-                cardCount: d.cardCount || 0,
-                setupInstructions: d.setupInstructions || null,
-                source: d.source
-            })));
+            res.send(
+                decks.map((d) => ({
+                    id: d.id,
+                    name: d.name,
+                    deckType: d.deckType,
+                    version: d.version,
+                    characterVersion: d.characterVersion || null,
+                    cardCount: d.cardCount || 0,
+                    setupInstructions: d.setupInstructions || null,
+                    source: d.source
+                }))
+            );
         })
     );
 
@@ -109,7 +114,9 @@ module.exports.init = function (server) {
             for (const card of allCards) {
                 for (const field of REQUIRED_CARD_FIELDS) {
                     if (card[field] === undefined || card[field] === null) {
-                        errors.push(`Card ${card.id || '(unknown)'} missing required field: ${field}`);
+                        errors.push(
+                            `Card ${card.id || '(unknown)'} missing required field: ${field}`
+                        );
                     }
                 }
             }
@@ -123,12 +130,12 @@ module.exports.init = function (server) {
             const cardsCollection = db.get('sotmCards');
             const decksCollection = db.get('sotmDecks');
 
-            const allCardIds = allCards.map(c => c.id);
+            const allCardIds = allCards.map((c) => c.id);
             const existingCards = await cardsCollection.find({ id: { $in: allCardIds } });
             // Only collision if the existing card belongs to a different user
             const userId = (req.user.id || req.user._id).toString();
             const collisions = existingCards.filter(
-                ec => ec.source !== 'user' || ec.uploadedBy !== userId
+                (ec) => ec.source !== 'user' || ec.uploadedBy !== userId
             );
 
             if (collisions.length > 0) {
@@ -136,7 +143,7 @@ module.exports.init = function (server) {
                 return res.status(409).send({
                     success: false,
                     message: 'Card ID collision(s) with existing non-user cards',
-                    collisions: collisions.map(c => c.id)
+                    collisions: collisions.map((c) => c.id)
                 });
             }
 
@@ -145,7 +152,7 @@ module.exports.init = function (server) {
             // --- 3 & 4. Set source/uploadedBy; default card version to deck version ---
             const deckVersion = deck.version;
 
-            const processedCards = allCards.map(c => ({
+            const processedCards = allCards.map((c) => ({
                 ...c,
                 source: 'user',
                 uploadedBy: userId,

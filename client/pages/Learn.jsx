@@ -12,12 +12,12 @@ const LearnToPlay = () => {
                 <Row className='lobby-row'>
                     <Col md='4'>
                         <h3>Plaid Hat Games</h3>
-                        <p>The&nbsp;
+                        <p>
+                            The&nbsp;
                             <a href='https://www.plaidhatgames.com/board-games/ashes-rise-phoenixborn/'>
                                 Official Ashes Reborn page
                             </a>
                             &nbsp;has rules, FAQs, reference cards, and many other resources.
-
                         </p>
                     </Col>
                     <Col md='4'>
@@ -48,9 +48,17 @@ const LearnToPlay = () => {
                 <Row>
                     <Col md='6'>
                         <h2>Getting Started</h2>
-                        <ul >
-                            <li>Play a game using the <a href='https://jaysonsethlindley.medium.com/first-adventure-dueling-decks-from-the-ashes-reborn-master-set-1d82917881fb'>First Adventure</a> decks.
-                                <p>Perfectly crafted from the core set, these dualling decks use Aradel and Saria and are a great introduction to the game.</p>
+                        <ul>
+                            <li>
+                                Play a game using the{' '}
+                                <a href='https://jaysonsethlindley.medium.com/first-adventure-dueling-decks-from-the-ashes-reborn-master-set-1d82917881fb'>
+                                    First Adventure
+                                </a>{' '}
+                                decks.
+                                <p>
+                                    Perfectly crafted from the core set, these dualling decks use
+                                    Aradel and Saria and are a great introduction to the game.
+                                </p>
                             </li>
                             <li>
                                 You can practise against an AI opponent on{' '}
@@ -58,7 +66,11 @@ const LearnToPlay = () => {
                             </li>
                         </ul>
                         <h3>Adventuring Party Decks</h3>
-                        <p>Each of these sets by ImpossibleGerman make six decks from one collection. These decks are also great for new players to try in place of the precons</p>
+                        <p>
+                            Each of these sets by ImpossibleGerman make six decks from one
+                            collection. These decks are also great for new players to try in place
+                            of the precons
+                        </p>
                         <ul>
                             <li>
                                 <a href='https://jaysonsethlindley.medium.com/adventuring-party-six-constructed-ashes-decks-from-one-collection-1a2e6a2d3260'>
@@ -84,19 +96,36 @@ const LearnToPlay = () => {
                     </Col>
                     <Col md='6'>
                         <h2>Diving Deeper</h2>
-                        <div >
+                        <div>
                             <h3>Deck Building</h3>
                             <p>Learn the mystic art of deckbuilding for Ashes Reborn: </p>
                             <ul>
-                                <li><a href='https://jaysonsethlindley.medium.com/colorful-cubes-foundations-of-deckbuilding-in-ashes-reborn-c49cd1abbe29'>Colorful Cubes: A Guide To Magic Types and Deckbuilding in Ashes Reborn</a></li>
-                                <li><a href='https://youtu.be/xUHvDIzFrO0'>Ashes Reborn Deckbuilding Guide</a></li>
-                                <li><a href='https://paroxysmbydesign.com/?page_id=153'>Hard 30 Essays by clu</a></li>
+                                <li>
+                                    <a href='https://jaysonsethlindley.medium.com/colorful-cubes-foundations-of-deckbuilding-in-ashes-reborn-c49cd1abbe29'>
+                                        Colorful Cubes: A Guide To Magic Types and Deckbuilding in
+                                        Ashes Reborn
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href='https://youtu.be/xUHvDIzFrO0'>
+                                        Ashes Reborn Deckbuilding Guide
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href='https://paroxysmbydesign.com/?page_id=153'>
+                                        Hard 30 Essays by clu
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                         <div>
                             <h3>Articles</h3>
                             <ul>
-                                <li><a href='https://jaysonsethlindley.medium.com/the-big-ones-the-best-ashes-reborn-decks-and-why-they-kept-winning-3d6a579a39e' >What are the best decks in Ashes?</a></li>
+                                <li>
+                                    <a href='https://jaysonsethlindley.medium.com/the-big-ones-the-best-ashes-reborn-decks-and-why-they-kept-winning-3d6a579a39e'>
+                                        What are the best decks in Ashes?
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </Col>
@@ -104,6 +133,6 @@ const LearnToPlay = () => {
             </Panel>
         </Col>
     );
-}
+};
 
 export default LearnToPlay;

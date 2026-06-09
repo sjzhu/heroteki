@@ -29,38 +29,44 @@ function Form({ name, onSubmit, apiLoading, buttonClass, buttonText, t, children
         }));
     }, []);
 
-    const handleSubmit = useCallback((event) => {
-        event.preventDefault();
+    const handleSubmit = useCallback(
+        (event) => {
+            event.preventDefault();
 
-        if (!$('form').valid()) {
-            return;
-        }
+            if (!$('form').valid()) {
+                return;
+            }
 
-        if (onSubmit) {
-            onSubmit(formState);
-        }
-    }, [formState, onSubmit]);
+            if (onSubmit) {
+                onSubmit(formState);
+            }
+        },
+        [formState, onSubmit]
+    );
 
-    const translateValidationProps = useCallback((field) => {
-        let validationAttributes = {};
+    const translateValidationProps = useCallback(
+        (field) => {
+            let validationAttributes = {};
 
-        if (field.validationProperties) {
-            for (let key of Object.keys(field.validationProperties)) {
-                if (
-                    key === 'data-val-required' ||
-                    key === 'data-val-length' ||
-                    key === 'data-val-equalto' ||
-                    key === 'data-val-regex'
-                ) {
-                    validationAttributes[key] = t(field.validationProperties[key]);
-                } else {
-                    validationAttributes[key] = field.validationProperties[key];
+            if (field.validationProperties) {
+                for (let key of Object.keys(field.validationProperties)) {
+                    if (
+                        key === 'data-val-required' ||
+                        key === 'data-val-length' ||
+                        key === 'data-val-equalto' ||
+                        key === 'data-val-regex'
+                    ) {
+                        validationAttributes[key] = t(field.validationProperties[key]);
+                    } else {
+                        validationAttributes[key] = field.validationProperties[key];
+                    }
                 }
             }
-        }
 
-        return validationAttributes;
-    }, [t]);
+            return validationAttributes;
+        },
+        [t]
+    );
 
     const fieldsToRender = formFields[name].map((field) => {
         return (
@@ -85,15 +91,9 @@ function Form({ name, onSubmit, apiLoading, buttonClass, buttonText, t, children
             {children}
             <div className='form-group'>
                 <div className={buttonClass || 'col-sm-offset-4 col-sm-3'}>
-                    <button
-                        type='submit'
-                        className='btn btn-primary'
-                        disabled={apiLoading}
-                    >
+                    <button type='submit' className='btn btn-primary' disabled={apiLoading}>
                         {t(buttonText) || t('Submit')}{' '}
-                        {apiLoading ? (
-                            <span className='spinner button-spinner' />
-                        ) : null}
+                        {apiLoading ? <span className='spinner button-spinner' /> : null}
                     </button>
                 </div>
             </div>

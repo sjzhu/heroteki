@@ -7,8 +7,8 @@ const collection = db.get('games');
 collection
     .find({ id: process.argv[2] })
     .then((result) => {
-        result.forEach(game => {
+        result.forEach((game) => {
             console.log(game);
-        })
+        });
     })
     .then(() => db.close());

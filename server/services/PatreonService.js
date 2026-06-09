@@ -18,7 +18,7 @@ class PatreonService {
         let patreonApiClient = patreonAPI(user.patreon.access_token);
 
         try {
-            logger.info('getting patreon status for %s', user.username)
+            logger.info('getting patreon status for %s', user.username);
             response = await patreonApiClient('/current_user', {
                 fields: {
                     pledge: [

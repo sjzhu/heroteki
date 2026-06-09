@@ -20,23 +20,35 @@ function makeManager(H, heroes, callbacks) {
 describe('TurnManager', () => {
     describe('construction', () => {
         it('starts in SETUP phase with round 0', () => {
-            const tm = makeManager(2, [['legacy', 'alice'], ['wraith', 'bob']]);
+            const tm = makeManager(2, [
+                ['legacy', 'alice'],
+                ['wraith', 'bob']
+            ]);
             expect(tm.phase).toBe(TurnPhase.SETUP);
             expect(tm.round).toBe(0);
         });
 
         it('stores H value at construction', () => {
-            const tm = makeManager(3, [['legacy', 'alice'], ['wraith', 'alice'], ['haka', 'bob']]);
+            const tm = makeManager(3, [
+                ['legacy', 'alice'],
+                ['wraith', 'alice'],
+                ['haka', 'bob']
+            ]);
             expect(tm.H).toBe(3);
         });
 
         it('H value never changes through a full round', () => {
-            const tm = makeManager(2, [['legacy', 'alice'], ['wraith', 'bob']]);
+            const tm = makeManager(2, [
+                ['legacy', 'alice'],
+                ['wraith', 'bob']
+            ]);
             const initialH = tm.H;
             // Advance through entire round
             const phases = [
-                TurnPhase.VILLAIN_START, TurnPhase.VILLAIN_PLAY, TurnPhase.VILLAIN_END,
-                TurnPhase.HERO_START,
+                TurnPhase.VILLAIN_START,
+                TurnPhase.VILLAIN_PLAY,
+                TurnPhase.VILLAIN_END,
+                TurnPhase.HERO_START
             ];
             for (let i = 0; i < phases.length; i++) {
                 tm.advance();
@@ -83,17 +95,26 @@ describe('TurnManager', () => {
         });
 
         it('VILLAIN_PLAY → VILLAIN_END', () => {
-            tm.advance(); tm.advance(); tm.advance();
+            tm.advance();
+            tm.advance();
+            tm.advance();
             expect(tm.phase).toBe(TurnPhase.VILLAIN_END);
         });
 
         it('VILLAIN_END → HERO_START(0)', () => {
-            tm.advance(); tm.advance(); tm.advance(); tm.advance();
+            tm.advance();
+            tm.advance();
+            tm.advance();
+            tm.advance();
             expect(tm.phase).toBe(TurnPhase.HERO_START);
         });
 
         it('HERO_START → HERO_PLAY', () => {
-            tm.advance(); tm.advance(); tm.advance(); tm.advance(); tm.advance();
+            tm.advance();
+            tm.advance();
+            tm.advance();
+            tm.advance();
+            tm.advance();
             expect(tm.phase).toBe(TurnPhase.HERO_PLAY);
         });
 
@@ -138,7 +159,10 @@ describe('TurnManager', () => {
         let tm;
 
         beforeEach(() => {
-            tm = makeManager(2, [['legacy', 'alice'], ['wraith', 'bob']]);
+            tm = makeManager(2, [
+                ['legacy', 'alice'],
+                ['wraith', 'bob']
+            ]);
         });
 
         it('after first hero HERO_END, enters second hero HERO_START', () => {
@@ -162,7 +186,10 @@ describe('TurnManager', () => {
         let tm;
 
         beforeEach(() => {
-            tm = makeManager(2, [['legacy', 'alice'], ['wraith', 'bob']]);
+            tm = makeManager(2, [
+                ['legacy', 'alice'],
+                ['wraith', 'bob']
+            ]);
         });
 
         it('both are null during VILLAIN phases', () => {
@@ -195,8 +222,11 @@ describe('TurnManager', () => {
         it('remain set through all 5 hero phases', () => {
             for (let i = 0; i < 4; i++) tm.advance(); // reach HERO_START
             const heroPhases = [
-                TurnPhase.HERO_START, TurnPhase.HERO_PLAY,
-                TurnPhase.HERO_POWER, TurnPhase.HERO_DRAW, TurnPhase.HERO_END
+                TurnPhase.HERO_START,
+                TurnPhase.HERO_PLAY,
+                TurnPhase.HERO_POWER,
+                TurnPhase.HERO_DRAW,
+                TurnPhase.HERO_END
             ];
             for (const phase of heroPhases) {
                 expect(tm.phase).toBe(phase);
@@ -222,7 +252,10 @@ describe('TurnManager', () => {
         let tm;
 
         beforeEach(() => {
-            tm = makeManager(2, [['legacy', 'alice'], ['wraith', 'bob']]);
+            tm = makeManager(2, [
+                ['legacy', 'alice'],
+                ['wraith', 'bob']
+            ]);
         });
 
         it('returns false for all players during SETUP', () => {
@@ -239,14 +272,17 @@ describe('TurnManager', () => {
         });
 
         it('returns true for ALL players during VILLAIN_PLAY', () => {
-            tm.advance(); tm.advance();
+            tm.advance();
+            tm.advance();
             expect(tm.phase).toBe(TurnPhase.VILLAIN_PLAY);
             expect(tm.isMyTurn('alice')).toBe(true);
             expect(tm.isMyTurn('bob')).toBe(true);
         });
 
         it('returns true for ALL players during VILLAIN_END', () => {
-            tm.advance(); tm.advance(); tm.advance();
+            tm.advance();
+            tm.advance();
+            tm.advance();
             expect(tm.phase).toBe(TurnPhase.VILLAIN_END);
             expect(tm.isMyTurn('alice')).toBe(true);
             expect(tm.isMyTurn('bob')).toBe(true);
@@ -279,7 +315,10 @@ describe('TurnManager', () => {
         });
 
         it('one player controls two heroes — isMyTurn() returns true during both hero turns', () => {
-            const tm2 = makeManager(2, [['legacy', 'alice'], ['wraith', 'alice']]);
+            const tm2 = makeManager(2, [
+                ['legacy', 'alice'],
+                ['wraith', 'alice']
+            ]);
             // First hero turn (4 advances)
             for (let i = 0; i < 4; i++) tm2.advance();
             expect(tm2.isMyTurn('alice')).toBe(true);
@@ -315,7 +354,10 @@ describe('TurnManager', () => {
 
     describe('getState()', () => {
         it('returns all required fields', () => {
-            const tm = makeManager(2, [['legacy', 'alice'], ['wraith', 'bob']]);
+            const tm = makeManager(2, [
+                ['legacy', 'alice'],
+                ['wraith', 'bob']
+            ]);
             const state = tm.getState();
 
             expect(state.round).toBeDefined();
@@ -329,7 +371,11 @@ describe('TurnManager', () => {
         });
 
         it('H in state matches constructor value', () => {
-            const tm = makeManager(3, [['legacy', 'alice'], ['wraith', 'bob'], ['haka', 'bob']]);
+            const tm = makeManager(3, [
+                ['legacy', 'alice'],
+                ['wraith', 'bob'],
+                ['haka', 'bob']
+            ]);
             expect(tm.getState().H).toBe(3);
         });
 

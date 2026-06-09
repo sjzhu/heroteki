@@ -80,7 +80,10 @@ module.exports.init = function (server) {
             upload.single('image')(req, res, function (err) {
                 if (err) {
                     if (err.code === 'LIMIT_FILE_SIZE') {
-                        return res.status(400).send({ success: false, message: 'File too large. Maximum size is 3 MB.' });
+                        return res.status(400).send({
+                            success: false,
+                            message: 'File too large. Maximum size is 3 MB.'
+                        });
                     }
                     return res.status(400).send({ success: false, message: err.message });
                 }
@@ -109,17 +112,18 @@ module.exports.init = function (server) {
                 await db.close();
                 // Clean up the uploaded file
                 fs.unlink(req.file.path, () => {});
-                return res.status(404).send({ success: false, message: `Card not found: ${cardId}` });
+                return res
+                    .status(404)
+                    .send({ success: false, message: `Card not found: ${cardId}` });
             }
 
-            await cardsCollection.findOneAndUpdate(
-                { id: cardId },
-                { $set: { imageUrl } }
-            );
+            await cardsCollection.findOneAndUpdate({ id: cardId }, { $set: { imageUrl } });
 
             await db.close();
 
-            logger.info(`Admin ${req.user.username} uploaded image for card ${cardId}: ${imageUrl}`);
+            logger.info(
+                `Admin ${req.user.username} uploaded image for card ${cardId}: ${imageUrl}`
+            );
 
             return res.send({ success: true, imageUrl });
         })

@@ -25,7 +25,10 @@ class ExactlyXCardSelector extends BaseCardSelector {
             } else {
                 return numCards === 1
                     ? 'Choose a ' + this.cardType[0]
-                    : { text: `Choose {{amount}} ${this.cardType[0]}s`, values: { amount: numCards } };
+                    : {
+                          text: `Choose {{amount}} ${this.cardType[0]}s`,
+                          values: { amount: numCards }
+                      };
             }
         }
 

@@ -55,7 +55,8 @@ const Effects = {
     modifyArmor: (amount) => EffectBuilder.card.flexible('modifyArmor', amount),
     modifyFocus: (amount) => EffectBuilder.card.flexible('modifyFocus', amount),
     multiplyDamage: (amount) => EffectBuilder.card.flexible('multiplyDamage', amount),
-    preventAllDamage: (shield, contextFunc) => EffectBuilder.card.static('preventAllDamage', shield, contextFunc),
+    preventAllDamage: (shield, contextFunc) =>
+        EffectBuilder.card.static('preventAllDamage', shield, contextFunc),
 
     // attacks from this unit may not be blocked
     preventBlock: (contextFunc) => EffectBuilder.card.static('preventBlock', 0, contextFunc),

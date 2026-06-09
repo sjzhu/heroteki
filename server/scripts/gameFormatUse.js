@@ -6,7 +6,6 @@ const ConfigService = require('../services/ConfigService.js');
 
 let gameService = new GameService(new ConfigService());
 
-
 let start = new Date('2024-01-01T00:00:01');
 let end = new Date();
 
@@ -43,7 +42,18 @@ gameService
             const startDateTime = moment(game.startedAt);
             const month = startDateTime.month();
             if (!monthCount[month]) {
-                monthCount[month] = { month: month, count: 0, solo: 0, precon: 0, firstadventure: 0, aparty: 0, constructed: 0, coaloff: 0, hl2pvp: 0, onecollection: 0 };
+                monthCount[month] = {
+                    month: month,
+                    count: 0,
+                    solo: 0,
+                    precon: 0,
+                    firstadventure: 0,
+                    aparty: 0,
+                    constructed: 0,
+                    coaloff: 0,
+                    hl2pvp: 0,
+                    onecollection: 0
+                };
             }
 
             if (game.solo) {
@@ -68,7 +78,9 @@ gameService
             'November',
             'December'
         ];
-        console.info('\n### Game count by month \n\nMonth | constructed | Solo | precon | firstadventure | aparty | coaloff | hl2pvp | onecollection');
+        console.info(
+            '\n### Game count by month \n\nMonth | constructed | Solo | precon | firstadventure | aparty | coaloff | hl2pvp | onecollection'
+        );
         for (const m in monthCount) {
             // console.info(monthNames[m], ' | ', monthCount[m].count, ' | ', monthCount[m].solo);
             console.info(

@@ -25,7 +25,9 @@ function footer(deckName, version, W, H, PAD) {
     const safeVer = escapeXml(version || '');
     return `
   <text x="${PAD}" y="${y}" font-family="${FONT_SANS}, sans-serif" font-size="${META_SIZE}" fill="#555" text-anchor="start">${safeDecK}</text>
-  <text x="${W - PAD}" y="${y}" font-family="${FONT_SANS}, sans-serif" font-size="${META_SIZE}" fill="#555" text-anchor="end">${safeVer}</text>`;
+  <text x="${
+      W - PAD
+  }" y="${y}" font-family="${FONT_SANS}, sans-serif" font-size="${META_SIZE}" fill="#555" text-anchor="end">${safeVer}</text>`;
 }
 
 /**
@@ -40,7 +42,9 @@ function keywordBar(keywords, y, PAD) {
     if (!keywords || keywords.length === 0) return '';
     const text = keywords.map((k) => k.toUpperCase()).join('  ·  ');
     return `
-  <text x="${PAD}" y="${y}" font-family="${FONT_SANS}, sans-serif" font-size="${BODY_SIZE}" font-variant="small-caps" fill="#444" letter-spacing="1">${escapeXml(text)}</text>`;
+  <text x="${PAD}" y="${y}" font-family="${FONT_SANS}, sans-serif" font-size="${BODY_SIZE}" font-variant="small-caps" fill="#444" letter-spacing="1">${escapeXml(
+        text
+    )}</text>`;
 }
 
 /**
@@ -60,7 +64,11 @@ function hpBadge(hp, W, PAD) {
     const y = PAD;
     return `
   <rect x="${x}" y="${y}" width="${badgeW}" height="${badgeH}" rx="4" fill="#c0392b"/>
-  <text x="${x + badgeW / 2}" y="${y + badgeH - 5}" font-family="${FONT_SANS}, sans-serif" font-size="13" font-weight="bold" fill="white" text-anchor="middle">HP ${escapeXml(String(hp))}</text>`;
+  <text x="${x + badgeW / 2}" y="${
+        y + badgeH - 5
+    }" font-family="${FONT_SANS}, sans-serif" font-size="13" font-weight="bold" fill="white" text-anchor="middle">HP ${escapeXml(
+        String(hp)
+    )}</text>`;
 }
 
 /**

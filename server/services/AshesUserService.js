@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const escapeRegex = require('../util.js').escapeRegex;
 const logger = require('../log.js');
 const monk = require('monk');

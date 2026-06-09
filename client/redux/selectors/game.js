@@ -12,16 +12,15 @@ export const selectMyHeroes = (state, myPlayerId) =>
 
 // The hero currently taking their turn (null outside hero phases)
 export const selectActiveHero = (state) =>
-    state.lobby.currentGame?.heroes?.find(
-        (h) => h.id === state.lobby.currentGame?.activeHeroId
-    ) ?? null;
+    state.lobby.currentGame?.heroes?.find((h) => h.id === state.lobby.currentGame?.activeHeroId) ??
+    null;
 
 export const selectTurnState = (state) => ({
     round: state.lobby.currentGame?.round,
     phase: state.lobby.currentGame?.phase,
     H: state.lobby.currentGame?.H,
     activeHeroId: state.lobby.currentGame?.activeHeroId,
-    activeControllerPlayerId: state.lobby.currentGame?.activeControllerPlayerId,
+    activeControllerPlayerId: state.lobby.currentGame?.activeControllerPlayerId
 });
 
 export const selectIsGameOver = (state) => state.lobby.currentGame?.isGameOver ?? false;

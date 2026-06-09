@@ -13,7 +13,6 @@ const ServerStatus = (props) => {
     const currentGame = useSelector((state) => state.lobby.currentGame);
     const isReplay = currentGame?.isReplay;
 
-
     let className = '';
     let toolTip = `${serverType} is`;
     let pingText;
@@ -64,7 +63,11 @@ const ServerStatus = (props) => {
                 <span className='text-danger'>{t('Disconnected')}</span>
             </React.Fragment>
         );
-        splash = !isReplay && <div className='disconnect-splash panel'><span className='text-danger'>Disconnected!</span></div>
+        splash = !isReplay && (
+            <div className='disconnect-splash panel'>
+                <span className='text-danger'>Disconnected!</span>
+            </div>
+        );
     }
 
     return (

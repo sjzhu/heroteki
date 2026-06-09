@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -102,7 +103,12 @@ const ConcedeLeave = ({ showText }) => {
             title='Leave the game'
             onClick={onLeaveClick}
         >
-            <FontAwesomeIcon icon={faRightFromBracket} className='game-menu-icon' style={{ rotate: '180deg' }} /> {showText && 'Leave'}
+            <FontAwesomeIcon
+                icon={faRightFromBracket}
+                className='game-menu-icon'
+                style={{ rotate: '180deg' }}
+            />{' '}
+            {showText && 'Leave'}
         </a>
     );
 };

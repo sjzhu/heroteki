@@ -26,8 +26,14 @@ const OverviewTab = () => {
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);
                 return r.json();
             })
-            .then((d) => { setData(d); setLoading(false); })
-            .catch((e) => { setError(e.message); setLoading(false); });
+            .then((d) => {
+                setData(d);
+                setLoading(false);
+            })
+            .catch((e) => {
+                setError(e.message);
+                setLoading(false);
+            });
     }, []);
 
     if (loading) return <div style={loadingStyle}>Loading overview…</div>;
@@ -57,21 +63,27 @@ const OverviewTab = () => {
                 </thead>
                 <tbody>
                     {villainStats.length === 0 ? (
-                        <tr><td colSpan={6} style={tdCenterStyle}>No data yet</td></tr>
-                    ) : villainStats.map((row, i) => (
-                        <tr key={i} style={i % 2 === 0 ? rowEvenStyle : rowOddStyle}>
-                            <td style={tdStyle}>{row.villainDeckId}</td>
-                            <td style={tdStyle}>{row.villainDeckVersion || '—'}</td>
-                            <td style={tdStyle}>{row.count}</td>
-                            <td style={tdStyle}>{row.heroWins}</td>
-                            <td style={tdStyle}>{row.villainWins}</td>
-                            <td style={tdStyle}>
-                                {row.count > 0
-                                    ? `${Math.round((row.heroWins / row.count) * 100)}%`
-                                    : '—'}
+                        <tr>
+                            <td colSpan={6} style={tdCenterStyle}>
+                                No data yet
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        villainStats.map((row, i) => (
+                            <tr key={i} style={i % 2 === 0 ? rowEvenStyle : rowOddStyle}>
+                                <td style={tdStyle}>{row.villainDeckId}</td>
+                                <td style={tdStyle}>{row.villainDeckVersion || '—'}</td>
+                                <td style={tdStyle}>{row.count}</td>
+                                <td style={tdStyle}>{row.heroWins}</td>
+                                <td style={tdStyle}>{row.villainWins}</td>
+                                <td style={tdStyle}>
+                                    {row.count > 0
+                                        ? `${Math.round((row.heroWins / row.count) * 100)}%`
+                                        : '—'}
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
 
@@ -88,20 +100,26 @@ const OverviewTab = () => {
                 </thead>
                 <tbody>
                     {heroStats.length === 0 ? (
-                        <tr><td colSpan={5} style={tdCenterStyle}>No data yet</td></tr>
-                    ) : heroStats.map((row, i) => (
-                        <tr key={i} style={i % 2 === 0 ? rowEvenStyle : rowOddStyle}>
-                            <td style={tdStyle}>{row.heroDeckId}</td>
-                            <td style={tdStyle}>{row.heroDeckVersion || '—'}</td>
-                            <td style={tdStyle}>{row.count}</td>
-                            <td style={tdStyle}>{row.wins}</td>
-                            <td style={tdStyle}>
-                                {row.count > 0
-                                    ? `${Math.round((row.wins / row.count) * 100)}%`
-                                    : '—'}
+                        <tr>
+                            <td colSpan={5} style={tdCenterStyle}>
+                                No data yet
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        heroStats.map((row, i) => (
+                            <tr key={i} style={i % 2 === 0 ? rowEvenStyle : rowOddStyle}>
+                                <td style={tdStyle}>{row.heroDeckId}</td>
+                                <td style={tdStyle}>{row.heroDeckVersion || '—'}</td>
+                                <td style={tdStyle}>{row.count}</td>
+                                <td style={tdStyle}>{row.wins}</td>
+                                <td style={tdStyle}>
+                                    {row.count > 0
+                                        ? `${Math.round((row.wins / row.count) * 100)}%`
+                                        : '—'}
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
         </div>
@@ -126,15 +144,20 @@ const GameListTab = ({ onSelectGame }) => {
                 return r.json();
             })
             .then((d) => {
-                const rows = Array.isArray(d) ? d : (d.games || []);
+                const rows = Array.isArray(d) ? d : d.games || [];
                 setGames(rows);
                 setHasMore(rows.length >= PAGE_SIZE);
                 setLoading(false);
             })
-            .catch((e) => { setError(e.message); setLoading(false); });
+            .catch((e) => {
+                setError(e.message);
+                setLoading(false);
+            });
     }, []);
 
-    useEffect(() => { loadGames(page); }, [page, loadGames]);
+    useEffect(() => {
+        loadGames(page);
+    }, [page, loadGames]);
 
     if (loading) return <div style={loadingStyle}>Loading games…</div>;
     if (error) return <div style={errorStyle}>Error: {error}</div>;
@@ -146,9 +169,13 @@ const GameListTab = ({ onSelectGame }) => {
 
     const formatDecks = (game) => {
         const parts = [];
-        if (game.villainDeckId) parts.push(`Villain: ${game.villainDeckId}@${game.villainDeckVersion || '?'}`);
+        if (game.villainDeckId)
+            parts.push(`Villain: ${game.villainDeckId}@${game.villainDeckVersion || '?'}`);
         if (game.heroes && game.heroes.length > 0) {
-            parts.push('Heroes: ' + game.heroes.map(h => `${h.heroDeckId}@${h.heroDeckVersion || '?'}`).join(', '));
+            parts.push(
+                'Heroes: ' +
+                    game.heroes.map((h) => `${h.heroDeckId}@${h.heroDeckVersion || '?'}`).join(', ')
+            );
         }
         return parts.join(' | ') || '—';
     };
@@ -168,26 +195,52 @@ const GameListTab = ({ onSelectGame }) => {
                 </thead>
                 <tbody>
                     {games.length === 0 ? (
-                        <tr><td colSpan={6} style={tdCenterStyle}>No games recorded yet</td></tr>
-                    ) : games.map((game, i) => (
-                        <tr key={game.gameId || i} style={i % 2 === 0 ? rowEvenStyle : rowOddStyle}>
-                            <td style={tdStyle}>{formatDate(game.endedAt)}</td>
-                            <td style={{ ...tdStyle, fontWeight: 'bold', color: game.result === 'heroVictory' ? '#28a745' : game.result === 'villainVictory' ? '#dc3545' : '#6c757d' }}>
-                                {game.result || '—'}
-                            </td>
-                            <td style={tdStyle}>{game.rounds || '—'}</td>
-                            <td style={tdStyle}>{game.durationMinutes != null ? `${game.durationMinutes} min` : '—'}</td>
-                            <td style={{ ...tdStyle, fontSize: '0.75rem' }}>{formatDecks(game)}</td>
-                            <td style={tdStyle}>
-                                <button
-                                    style={linkBtnStyle}
-                                    onClick={() => onSelectGame(game.gameId)}
-                                >
-                                    View Log
-                                </button>
+                        <tr>
+                            <td colSpan={6} style={tdCenterStyle}>
+                                No games recorded yet
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        games.map((game, i) => (
+                            <tr
+                                key={game.gameId || i}
+                                style={i % 2 === 0 ? rowEvenStyle : rowOddStyle}
+                            >
+                                <td style={tdStyle}>{formatDate(game.endedAt)}</td>
+                                <td
+                                    style={{
+                                        ...tdStyle,
+                                        fontWeight: 'bold',
+                                        color:
+                                            game.result === 'heroVictory'
+                                                ? '#28a745'
+                                                : game.result === 'villainVictory'
+                                                ? '#dc3545'
+                                                : '#6c757d'
+                                    }}
+                                >
+                                    {game.result || '—'}
+                                </td>
+                                <td style={tdStyle}>{game.rounds || '—'}</td>
+                                <td style={tdStyle}>
+                                    {game.durationMinutes != null
+                                        ? `${game.durationMinutes} min`
+                                        : '—'}
+                                </td>
+                                <td style={{ ...tdStyle, fontSize: '0.75rem' }}>
+                                    {formatDecks(game)}
+                                </td>
+                                <td style={tdStyle}>
+                                    <button
+                                        style={linkBtnStyle}
+                                        onClick={() => onSelectGame(game.gameId)}
+                                    >
+                                        View Log
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
             <div style={paginationStyle}>
@@ -231,10 +284,13 @@ const EventLogTab = ({ gameId: initialGameId }) => {
                 return r.json();
             })
             .then((d) => {
-                setEvents(Array.isArray(d) ? d : (d.events || []));
+                setEvents(Array.isArray(d) ? d : d.events || []);
                 setLoading(false);
             })
-            .catch((e) => { setError(e.message); setLoading(false); });
+            .catch((e) => {
+                setError(e.message);
+                setLoading(false);
+            });
     }, []);
 
     useEffect(() => {
@@ -256,7 +312,10 @@ const EventLogTab = ({ gameId: initialGameId }) => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}>
+            <form
+                onSubmit={handleSubmit}
+                style={{ display: 'flex', gap: '8px', marginBottom: '12px', alignItems: 'center' }}
+            >
                 <input
                     style={inputStyle}
                     type='text'
@@ -264,7 +323,9 @@ const EventLogTab = ({ gameId: initialGameId }) => {
                     value={inputGameId}
                     onChange={(e) => setInputGameId(e.target.value)}
                 />
-                <button type='submit' style={pageBtnStyle}>Load Events</button>
+                <button type='submit' style={pageBtnStyle}>
+                    Load Events
+                </button>
                 <input
                     style={{ ...inputStyle, maxWidth: '180px' }}
                     type='text'
@@ -278,7 +339,9 @@ const EventLogTab = ({ gameId: initialGameId }) => {
             {error && <div style={errorStyle}>Error: {error}</div>}
 
             {!loading && events.length === 0 && gameId && (
-                <div style={{ color: '#8b949e', padding: '12px' }}>No events found for this game.</div>
+                <div style={{ color: '#8b949e', padding: '12px' }}>
+                    No events found for this game.
+                </div>
             )}
 
             {events.length > 0 && (
@@ -299,11 +362,33 @@ const EventLogTab = ({ gameId: initialGameId }) => {
                                 <td style={tdStyle}>{evt.round}</td>
                                 <td style={tdStyle}>{evt.phase}</td>
                                 <td style={tdStyle}>{evt.actorName || evt.actorId || '—'}</td>
-                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '0.8rem' }}>{evt.eventType}</td>
-                                <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: '0.75rem', maxWidth: '300px', wordBreak: 'break-all' }}>
+                                <td
+                                    style={{
+                                        ...tdStyle,
+                                        fontFamily: 'monospace',
+                                        fontSize: '0.8rem'
+                                    }}
+                                >
+                                    {evt.eventType}
+                                </td>
+                                <td
+                                    style={{
+                                        ...tdStyle,
+                                        fontFamily: 'monospace',
+                                        fontSize: '0.75rem',
+                                        maxWidth: '300px',
+                                        wordBreak: 'break-all'
+                                    }}
+                                >
                                     {evt.payload ? JSON.stringify(evt.payload) : '—'}
                                 </td>
-                                <td style={{ ...tdStyle, fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                                <td
+                                    style={{
+                                        ...tdStyle,
+                                        fontSize: '0.75rem',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
                                     {evt.timestamp ? new Date(evt.timestamp).toLocaleString() : '—'}
                                 </td>
                             </tr>
@@ -353,7 +438,11 @@ const StatsPage = () => {
                         style={activeTab === tab ? activeTabStyle : tabStyle}
                         onClick={() => setActiveTab(tab)}
                     >
-                        {tab === 'overview' ? 'Overview' : tab === 'gamelist' ? 'Game List' : 'Event Log'}
+                        {tab === 'overview'
+                            ? 'Overview'
+                            : tab === 'gamelist'
+                            ? 'Game List'
+                            : 'Event Log'}
                     </button>
                 ))}
             </div>
@@ -372,7 +461,7 @@ const pageStyle = {
     padding: '20px',
     backgroundColor: '#0d1117',
     minHeight: '100vh',
-    color: '#f0f6fc',
+    color: '#f0f6fc'
 };
 
 const tabBarStyle = {
@@ -380,7 +469,7 @@ const tabBarStyle = {
     gap: '4px',
     marginBottom: '16px',
     borderBottom: '1px solid #30363d',
-    paddingBottom: '8px',
+    paddingBottom: '8px'
 };
 
 const tabStyle = {
@@ -390,28 +479,28 @@ const tabStyle = {
     borderRadius: '4px',
     padding: '6px 16px',
     cursor: 'pointer',
-    fontSize: '0.9rem',
+    fontSize: '0.9rem'
 };
 
 const activeTabStyle = {
     ...tabStyle,
     backgroundColor: '#388bfd',
     color: '#fff',
-    borderColor: '#388bfd',
+    borderColor: '#388bfd'
 };
 
 const tabContentStyle = {
     backgroundColor: '#161b22',
     borderRadius: '6px',
     padding: '16px',
-    border: '1px solid #30363d',
+    border: '1px solid #30363d'
 };
 
 const summaryRowStyle = {
     display: 'flex',
     gap: '12px',
     flexWrap: 'wrap',
-    marginBottom: '20px',
+    marginBottom: '20px'
 };
 
 const statCardStyle = {
@@ -419,7 +508,7 @@ const statCardStyle = {
     border: '1px solid #30363d',
     borderRadius: '6px',
     padding: '12px 20px',
-    minWidth: '120px',
+    minWidth: '120px'
 };
 
 const sectionTitleStyle = {
@@ -428,17 +517,17 @@ const sectionTitleStyle = {
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
     marginTop: '20px',
-    marginBottom: '8px',
+    marginBottom: '8px'
 };
 
 const tableStyle = {
     width: '100%',
     borderCollapse: 'collapse',
-    fontSize: '0.85rem',
+    fontSize: '0.85rem'
 };
 
 const theadStyle = {
-    backgroundColor: '#21262d',
+    backgroundColor: '#21262d'
 };
 
 const thStyle = {
@@ -449,20 +538,20 @@ const thStyle = {
     borderBottom: '1px solid #30363d',
     fontSize: '0.8rem',
     textTransform: 'uppercase',
-    letterSpacing: '0.04em',
+    letterSpacing: '0.04em'
 };
 
 const tdStyle = {
     padding: '6px 12px',
     color: '#f0f6fc',
-    borderBottom: '1px solid #21262d',
+    borderBottom: '1px solid #21262d'
 };
 
 const tdCenterStyle = {
     ...tdStyle,
     textAlign: 'center',
     color: '#8b949e',
-    padding: '20px',
+    padding: '20px'
 };
 
 const rowEvenStyle = { backgroundColor: '#0d1117' };
@@ -472,7 +561,7 @@ const paginationStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '12px',
+    marginTop: '12px'
 };
 
 const pageBtnStyle = {
@@ -482,7 +571,7 @@ const pageBtnStyle = {
     borderRadius: '4px',
     padding: '5px 14px',
     cursor: 'pointer',
-    fontSize: '0.85rem',
+    fontSize: '0.85rem'
 };
 
 const linkBtnStyle = {
@@ -492,13 +581,13 @@ const linkBtnStyle = {
     borderRadius: '4px',
     padding: '3px 10px',
     cursor: 'pointer',
-    fontSize: '0.8rem',
+    fontSize: '0.8rem'
 };
 
 const loadingStyle = {
     color: '#8b949e',
     padding: '20px',
-    textAlign: 'center',
+    textAlign: 'center'
 };
 
 const errorStyle = {
@@ -506,7 +595,7 @@ const errorStyle = {
     padding: '12px',
     backgroundColor: '#1c1c1c',
     borderRadius: '4px',
-    border: '1px solid #f85149',
+    border: '1px solid #f85149'
 };
 
 const inputStyle = {
@@ -517,7 +606,7 @@ const inputStyle = {
     padding: '5px 10px',
     fontSize: '0.85rem',
     outline: 'none',
-    flex: 1,
+    flex: 1
 };
 
 StatsPage.displayName = 'StatsPage';

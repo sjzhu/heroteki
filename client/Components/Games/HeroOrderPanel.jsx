@@ -7,7 +7,7 @@
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { sendSocketMessage } from '../../redux/actions';
 
 const ITEM_TYPE_HERO = 'sotm_hero';
@@ -59,9 +59,7 @@ const DraggableHeroRow = ({ deck, index, moveHero, isHost }) => {
                 userSelect: 'none'
             }}
         >
-            <span style={{ color: '#888', fontSize: '12px', minWidth: '20px' }}>
-                {index + 1}.
-            </span>
+            <span style={{ color: '#888', fontSize: '12px', minWidth: '20px' }}>{index + 1}.</span>
             <span style={{ flex: 1 }}>
                 {deck.name}
                 {deck.version && (
@@ -70,9 +68,7 @@ const DraggableHeroRow = ({ deck, index, moveHero, isHost }) => {
                     </span>
                 )}
             </span>
-            {isHost && (
-                <span style={{ color: '#555', fontSize: '12px' }}>&#8597;</span>
-            )}
+            {isHost && <span style={{ color: '#555', fontSize: '12px' }}>&#8597;</span>}
         </div>
     );
 };
@@ -132,7 +128,14 @@ const HeroOrderPanel = ({ currentGame, user }) => {
     const getDeckDisplayName = (deckId) => deckId;
 
     return (
-        <div style={{ marginTop: '16px', padding: '12px', background: '#1a1a1a', borderRadius: '6px' }}>
+        <div
+            style={{
+                marginTop: '16px',
+                padding: '12px',
+                background: '#1a1a1a',
+                borderRadius: '6px'
+            }}
+        >
             <h4 style={{ marginBottom: '8px' }}>
                 Hero Turn Order
                 {isConfirmed && (
@@ -145,7 +148,7 @@ const HeroOrderPanel = ({ currentGame, user }) => {
             {isConfirmed ? (
                 // Read-only numbered list
                 <ol style={{ paddingLeft: '20px', margin: 0 }}>
-                    {orderedDecks.map((entry, i) => (
+                    {orderedDecks.map((entry) => (
                         <li key={entry.deckId} style={{ padding: '4px 0', color: '#ccc' }}>
                             {getDeckDisplayName(entry.deckId)}{' '}
                             <span style={{ color: '#888', fontSize: '0.85em' }}>
@@ -172,12 +175,7 @@ const HeroOrderPanel = ({ currentGame, user }) => {
                         />
                     ))}
                     {isHost && orderedDecks.length > 0 && (
-                        <Button
-                            variant='success'
-                            size='sm'
-                            className='mt-2'
-                            onClick={confirmOrder}
-                        >
+                        <Button variant='success' size='sm' className='mt-2' onClick={confirmOrder}>
                             Confirm Order
                         </Button>
                     )}

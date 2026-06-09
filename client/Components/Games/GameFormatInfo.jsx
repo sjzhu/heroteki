@@ -13,7 +13,8 @@ const GameFormatInfo = ({ gameType: gameFormat }) => {
                     <a
                         className='format-info-link'
                         target='blank'
-                        href='https://jaysonsethlindley.medium.com/first-adventure-dueling-decks-from-the-ashes-reborn-master-set-1d82917881fb'>
+                        href='https://jaysonsethlindley.medium.com/first-adventure-dueling-decks-from-the-ashes-reborn-master-set-1d82917881fb'
+                    >
                         this article
                     </a>
                 </AlertPanel>
@@ -64,21 +65,23 @@ const GameFormatInfo = ({ gameType: gameFormat }) => {
         case 'survival':
             return (
                 <AlertPanel type='info'>
-                    <strong>Survival</strong> See how long you can last against an increasingly difficult chimera opponent.
+                    <strong>Survival</strong> See how long you can last against an increasingly
+                    difficult chimera opponent.
                 </AlertPanel>
             );
         case 'hl2pvp':
             return (
                 <AlertPanel type='info'>
-                    <strong>Heroic Level 2</strong> Construct a deck using the PvE campaign rules for Heroic Level 2!
+                    <strong>Heroic Level 2</strong> Construct a deck using the PvE campaign rules
+                    for Heroic Level 2!
                 </AlertPanel>
             );
         case 'onecollection':
             return (
                 <AlertPanel type='info'>
-                    <strong>One Collection Battlebox</strong> NoSuchMethod&apos;s One Collection Battlebox format. Pre-built
-                    decks where each pb has access to both uniques. Using all cards released at the
-                    end of the Red Rains cycle.
+                    <strong>One Collection Battlebox</strong> NoSuchMethod&apos;s One Collection
+                    Battlebox format. Pre-built decks where each pb has access to both uniques.
+                    Using all cards released at the end of the Red Rains cycle.
                 </AlertPanel>
             );
     }

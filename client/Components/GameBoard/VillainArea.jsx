@@ -26,7 +26,7 @@ const TokenBadges = ({ tokens }) => {
                         borderRadius: '3px',
                         padding: '1px 5px',
                         fontSize: '0.7rem',
-                        whiteSpace: 'nowrap',
+                        whiteSpace: 'nowrap'
                     }}
                 >
                     {label} ×{count}
@@ -78,9 +78,7 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
         <div style={areaStyle(isActiveTurn)}>
             <div style={headerStyle}>
                 <span style={titleStyle}>VILLAIN</span>
-                {villain.deckId && (
-                    <span style={deckIdStyle}>{villain.deckId}</span>
-                )}
+                {villain.deckId && <span style={deckIdStyle}>{villain.deckId}</span>}
                 {isActiveTurn && <span style={activeBadgeStyle}>ACTIVE</span>}
             </div>
 
@@ -97,14 +95,25 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
                                 <img
                                     src={charCard.imageUrl}
                                     alt={charCard.name}
-                                    style={{ width: '60px', height: '84px', objectFit: 'cover', borderRadius: '3px' }}
+                                    style={{
+                                        width: '60px',
+                                        height: '84px',
+                                        objectFit: 'cover',
+                                        borderRadius: '3px'
+                                    }}
                                 />
                             ) : (
                                 <div style={cardPlaceholderStyle}>{charCard.name}</div>
                             )}
                         </div>
                         <div style={{ padding: '4px' }}>
-                            <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#f8f9fa' }}>
+                            <div
+                                style={{
+                                    fontSize: '0.75rem',
+                                    fontWeight: 'bold',
+                                    color: '#f8f9fa'
+                                }}
+                            >
                                 {charCard.name}
                             </div>
                             <HpDial
@@ -113,9 +122,7 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
                                 onAdjust={(delta) => onAction('adjustHp', { controllerId, delta })}
                                 disabled={isGameOver}
                             />
-                            {villain.isFlipped && (
-                                <span style={flippedBadgeStyle}>FLIPPED</span>
-                            )}
+                            {villain.isFlipped && <span style={flippedBadgeStyle}>FLIPPED</span>}
                             <TokenBadges tokens={charCard.tokens} />
                         </div>
                     </div>
@@ -136,13 +143,20 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
                                     <img
                                         src={card.imageUrl}
                                         alt={card.name}
-                                        style={{ width: '56px', height: '78px', objectFit: 'cover', borderRadius: '3px' }}
+                                        style={{
+                                            width: '56px',
+                                            height: '78px',
+                                            objectFit: 'cover',
+                                            borderRadius: '3px'
+                                        }}
                                     />
                                 ) : (
                                     <div style={cardPlaceholderStyle}>{card.name}</div>
                                 )}
                                 <div style={{ padding: '2px 4px' }}>
-                                    <div style={{ fontSize: '0.65rem', color: '#f8f9fa' }}>{card.name}</div>
+                                    <div style={{ fontSize: '0.65rem', color: '#f8f9fa' }}>
+                                        {card.name}
+                                    </div>
                                     {card.maxHp !== null && (
                                         <HpDial
                                             hp={card.hp}
@@ -151,7 +165,7 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
                                                 onAction('modifyCard', {
                                                     cardId: card.id,
                                                     controllerId,
-                                                    updates: { hp: (card.hp || 0) + delta },
+                                                    updates: { hp: (card.hp || 0) + delta }
                                                 })
                                             }
                                             disabled={isGameOver}
@@ -177,7 +191,10 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
                         </button>
                         <button
                             style={actionBtnStyle}
-                            onClick={() => !isGameOver && onAction('shuffleDeck', { controllerId, zoneId: 'deck' })}
+                            onClick={() =>
+                                !isGameOver &&
+                                onAction('shuffleDeck', { controllerId, zoneId: 'deck' })
+                            }
                             disabled={isGameOver}
                         >
                             Shuffle
@@ -227,7 +244,12 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
                 controllerId={controllerId}
                 zoneId='deck'
                 onMoveToHand={(cardId, cid, zoneId) =>
-                    onAction('moveCard', { cardId, fromZone: zoneId, toZone: 'hand', controllerId: cid })
+                    onAction('moveCard', {
+                        cardId,
+                        fromZone: zoneId,
+                        toZone: 'hand',
+                        controllerId: cid
+                    })
                 }
                 onClose={() => setDeckSearchOpen(false)}
             />
@@ -241,14 +263,14 @@ const areaStyle = (isActive) => ({
     borderRadius: '6px',
     padding: '8px',
     backgroundColor: '#212529',
-    marginBottom: '4px',
+    marginBottom: '4px'
 });
 
 const headerStyle = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    marginBottom: '6px',
+    marginBottom: '6px'
 };
 
 const titleStyle = {
@@ -256,12 +278,12 @@ const titleStyle = {
     fontWeight: 'bold',
     color: '#adb5bd',
     textTransform: 'uppercase',
-    letterSpacing: '0.08em',
+    letterSpacing: '0.08em'
 };
 
 const deckIdStyle = {
     fontSize: '0.8rem',
-    color: '#f8f9fa',
+    color: '#f8f9fa'
 };
 
 const activeBadgeStyle = {
@@ -270,7 +292,7 @@ const activeBadgeStyle = {
     borderRadius: '3px',
     padding: '1px 6px',
     fontSize: '0.7rem',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
 };
 
 const flippedBadgeStyle = {
@@ -281,14 +303,14 @@ const flippedBadgeStyle = {
     padding: '1px 5px',
     fontSize: '0.65rem',
     fontWeight: 'bold',
-    margin: '2px 0',
+    margin: '2px 0'
 };
 
 const contentRowStyle = {
     display: 'flex',
     gap: '8px',
     alignItems: 'flex-start',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
 };
 
 const charCardStyle = {
@@ -297,18 +319,18 @@ const charCardStyle = {
     borderRadius: '4px',
     backgroundColor: '#1a1d20',
     width: '80px',
-    flexShrink: 0,
+    flexShrink: 0
 };
 
 const playAreaStyle = {
     flex: 1,
-    minWidth: '120px',
+    minWidth: '120px'
 };
 
 const cardRowStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: '4px',
+    gap: '4px'
 };
 
 const playCardStyle = {
@@ -316,7 +338,7 @@ const playCardStyle = {
     border: '1px solid #495057',
     borderRadius: '4px',
     backgroundColor: '#1a1d20',
-    width: '72px',
+    width: '72px'
 };
 
 const cardPlaceholderStyle = {
@@ -330,31 +352,31 @@ const cardPlaceholderStyle = {
     fontSize: '0.6rem',
     color: '#adb5bd',
     textAlign: 'center',
-    padding: '4px',
+    padding: '4px'
 };
 
 const cardNameStyle = {
-    textAlign: 'center',
+    textAlign: 'center'
 };
 
 const pileColumnStyle = {
     display: 'flex',
     flexDirection: 'column',
     gap: '4px',
-    minWidth: '80px',
+    minWidth: '80px'
 };
 
 const pileBoxStyle = {
     border: '1px solid #495057',
     borderRadius: '4px',
     padding: '6px',
-    backgroundColor: '#1a1d20',
+    backgroundColor: '#1a1d20'
 };
 
 const zoneHeaderStyle = {
     fontSize: '0.7rem',
     color: '#adb5bd',
-    marginBottom: '4px',
+    marginBottom: '4px'
 };
 
 const actionBtnStyle = {
@@ -367,7 +389,7 @@ const actionBtnStyle = {
     padding: '3px 0',
     cursor: 'pointer',
     fontSize: '0.7rem',
-    marginBottom: '2px',
+    marginBottom: '2px'
 };
 
 export default VillainArea;

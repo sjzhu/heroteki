@@ -31,7 +31,9 @@ function Register() {
     useEffect(() => {
         let tId;
         if (accountRegistered) {
-            setSuccessMessage(t('Your account was successfully registered.  You can now proceed to login.'));
+            setSuccessMessage(
+                t('Your account was successfully registered.  You can now proceed to login.')
+            );
             tId = setTimeout(() => navigate('/login'), 2000);
         }
 
@@ -40,20 +42,34 @@ function Register() {
 
     const onRegister = useCallback(
         (state) => {
-            dispatch(actions.registerAccount({ username: state.username, password: state.password, email: state.email }));
+            dispatch(
+                actions.registerAccount({
+                    username: state.username,
+                    password: state.password,
+                    email: state.email
+                })
+            );
         },
         [dispatch]
     );
 
-    const errorBar = apiSuccess === false ? <AlertPanel type='error' message={t(apiMessage)} /> : null;
-    const successBar = successMessage ? <AlertPanel type='success' message={t(successMessage)} /> : null;
+    const errorBar =
+        apiSuccess === false ? <AlertPanel type='error' message={t(apiMessage)} /> : null;
+    const successBar = successMessage ? (
+        <AlertPanel type='success' message={t(successMessage)} />
+    ) : null;
 
     return (
         <div className='col-md-8 col-md-offset-2'>
             {errorBar}
             {successBar}
             <Panel title={t('Register an account')}>
-                <Form name='register' apiLoading={apiLoading} buttonText='Register' onSubmit={onRegister} />
+                <Form
+                    name='register'
+                    apiLoading={apiLoading}
+                    buttonText='Register'
+                    onSubmit={onRegister}
+                />
             </Panel>
         </div>
     );

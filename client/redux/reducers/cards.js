@@ -80,8 +80,12 @@ function processDecks(decks, state) {
         const maxThree = !deck.cards.some((c) => c.count > 3);
         let aspectCheck = true;
         if (deck.mode === 'chimera') {
-            const oneCount = deck.cards.filter(c => c.card.blood === 1).reduce((acc, c) => acc + c.count, 0);
-            const twoCount = deck.cards.filter(c => c.card.blood === 2).reduce((acc, c) => acc + c.count, 0);
+            const oneCount = deck.cards
+                .filter((c) => c.card.blood === 1)
+                .reduce((acc, c) => acc + c.count, 0);
+            const twoCount = deck.cards
+                .filter((c) => c.card.blood === 2)
+                .reduce((acc, c) => acc + c.count, 0);
             aspectCheck = oneCount === 9 && twoCount === 9;
         }
         const legalToPlay =
@@ -225,7 +229,6 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
 
                 processDecks(action.response.decks, state);
                 console.log('standalone decks processed');
-
             }
 
             newState = Object.assign({}, state, {
@@ -240,7 +243,7 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
                 processDecks(action.response.decks, state);
                 console.log('precon decks processed');
             }
-            var groupedDecks = action.response.decks.groupBy(d => d.groupName);
+            var groupedDecks = action.response.decks.groupBy((d) => d.groupName);
 
             newState = Object.assign({}, state, {
                 standaloneDecks: groupedDecks.reborn || [],
@@ -273,7 +276,6 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
 
                 processDecks(action.response.decks, state);
                 console.log('firstadventure decks processed');
-
             }
 
             newState = Object.assign({}, state, {
@@ -287,7 +289,6 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
 
                 processDecks(action.response.decks, state);
                 console.log('pve decks processed');
-
             }
 
             newState = Object.assign({}, state, {
@@ -301,7 +302,6 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
 
                 processDecks(action.response.decks, state);
                 console.log('chimera decks processed');
-
             }
 
             newState = Object.assign({}, state, {
@@ -315,7 +315,6 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
 
                 processDecks(action.response.decks, state);
                 console.log('dualduel decks processed');
-
             }
 
             newState = Object.assign({}, state, {
@@ -329,7 +328,6 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
 
                 processDecks(action.response.decks, state);
                 console.log('OCB decks processed');
-
             }
 
             newState = Object.assign({}, state, {
@@ -447,7 +445,7 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
                 deckSaved: false
             });
 
-            var card = newState.selectedDeck.cards.find(c => c.id === action.card.id);
+            var card = newState.selectedDeck.cards.find((c) => c.id === action.card.id);
             card.ff = !card.ff;
 
             if (newState.selectedDeck) {
@@ -522,7 +520,9 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
                 deckDeleted: true
             });
 
-            var chimeraDeleted = !!state.myChimeraDecks.find(d => d._id === action.response.deckId);
+            var chimeraDeleted = !!state.myChimeraDecks.find(
+                (d) => d._id === action.response.deckId
+            );
             newState.decks = newState.decks.filter((deck) => {
                 return deck._id !== action.response.deckId;
             });

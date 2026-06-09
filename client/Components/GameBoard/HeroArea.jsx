@@ -27,7 +27,7 @@ const TokenBadges = ({ tokens }) => {
                         borderRadius: '3px',
                         padding: '1px 5px',
                         fontSize: '0.7rem',
-                        whiteSpace: 'nowrap',
+                        whiteSpace: 'nowrap'
                     }}
                 >
                     {label} ×{count}
@@ -101,7 +101,12 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                                 <img
                                     src={charCard.imageUrl}
                                     alt={charCard.name}
-                                    style={{ width: '60px', height: '84px', objectFit: 'cover', borderRadius: '3px' }}
+                                    style={{
+                                        width: '60px',
+                                        height: '84px',
+                                        objectFit: 'cover',
+                                        borderRadius: '3px'
+                                    }}
                                 />
                             ) : (
                                 <div style={cardPlaceholderStyle}>{charCard.name}</div>
@@ -111,7 +116,14 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                             )}
                         </div>
                         <div style={{ flex: 1, paddingLeft: '6px' }}>
-                            <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#f8f9fa', marginBottom: '4px' }}>
+                            <div
+                                style={{
+                                    fontSize: '0.8rem',
+                                    fontWeight: 'bold',
+                                    color: '#f8f9fa',
+                                    marginBottom: '4px'
+                                }}
+                            >
                                 {charCard.name}
                             </div>
                             <HpDial
@@ -143,13 +155,20 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                                     <img
                                         src={card.imageUrl}
                                         alt={card.name}
-                                        style={{ width: '56px', height: '78px', objectFit: 'cover', borderRadius: '3px' }}
+                                        style={{
+                                            width: '56px',
+                                            height: '78px',
+                                            objectFit: 'cover',
+                                            borderRadius: '3px'
+                                        }}
                                     />
                                 ) : (
                                     <div style={cardPlaceholderStyle}>{card.name}</div>
                                 )}
                                 <div style={{ padding: '2px 4px' }}>
-                                    <div style={{ fontSize: '0.65rem', color: '#f8f9fa' }}>{card.name}</div>
+                                    <div style={{ fontSize: '0.65rem', color: '#f8f9fa' }}>
+                                        {card.name}
+                                    </div>
                                     {card.maxHp !== null && (
                                         <HpDial
                                             hp={card.hp}
@@ -158,7 +177,7 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                                                 onAction('modifyCard', {
                                                     cardId: card.id,
                                                     controllerId,
-                                                    updates: { hp: (card.hp || 0) + delta },
+                                                    updates: { hp: (card.hp || 0) + delta }
                                                 })
                                             }
                                             disabled={isGameOver}
@@ -176,7 +195,9 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                     <div style={zoneHeaderStyle}>
                         Hand ({hand.length})
                         {isMe && isActiveTurn && !isGameOver && (
-                            <span style={{ marginLeft: '6px', fontSize: '0.65rem', color: '#0d6efd' }}>
+                            <span
+                                style={{ marginLeft: '6px', fontSize: '0.65rem', color: '#0d6efd' }}
+                            >
                                 Click to play
                             </span>
                         )}
@@ -186,7 +207,11 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                             if (card.faceDown) {
                                 // Show card back for other players' cards
                                 return (
-                                    <div key={idx} style={faceDownCardStyle} title='Card (face down)'>
+                                    <div
+                                        key={idx}
+                                        style={faceDownCardStyle}
+                                        title='Card (face down)'
+                                    >
                                         <div style={cardBackStyle}></div>
                                     </div>
                                 );
@@ -196,24 +221,38 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                                     key={card.id}
                                     style={{
                                         ...handCardStyle,
-                                        cursor: isMe && isActiveTurn && !isGameOver ? 'pointer' : 'context-menu',
-                                        opacity: isGameOver ? 0.6 : 1,
+                                        cursor:
+                                            isMe && isActiveTurn && !isGameOver
+                                                ? 'pointer'
+                                                : 'context-menu',
+                                        opacity: isGameOver ? 0.6 : 1
                                     }}
                                     onClick={() => handlePlayCard(card.id)}
                                     onContextMenu={(e) => handleContextMenu(e, card, 'hand')}
-                                    title={isMe && isActiveTurn ? `${card.name} — click to play, right-click for options` : card.name}
+                                    title={
+                                        isMe && isActiveTurn
+                                            ? `${card.name} — click to play, right-click for options`
+                                            : card.name
+                                    }
                                 >
                                     {card.imageUrl ? (
                                         <img
                                             src={card.imageUrl}
                                             alt={card.name}
-                                            style={{ width: '56px', height: '78px', objectFit: 'cover', borderRadius: '3px' }}
+                                            style={{
+                                                width: '56px',
+                                                height: '78px',
+                                                objectFit: 'cover',
+                                                borderRadius: '3px'
+                                            }}
                                         />
                                     ) : (
                                         <div style={cardPlaceholderStyle}>{card.name}</div>
                                     )}
                                     <div style={{ padding: '2px 4px' }}>
-                                        <div style={{ fontSize: '0.65rem', color: '#f8f9fa' }}>{card.name}</div>
+                                        <div style={{ fontSize: '0.65rem', color: '#f8f9fa' }}>
+                                            {card.name}
+                                        </div>
                                         {card.keywords && card.keywords.length > 0 && (
                                             <div style={{ fontSize: '0.6rem', color: '#adb5bd' }}>
                                                 {card.keywords.join(', ')}
@@ -232,14 +271,20 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                         <div style={zoneHeaderStyle}>Deck ({deck.length})</div>
                         <button
                             style={actionBtnStyle}
-                            onClick={() => !isGameOver && onAction('drawCard', { heroId: controllerId, count: 1 })}
+                            onClick={() =>
+                                !isGameOver &&
+                                onAction('drawCard', { heroId: controllerId, count: 1 })
+                            }
                             disabled={isGameOver}
                         >
                             Draw 1
                         </button>
                         <button
                             style={actionBtnStyle}
-                            onClick={() => !isGameOver && onAction('shuffleDeck', { controllerId, zoneId: 'deck' })}
+                            onClick={() =>
+                                !isGameOver &&
+                                onAction('shuffleDeck', { controllerId, zoneId: 'deck' })
+                            }
                             disabled={isGameOver}
                         >
                             Shuffle
@@ -270,9 +315,7 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
             </div>
 
             {/* Game over overlay on play areas */}
-            {isGameOver && (
-                <div style={gameOverOverlayStyle} />
-            )}
+            {isGameOver && <div style={gameOverOverlayStyle} />}
 
             {/* Context Menu */}
             {contextMenu && (
@@ -294,7 +337,12 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                 controllerId={controllerId}
                 zoneId='deck'
                 onMoveToHand={(cardId, cid, zoneId) =>
-                    onAction('moveCard', { cardId, fromZone: zoneId, toZone: 'hand', controllerId: cid })
+                    onAction('moveCard', {
+                        cardId,
+                        fromZone: zoneId,
+                        toZone: 'hand',
+                        controllerId: cid
+                    })
                 }
                 onClose={() => setDeckSearchOpen(false)}
             />
@@ -311,7 +359,7 @@ const areaStyle = (borderColor) => ({
     minWidth: '200px',
     maxWidth: '280px',
     position: 'relative',
-    flexShrink: 0,
+    flexShrink: 0
 });
 
 const headerStyle = {
@@ -319,7 +367,7 @@ const headerStyle = {
     alignItems: 'center',
     gap: '6px',
     marginBottom: '6px',
-    flexWrap: 'wrap',
+    flexWrap: 'wrap'
 };
 
 const titleStyle = {
@@ -327,13 +375,13 @@ const titleStyle = {
     fontWeight: 'bold',
     color: '#adb5bd',
     textTransform: 'uppercase',
-    letterSpacing: '0.08em',
+    letterSpacing: '0.08em'
 };
 
 const nameStyle = {
     fontSize: '0.85rem',
     color: '#f8f9fa',
-    fontWeight: '500',
+    fontWeight: '500'
 };
 
 const meBadgeStyle = {
@@ -342,7 +390,7 @@ const meBadgeStyle = {
     borderRadius: '3px',
     padding: '1px 6px',
     fontSize: '0.7rem',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
 };
 
 const activeBadgeStyle = {
@@ -351,7 +399,7 @@ const activeBadgeStyle = {
     borderRadius: '3px',
     padding: '1px 6px',
     fontSize: '0.7rem',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
 };
 
 const incapBadgeStyle = {
@@ -359,20 +407,20 @@ const incapBadgeStyle = {
     color: '#fff',
     borderRadius: '3px',
     padding: '1px 6px',
-    fontSize: '0.7rem',
+    fontSize: '0.7rem'
 };
 
 const contentColStyle = {
     display: 'flex',
     flexDirection: 'column',
-    gap: '4px',
+    gap: '4px'
 };
 
 const charRowStyle = {
     display: 'flex',
     gap: '8px',
     alignItems: 'flex-start',
-    marginBottom: '6px',
+    marginBottom: '6px'
 };
 
 const charCardStyle = {
@@ -382,7 +430,7 @@ const charCardStyle = {
     backgroundColor: '#1a1d20',
     width: '68px',
     flexShrink: 0,
-    position: 'relative',
+    position: 'relative'
 };
 
 const incapOverlayStyle = {
@@ -397,19 +445,19 @@ const incapOverlayStyle = {
     color: '#dc3545',
     borderRadius: '4px',
     textAlign: 'center',
-    letterSpacing: '0.05em',
+    letterSpacing: '0.05em'
 };
 
 const zoneHeaderStyle = {
     fontSize: '0.7rem',
     color: '#adb5bd',
-    marginBottom: '4px',
+    marginBottom: '4px'
 };
 
 const cardRowStyle = {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: '4px',
+    gap: '4px'
 };
 
 const playCardStyle = {
@@ -417,30 +465,31 @@ const playCardStyle = {
     border: '1px solid #495057',
     borderRadius: '4px',
     backgroundColor: '#1a1d20',
-    width: '68px',
+    width: '68px'
 };
 
 const handCardStyle = {
     border: '1px solid #495057',
     borderRadius: '4px',
     backgroundColor: '#1a1d20',
-    width: '68px',
+    width: '68px'
 };
 
 const faceDownCardStyle = {
     width: '68px',
     height: '102px',
     borderRadius: '4px',
-    overflow: 'hidden',
+    overflow: 'hidden'
 };
 
 const cardBackStyle = {
     width: '100%',
     height: '100%',
     backgroundColor: '#1a1d20',
-    background: 'repeating-linear-gradient(45deg, #2c3038 0px, #2c3038 4px, #1a1d20 4px, #1a1d20 8px)',
+    background:
+        'repeating-linear-gradient(45deg, #2c3038 0px, #2c3038 4px, #1a1d20 4px, #1a1d20 8px)',
     borderRadius: '4px',
-    border: '1px solid #495057',
+    border: '1px solid #495057'
 };
 
 const cardPlaceholderStyle = {
@@ -454,12 +503,12 @@ const cardPlaceholderStyle = {
     fontSize: '0.6rem',
     color: '#adb5bd',
     textAlign: 'center',
-    padding: '4px',
+    padding: '4px'
 };
 
 const pileRowStyle = {
     display: 'flex',
-    gap: '4px',
+    gap: '4px'
 };
 
 const pileBoxStyle = {
@@ -467,7 +516,7 @@ const pileBoxStyle = {
     border: '1px solid #495057',
     borderRadius: '4px',
     padding: '6px',
-    backgroundColor: '#1a1d20',
+    backgroundColor: '#1a1d20'
 };
 
 const actionBtnStyle = {
@@ -480,7 +529,7 @@ const actionBtnStyle = {
     padding: '3px 0',
     cursor: 'pointer',
     fontSize: '0.7rem',
-    marginBottom: '2px',
+    marginBottom: '2px'
 };
 
 const gameOverOverlayStyle = {
@@ -489,7 +538,7 @@ const gameOverOverlayStyle = {
     backgroundColor: 'rgba(0,0,0,0.4)',
     borderRadius: '6px',
     pointerEvents: 'none',
-    zIndex: 10,
+    zIndex: 10
 };
 
 export default HeroArea;

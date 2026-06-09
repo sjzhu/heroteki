@@ -109,7 +109,6 @@ class ThenAbility extends BaseAbility {
         }
     }
 
-
     queueThenAbility(context, events = []) {
         let then = this.properties.then;
         if (then) {
@@ -122,14 +121,18 @@ class ThenAbility extends BaseAbility {
                     // then function call may return undefined
                     then &&
                     (then.alwaysTriggers ||
-                        (events.length > 0 && events.every((event) => !event.cancelled)))) {
+                        (events.length > 0 && events.every((event) => !event.cancelled)))
+                ) {
                     let thenAbility = new ThenAbility(this.game, this.card, then);
                     let thenContext = thenAbility.createContext(context.player, context);
                     if (events && events.length > 0) {
                         thenContext.preThenEvents = events;
                         thenContext.preThenEvent = events[0];
                     }
-                    if (!thenAbility.meetsRequirements(thenContext) && thenAbility.condition(thenContext)) {
+                    if (
+                        !thenAbility.meetsRequirements(thenContext) &&
+                        thenAbility.condition(thenContext)
+                    ) {
                         this.game.resolveAbility(thenContext);
                     }
                 }

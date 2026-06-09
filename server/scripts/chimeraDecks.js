@@ -7,8 +7,8 @@ const collection = db.get('precon_decks');
 collection
     .find({ mode: 'chimera' })
     .then((result) => {
-        result.forEach(deck => {
+        result.forEach((deck) => {
             console.log(deck);
-        })
+        });
     })
     .then(() => db.close());

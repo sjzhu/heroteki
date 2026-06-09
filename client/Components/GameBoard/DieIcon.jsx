@@ -53,7 +53,9 @@ const DieIcon = ({ die, onClick, disableMouseOver, onMouseOut, onMouseOver, simp
             onMouseOut={!disableMouseOver ? onMouseOut : undefined}
             onClick={onClick}
         >
-            <span className={diceFont} title={description}>{readerSpan}</span>
+            <span className={diceFont} title={description}>
+                {readerSpan}
+            </span>
         </span>
     );
 };

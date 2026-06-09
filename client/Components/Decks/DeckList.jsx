@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { faLink, faLock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
@@ -56,7 +57,10 @@ const DeckList = ({ decks, onDeckSelected, showWinRate, allowInvalidSelection })
                             <div className='decklist-entry'>
                                 {/* <div className={`decklist-entry-image ${row.phoenixborn[0].id}`}></div> */}
                                 <div>
-                                    <button className='decklist-title' tabIndex={0}>{d.name}</button>&nbsp;
+                                    <button className='decklist-title' tabIndex={0}>
+                                        {d.name}
+                                    </button>
+                                    &nbsp;
                                     {icon}
                                     <br />
                                     {dice}

@@ -17,12 +17,7 @@ function TypeaheadLookup({ onValueSelected, values }) {
 
     return (
         <div>
-            <Typeahead
-                labelKey={'label'}
-                options={values}
-                dropup
-                onChange={handleChange}
-            />
+            <Typeahead labelKey={'label'} options={values} dropup onChange={handleChange} />
             <button type='button' onClick={handleDoneClick} className='btn btn-primary'>
                 Done
             </button>

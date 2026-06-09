@@ -37,7 +37,14 @@ const PendingGamePlayers = ({ currentGame, user }) => {
 
                             {/* Hero badges */}
                             {myHeroIds.length > 0 ? (
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        gap: '4px',
+                                        alignItems: 'center'
+                                    }}
+                                >
                                     {myHeroIds.map((deckId) => (
                                         <span key={deckId} className='badge bg-info text-dark'>
                                             {deckId}
@@ -67,7 +74,8 @@ const PendingGamePlayers = ({ currentGame, user }) => {
                                     ))}
                                 </div>
                             ) : (
-                                isMe && !userIsSpectator && (
+                                isMe &&
+                                !userIsSpectator && (
                                     <span style={{ color: '#888', fontSize: '0.9em' }}>
                                         No heroes selected
                                     </span>
@@ -89,9 +97,7 @@ const PendingGamePlayers = ({ currentGame, user }) => {
                 );
             })}
 
-            {showModal && (
-                <SotmHeroSelectModal onClose={() => setShowModal(false)} />
-            )}
+            {showModal && <SotmHeroSelectModal onClose={() => setShowModal(false)} />}
         </div>
     );
 };

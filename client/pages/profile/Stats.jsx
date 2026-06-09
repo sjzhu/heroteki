@@ -51,7 +51,8 @@ function Stats() {
             const entries = Object.values(stats);
             totalWins = entries.reduce((sum, s) => sum + (s.wins || 0), 0);
             totalLosses = entries.reduce((sum, s) => sum + (s.losses || 0), 0);
-            totalPlayed = entries.reduce((sum, s) => sum + (s.total || 0), 0) || totalWins + totalLosses;
+            totalPlayed =
+                entries.reduce((sum, s) => sum + (s.total || 0), 0) || totalWins + totalLosses;
         }
 
         const winRate = totalPlayed > 0 ? Math.round((totalWins / totalPlayed) * 100) : 0;

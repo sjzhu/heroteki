@@ -15,7 +15,6 @@ const GameConfiguration = ({ optionSettings, onOptionSettingToggle }) => {
     const leftMode = useSelector((state) => state.account.user.settings.optionSettings?.leftMode);
     const selectedCardSize = useSelector((state) => state.account.user.settings.cardSize);
 
-
     return (
         <div>
             <Form>
@@ -82,7 +81,8 @@ const GameConfiguration = ({ optionSettings, onOptionSettingToggle }) => {
                                 onOptionSettingToggle('noCardZoom', event.target.checked)
                             }
                         />
-                    </Form.Group>                    <Form.Group>
+                    </Form.Group>{' '}
+                    <Form.Group>
                         <Form.Check
                             id='manualAlts'
                             name='gameOptions.manualAlts'
@@ -133,7 +133,6 @@ const GameConfiguration = ({ optionSettings, onOptionSettingToggle }) => {
                         />
                         <br />
                         {optionSettings.bluffTimer} seconds
-
                     </div>
                     <br />
                     <div className='alertTimer'>
@@ -148,7 +147,8 @@ const GameConfiguration = ({ optionSettings, onOptionSettingToggle }) => {
                             onChange={(event) =>
                                 onOptionSettingToggle('alertTimer', event.target.value)
                             }
-                        />< br />
+                        />
+                        <br />
                         {optionSettings.alertTimer} seconds
                     </div>
                     <br />

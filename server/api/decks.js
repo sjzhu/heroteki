@@ -8,6 +8,7 @@ const AshesGameService = require('../services/AshesGameService');
 const configService = new ConfigService();
 
 const deckService = new AshesDeckService(configService);
+// eslint-disable-next-line no-unused-vars
 const gameService = new AshesGameService(configService);
 
 module.exports.init = function (server) {
@@ -188,13 +189,11 @@ module.exports.init = function (server) {
 
     // SotMDE Phase 6.6: Ashes.live deck import route disabled. Returns 404.
     // File retained for test compatibility. Use /api/sotm/decks for SotMDE decks.
-    server.get(
-        '/api/decks',
-        passport.authenticate('jwt', { session: false }),
-        function (req, res) {
-            return res.status(404).send({ success: false, message: 'Ashes deck import not available in SotMDE' });
-        }
-    );
+    server.get('/api/decks', passport.authenticate('jwt', { session: false }), function (req, res) {
+        return res
+            .status(404)
+            .send({ success: false, message: 'Ashes deck import not available in SotMDE' });
+    });
 
     server.get(
         '/api/decks/chimera',
@@ -204,7 +203,12 @@ module.exports.init = function (server) {
             let decks = [];
 
             if (numDecks > 0) {
-                const rawDecks = await deckService.findByUserName(req.user.username, req.query, true, true);
+                const rawDecks = await deckService.findByUserName(
+                    req.user.username,
+                    req.query,
+                    true,
+                    true
+                );
                 decks = rawDecks.map((deck) => {
                     deck.played = 0;
                     deck.wins = 0;
@@ -289,7 +293,6 @@ module.exports.init = function (server) {
             res.send({ success: true, message: 'Saved' });
         })
     );
-
 
     server.post(
         '/api/decks',
@@ -385,7 +388,6 @@ module.exports.init = function (server) {
         })
     );
 
-
     server.put(
         '/api/decks/:id',
         passport.authenticate('jwt', { session: false }),
@@ -469,4 +471,3 @@ function getWinrateOrder(a, b) {
         else return 1;
     }
 }
-

@@ -29,7 +29,9 @@ for (let i = 0; i < args.length; i++) {
             process.exit(1);
         }
     } else {
-        console.error('Too many arguments. Usage: node cardPlayStats.js [start_date] [end_date] [-solo] [-ranked]');
+        console.error(
+            'Too many arguments. Usage: node cardPlayStats.js [start_date] [end_date] [-solo] [-ranked]'
+        );
         process.exit(1);
     }
 }
@@ -64,7 +66,12 @@ if (start && end) {
 } else {
     dateMsg = 'for all dates';
 }
-console.info('Generating card play statistics...', dateMsg, includeSolo ? '(including solo games)' : '(excluding solo games)', ranked ? '(ranked games only)' : '(all game types)');
+console.info(
+    'Generating card play statistics...',
+    dateMsg,
+    includeSolo ? '(including solo games)' : '(excluding solo games)',
+    ranked ? '(ranked games only)' : '(all game types)'
+);
 
 gameService.games
     .find(findSpec)
@@ -79,14 +86,14 @@ gameService.games
                 return;
             }
 
-            let players = game.players.map(p => p.name);
+            let players = game.players.map((p) => p.name);
             let isSolo = game.solo || players.length !== 2;
             if (!includeSolo && isSolo) {
                 return; // Skip solo games if not including
             }
 
             let winner = game.winner;
-            let loser = isSolo ? null : players.find(p => p !== winner);
+            let loser = isSolo ? null : players.find((p) => p !== winner);
 
             let chat = game.chat;
             let cardsSeen = {};
@@ -121,7 +128,15 @@ gameService.games
 
             Object.keys(cardsSeen).forEach((cardName) => {
                 if (!cardStats[cardName]) {
-                    cardStats[cardName] = { totalGames: 0, winnerPlays: 0, loserPlays: 0, totalPlays: 0, otherPlays: 0, otherMessages: [], players: new Set() };
+                    cardStats[cardName] = {
+                        totalGames: 0,
+                        winnerPlays: 0,
+                        loserPlays: 0,
+                        totalPlays: 0,
+                        otherPlays: 0,
+                        otherMessages: [],
+                        players: new Set()
+                    };
                 }
 
                 cardStats[cardName].totalGames++;
@@ -136,16 +151,22 @@ gameService.games
                 cardStats[cardName].otherPlays += cardsSeen[cardName].otherPlays;
                 cardStats[cardName].totalPlays += cardsSeen[cardName].otherPlays;
                 cardStats[cardName].otherMessages.push(...cardsSeen[cardName].otherMessages);
-                cardsSeen[cardName].players.forEach((playerName) => cardStats[cardName].players.add(playerName));
+                cardsSeen[cardName].players.forEach((playerName) =>
+                    cardStats[cardName].players.add(playerName)
+                );
             });
         });
 
         // Generate CSV
-        let csv = 'Card Name,Total Games,Winner Plays,Loser Plays,Total Plays,Other Plays,Win %,Unique Players\n';
+        let csv =
+            'Card Name,Total Games,Winner Plays,Loser Plays,Total Plays,Other Plays,Win %,Unique Players\n';
         _.each(cardStats, (stats, cardName) => {
-            const winPercent = stats.totalGames > 0 ? Math.round((stats.winnerPlays / stats.totalGames) * 100) : 0;
+            const winPercent =
+                stats.totalGames > 0 ? Math.round((stats.winnerPlays / stats.totalGames) * 100) : 0;
             const uniquePlayerCount = stats.players.size;
-            csv += `"${cardName.replace(/"/g, '""')}",${stats.totalGames},${stats.winnerPlays},${stats.loserPlays},${stats.totalPlays},${stats.otherPlays},${winPercent},${uniquePlayerCount}\n`;
+            csv += `"${cardName.replace(/"/g, '""')}",${stats.totalGames},${stats.winnerPlays},${
+                stats.loserPlays
+            },${stats.totalPlays},${stats.otherPlays},${winPercent},${uniquePlayerCount}\n`;
         });
 
         fs.writeFileSync('card_play_stats.csv', csv);

@@ -24,7 +24,7 @@ const AuxZone = ({ zone, label, controllerId, onAction }) => {
         borderRadius: '4px',
         padding: '6px 8px',
         marginTop: '6px',
-        backgroundColor: '#1a1d20',
+        backgroundColor: '#1a1d20'
     };
 
     const labelStyle = {
@@ -32,21 +32,21 @@ const AuxZone = ({ zone, label, controllerId, onAction }) => {
         color: '#adb5bd',
         textTransform: 'uppercase',
         letterSpacing: '0.05em',
-        marginBottom: '4px',
+        marginBottom: '4px'
     };
 
     const rowStyle = {
         display: 'flex',
         gap: '8px',
         alignItems: 'center',
-        flexWrap: 'wrap',
+        flexWrap: 'wrap'
     };
 
     const pileStyle = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '2px',
+        gap: '2px'
     };
 
     const pileCountStyle = {
@@ -54,7 +54,7 @@ const AuxZone = ({ zone, label, controllerId, onAction }) => {
         borderRadius: '3px',
         padding: '2px 8px',
         fontSize: '0.75rem',
-        color: '#f8f9fa',
+        color: '#f8f9fa'
     };
 
     const smallBtnStyle = {
@@ -64,7 +64,7 @@ const AuxZone = ({ zone, label, controllerId, onAction }) => {
         border: 'none',
         color: '#f8f9fa',
         borderRadius: '3px',
-        cursor: 'pointer',
+        cursor: 'pointer'
     };
 
     return (

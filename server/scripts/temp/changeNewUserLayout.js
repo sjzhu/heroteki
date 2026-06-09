@@ -12,8 +12,7 @@ collection
         {
             $set: {
                 'settings.optionSettings.leftMode': true,
-                "settings.optionSettings.compactLayout": true
-
+                'settings.optionSettings.compactLayout': true
             }
         },
         { multi: true }

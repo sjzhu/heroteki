@@ -111,8 +111,8 @@ const UploadCardImage = () => {
                 <Panel title='Upload Card Image (Admin)'>
                     <p>Upload a card image for a specific card ID.</p>
                     <p>
-                        Accepted formats: JPEG, PNG, WebP. Max file size: 3 MB.
-                        The image will be stored in <code>/public/card-images/manual/</code>.
+                        Accepted formats: JPEG, PNG, WebP. Max file size: 3 MB. The image will be
+                        stored in <code>/public/card-images/manual/</code>.
                     </p>
 
                     {/* Card ID input with autocomplete */}
@@ -155,7 +155,13 @@ const UploadCardImage = () => {
                             <img
                                 src={previewUrl}
                                 alt='Card preview'
-                                style={{ maxWidth: '200px', maxHeight: '280px', objectFit: 'contain', border: '1px solid #555', borderRadius: '4px' }}
+                                style={{
+                                    maxWidth: '200px',
+                                    maxHeight: '280px',
+                                    objectFit: 'contain',
+                                    border: '1px solid #555',
+                                    borderRadius: '4px'
+                                }}
                             />
                         </div>
                     )}
@@ -163,8 +169,7 @@ const UploadCardImage = () => {
                     {error && <div className='alert alert-danger mb-3'>{error}</div>}
                     {result && (
                         <div className='alert alert-success mb-3'>
-                            <strong>Success!</strong> Image uploaded for card{' '}
-                            <code>{cardId}</code>.
+                            <strong>Success!</strong> Image uploaded for card <code>{cardId}</code>.
                             <br />
                             New URL:{' '}
                             <a href={result.imageUrl} target='_blank' rel='noopener noreferrer'>

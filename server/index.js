@@ -4,7 +4,7 @@ const UserService = require('./services/AshesUserService');
 const ConfigService = require('./services/ConfigService');
 const configService = new ConfigService();
 const express = require('express');
-const http = require("http");
+const http = require('http');
 const logger = require('./log.js');
 const basicAuth = require('express-basic-auth');
 const config = require('config');
@@ -18,10 +18,12 @@ async function runServer() {
     // base64-encoded without TLS. This can alternatively be applied at the
     // reverse-proxy level (nginx/Caddy) to cover both lobby and game node.
     if (config.get('privateMode')) {
-        app.use(basicAuth({
-            users: { [config.get('privateUser')]: config.get('privatePassword') },
-            challenge: true
-        }));
+        app.use(
+            basicAuth({
+                users: { [config.get('privateUser')]: config.get('privatePassword') },
+                challenge: true
+            })
+        );
     }
 
     let options = { configService: configService };

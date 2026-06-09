@@ -93,9 +93,7 @@ var customMatchers = {
                 var buttons = actual.currentPrompt().buttons;
                 var result = {};
 
-                result.pass = _.any(buttons, (button) =>
-                    util.equals(button.text, expected)
-                );
+                result.pass = _.any(buttons, (button) => util.equals(button.text, expected));
 
                 if (result.pass) {
                     result.message = `Expected ${actual.name} not to have prompt button "${expected}" but it did.`;
@@ -318,7 +316,7 @@ beforeEach(function () {
             if (this.player2.dicepool.length === 0) {
                 this.player2.dicepool = ['rage', 'rage', 'rage', 'rage', 'rage'];
             }
-            this.player2.dicepool.forEach(d => d.level = 'basic');
+            this.player2.dicepool.forEach((d) => (d.level = 'basic'));
         }
         this.player1.hand = options.player1.hand;
         this.player2.hand = options.player2.hand;

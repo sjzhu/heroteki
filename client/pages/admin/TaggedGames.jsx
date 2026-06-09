@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { loadLeague, loadTaggedGames } from '../../redux/actions';
@@ -84,7 +85,7 @@ const TaggedGames = () => {
                         />
                     </Form.Group>
                 </div>
-            </Form >
+            </Form>
             <Tabs>
                 <TabList>
                     <Tab>Standings</Tab>
@@ -97,8 +98,8 @@ const TaggedGames = () => {
                     <TaggedGameList />
                 </TabPanel>
             </Tabs>
-        </div >
+        </div>
     );
-}
+};
 
 export default TaggedGames;

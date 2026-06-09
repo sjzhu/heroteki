@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { Col, Dropdown, Row, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import './DeckSummary.scss';
@@ -65,15 +66,15 @@ const DeckSummary = ({ deck, editMode, allowEdit, onEdit, onCopy, onDelete, magi
     };
 
     const combinedCards = deck.cards.concat(deck.conjurations);
-    const cardCount = deck.cards.reduce((agg, val) => agg += val.count, 0);
+    const cardCount = deck.cards.reduce((agg, val) => (agg += val.count), 0);
     return (
         <Col className='deck-summary'>
             <div className='deck-cards-header'>
-                <ToggleButtonGroup name="radio" value={showCardPictures}>
+                <ToggleButtonGroup name='radio' value={showCardPictures}>
                     <ToggleButton
                         key={'rad-0'}
                         id={`radio-0`}
-                        type="radio"
+                        type='radio'
                         value={false}
                         onChange={(e) => setShowCardPictures(false)}
                         className='mini'
@@ -83,7 +84,7 @@ const DeckSummary = ({ deck, editMode, allowEdit, onEdit, onCopy, onDelete, magi
                     <ToggleButton
                         key={'rad-1'}
                         id={`radio-1`}
-                        type="radio"
+                        type='radio'
                         value={true}
                         onChange={(e) => setShowCardPictures(true)}
                         className='mini'
@@ -101,7 +102,8 @@ const DeckSummary = ({ deck, editMode, allowEdit, onEdit, onCopy, onDelete, magi
                                 className='def deck-edit-btn'
                                 id='dropdown-basic'
                             >
-                                <FontAwesomeIcon icon={faPen} />&nbsp;
+                                <FontAwesomeIcon icon={faPen} />
+                                &nbsp;
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu>
@@ -142,7 +144,9 @@ const DeckSummary = ({ deck, editMode, allowEdit, onEdit, onCopy, onDelete, magi
                                         <Dropdown.Item href='#' onClick={handleUpdateClick}>
                                             Update
                                         </Dropdown.Item>
-                                        <Dropdown.Item href={ashesLiveLink}>Go to {siteName}</Dropdown.Item>
+                                        <Dropdown.Item href={ashesLiveLink}>
+                                            Go to {siteName}
+                                        </Dropdown.Item>
                                         <Dropdown.Item href='#' onClick={writeLinkToClipboard}>
                                             Copy {siteName} url
                                         </Dropdown.Item>

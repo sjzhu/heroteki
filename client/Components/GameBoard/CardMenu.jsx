@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useCallback } from 'react';
 import { withTranslation } from 'react-i18next';
 import classNames from 'classnames';
@@ -9,15 +10,18 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 function CardMenu({ cardName, menu, onMenuItemClick, onCloseClick, side, t }) {
     const [submenu, setSubmenu] = useState('main');
 
-    const handleMenuItemClick = useCallback((menuItem) => {
-        if (['main', 'tokens', 'moves'].includes(menuItem.command)) {
-            setSubmenu(menuItem.command);
-        } else {
-            if (onMenuItemClick) {
-                onMenuItemClick(menuItem);
+    const handleMenuItemClick = useCallback(
+        (menuItem) => {
+            if (['main', 'tokens', 'moves'].includes(menuItem.command)) {
+                setSubmenu(menuItem.command);
+            } else {
+                if (onMenuItemClick) {
+                    onMenuItemClick(menuItem);
+                }
             }
-        }
-    }, [onMenuItemClick]);
+        },
+        [onMenuItemClick]
+    );
 
     const handleCloseClick = useCallback(() => {
         if (onCloseClick) {
@@ -49,8 +53,11 @@ function CardMenu({ cardName, menu, onMenuItemClick, onCloseClick, side, t }) {
     let menuClass = side == 'bottom' ? 'bottom-menu' : 'menu';
     return (
         <div className={`panel ${menuClass}`} onClick={handleCloseClick}>
-            <div className='menu-title'>{cardName}
-                <span className='close-menu-button'><FontAwesomeIcon icon={faTimes} /></span>
+            <div className='menu-title'>
+                {cardName}
+                <span className='close-menu-button'>
+                    <FontAwesomeIcon icon={faTimes} />
+                </span>
             </div>
             {menuItems}
         </div>

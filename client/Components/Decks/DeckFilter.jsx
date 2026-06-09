@@ -6,7 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { addChimeraDeck, addDeck } from '../../redux/actions';
 
-const DeckFilter = ({ onNameChange, onPbChange, handleFaveChange, showButtons, mode, onPageSizeChange }) => {
+const DeckFilter = ({
+    onNameChange,
+    onPbChange,
+    handleFaveChange,
+    showButtons,
+    mode,
+    onPageSizeChange
+}) => {
     const allCards = useSelector((state) => state.cards.cards);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -78,8 +85,10 @@ const DeckFilter = ({ onNameChange, onPbChange, handleFaveChange, showButtons, m
                     </Form.Group>
                     {showButtons && (
                         <>
-                            <Form.Group as={Col} controlId='pageSize' xs='1' >
-                                <Form.Select onChange={(e) => onPageSizeChange && onPageSizeChange(e)}>
+                            <Form.Group as={Col} controlId='pageSize' xs='1'>
+                                <Form.Select
+                                    onChange={(e) => onPageSizeChange && onPageSizeChange(e)}
+                                >
                                     <option value='10'>10</option>
                                     <option value='20'>20</option>
                                     <option value='30'>30</option>

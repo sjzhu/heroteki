@@ -10,12 +10,15 @@ let args = process.argv.slice(2);
 const inputTag = args[0];
 
 const gameLabels = {};
-gameService.getTaggedGames(inputTag, {})
+gameService
+    .getTaggedGames(inputTag, {})
     .then(async (games) => {
         console.log('Date | player 1 | p1 deck | player 2 | p2 deck | winner');
         games.forEach((game) => {
             console.log(
-                `${game.startedAt.toDateString()} | ${game.players[0].name} | ${game.players[0].deck} | ${game.players[1].name} | ${game.players[1].deck} | ${game.winner} `
+                `${game.startedAt.toDateString()} | ${game.players[0].name} | ${
+                    game.players[0].deck
+                } | ${game.players[1].name} | ${game.players[1].deck} | ${game.winner} `
             );
         });
         games.sort((a, b) => a.finishedAt < b.finishedAt);

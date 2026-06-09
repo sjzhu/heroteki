@@ -62,7 +62,7 @@ class EnvironmentController {
      * @returns {import('./SotmCard')|null}
      */
     discardFromPlay(cardId) {
-        const idx = this.playArea.findIndex(c => c.id === cardId);
+        const idx = this.playArea.findIndex((c) => c.id === cardId);
         if (idx === -1) return null;
 
         const card = this.playArea.splice(idx, 1)[0];
@@ -77,16 +77,16 @@ class EnvironmentController {
         return {
             deckId: this.deckId,
             deckVersion: this.deckVersion,
-            deck: this.deck.map(c => c.getSummary()),
+            deck: this.deck.map((c) => c.getSummary()),
             deckCount: this.deck.length,
-            trash: this.trash.map(c => c.getSummary()),
-            playArea: this.playArea.map(c => c.getSummary()),
-            auxiliaryZones: this.auxiliaryZones.map(az => ({
+            trash: this.trash.map((c) => c.getSummary()),
+            playArea: this.playArea.map((c) => c.getSummary()),
+            auxiliaryZones: this.auxiliaryZones.map((az) => ({
                 id: az.id,
                 name: az.name,
-                deck: az.deck.map(c => c.getSummary()),
-                trash: az.trash.map(c => c.getSummary()),
-            })),
+                deck: az.deck.map((c) => c.getSummary()),
+                trash: az.trash.map((c) => c.getSummary())
+            }))
         };
     }
 }

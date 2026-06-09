@@ -4,6 +4,7 @@ import { Col, Form, Button, Row } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 
+// eslint-disable-next-line no-unused-vars
 import Link from '../Components/Navigation/Link';
 
 /**

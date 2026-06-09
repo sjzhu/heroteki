@@ -6,7 +6,6 @@ const ConfigService = require('./services/ConfigService.js');
 
 let gameService = new GameService(new ConfigService());
 
-
 let start = new Date('2022-01-01T00:00:01');
 let end = new Date();
 

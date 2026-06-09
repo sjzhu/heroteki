@@ -44,7 +44,7 @@ const ProfileMain = ({ user, formProps, handleEloChange }) => {
     let eloRating = '(calibrating)';
     if (user.rankedGamesPlayed >= 6) {
         eloRating = user?.eloRating ? Math.round(user.eloRating) : '';
-    };
+    }
     const optOut = useContext(EloContext);
     if (optOut) {
         eloRating = 'Opted out - your Elo will not be displayed in the leaderboard';
@@ -152,7 +152,9 @@ const ProfileMain = ({ user, formProps, handleEloChange }) => {
                 </Form.Group>
                 <Form.Group as={Col} md='4'>
                     <Form.Label>{t('Elo Rating')}</Form.Label>
-                    <div>{eloRating}&nbsp; {!optOut && <Link to='/results'>View Elo Leaderboard</Link>}
+                    <div>
+                        {eloRating}&nbsp;{' '}
+                        {!optOut && <Link to='/results'>View Elo Leaderboard</Link>}
                     </div>
                 </Form.Group>
                 <Form.Group as={Col} md='2'>
@@ -201,7 +203,7 @@ const ProfileMain = ({ user, formProps, handleEloChange }) => {
                     </Form.Control.Feedback>
                 </Form.Group>
             </Row>
-        </Panel >
+        </Panel>
     );
 };
 

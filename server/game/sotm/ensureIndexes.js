@@ -39,10 +39,7 @@ async function ensureIndexes(db) {
             { villainDeckId: 1, villainDeckVersion: 1, result: 1 },
             { background: true, name: 'villainDeckId_version_result' }
         );
-        await gameOutcomes.createIndex(
-            { endedAt: 1 },
-            { background: true, name: 'endedAt' }
-        );
+        await gameOutcomes.createIndex({ endedAt: 1 }, { background: true, name: 'endedAt' });
 
         // gameStates indexes
         await gameStates.createIndex(

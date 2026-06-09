@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { faLink, faLock } from '@fortawesome/free-solid-svg-icons';
 import { faFileLines } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,7 +29,7 @@ const DeckListEx = ({ decks, onDeckSelected, showWinRate, allowInvalidSelection 
         } else {
             notesState.add(deckId);
         }
-    }
+    };
     const onDieHover = (die) => {
         // highlight cards with dice type
         setMagicHover(die.magic);
@@ -73,7 +74,10 @@ const DeckListEx = ({ decks, onDeckSelected, showWinRate, allowInvalidSelection 
                             <div className='decklistex-header-content'>
                                 {/* <div className={`decklist-entry-image ${row.phoenixborn[0].id}`}></div> */}
                                 <div>
-                                    <button className='decklist-title' tabIndex={0}>{d.name}</button>&nbsp;
+                                    <button className='decklist-title' tabIndex={0}>
+                                        {d.name}
+                                    </button>
+                                    &nbsp;
                                     {icon}
                                     <br />
                                     {d.mode !== 'chimera' && (
@@ -98,7 +102,9 @@ const DeckListEx = ({ decks, onDeckSelected, showWinRate, allowInvalidSelection 
                                     />
                                 </div>
                                 {d.notes && (
-                                    <Button onClick={() => toggleNotes(d._id)} className='def'><FontAwesomeIcon icon={faFileLines} /> Notes...</Button>
+                                    <Button onClick={() => toggleNotes(d._id)} className='def'>
+                                        <FontAwesomeIcon icon={faFileLines} /> Notes...
+                                    </Button>
                                 )}
                                 {notesState.has(d._id) && (
                                     <div className='deck-card-group deck-notes'>{d.notes}</div>

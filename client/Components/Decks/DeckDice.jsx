@@ -5,7 +5,6 @@ import './DeckDice.scss';
 import classNames from 'classnames';
 
 const DeckDice = ({ deck, onDieClick, onDieHover, size, slotCount = 10 }) => {
-
     const getDiceToRender = () => {
         const diceToRender = [];
         if (deck.dicepool) {
@@ -17,7 +16,9 @@ const DeckDice = ({ deck, onDieClick, onDieHover, size, slotCount = 10 }) => {
                             <DieIcon
                                 die={{ magic: diceCount.magic, level: 'power' }}
                                 onClick={() => onDieClick && onDieClick({ magic: diceCount.magic })}
-                                onMouseOver={() => onDieHover && onDieHover({ magic: diceCount.magic })}
+                                onMouseOver={() =>
+                                    onDieHover && onDieHover({ magic: diceCount.magic })
+                                }
                                 onMouseOut={() => onDieHover && onDieHover({ magic: '' })}
                             />
                         );

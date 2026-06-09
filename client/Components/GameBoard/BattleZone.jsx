@@ -22,7 +22,8 @@ const BattleZone = ({ player, cardsInPlay, cardProps }) => {
     };
 
     const getDefender = (battle) => {
-        const defender = currentGame.attack.isPBAttack || battle.guard ? battle.guard : battle.target;
+        const defender =
+            currentGame.attack.isPBAttack || battle.guard ? battle.guard : battle.target;
         if (!defender) {
             return emptyFrame;
         }

@@ -35,9 +35,9 @@ const DECK_TYPES = ['hero', 'villain', 'environment'];
  * User-uploaded decks receive warnings (not errors) on mismatch.
  */
 const EXPECTED_DECK_SIZES = {
-  hero: 40,
-  villain: 25,
-  environment: 15
+    hero: 40,
+    villain: 25,
+    environment: 15
 };
 
 module.exports = { DECK_TYPES, EXPECTED_DECK_SIZES };

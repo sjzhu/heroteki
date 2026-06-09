@@ -67,7 +67,6 @@ const UserAltAdmin = () => {
         username: yup.string().required('Username must be specified')
     });
 
-
     const altCards = [];
     for (const [key, value] of Object.entries(userAlts || [])) {
         altCards.push(...value.map((v) => ({ id: key, alt: v, imageStub: v })));
@@ -167,7 +166,7 @@ const UserAltAdmin = () => {
                             </Row>
                         </Panel>
                         {currentUser && (
-                            <div >
+                            <div>
                                 <Panel>
                                     <div className='lobby-header'>Alt Arts</div>
                                     <Row>
@@ -192,7 +191,10 @@ const UserAltAdmin = () => {
                                     </Row>
                                     <div>
                                         <div style={{ display: 'flex' }}>
-                                            <select className='form-control col-md-6' onChange={handleSelectedAltChange}>
+                                            <select
+                                                className='form-control col-md-6'
+                                                onChange={handleSelectedAltChange}
+                                            >
                                                 <option value={null} />
                                                 {allAlts.map((a) => (
                                                     <option key={a.alt} value={a.alt}>
@@ -200,9 +202,14 @@ const UserAltAdmin = () => {
                                                     </option>
                                                 ))}
                                             </select>
-                                            <button className='btn btn-primary def' onClick={addAltClick} >Add</button>
+                                            <button
+                                                className='btn btn-primary def'
+                                                onClick={addAltClick}
+                                            >
+                                                Add
+                                            </button>
                                         </div>
-                                        <div className='admin-card' >
+                                        <div className='admin-card'>
                                             {selectedAlt && <CardImage card={selectedAlt} />}
                                         </div>
                                         <h3>Currently held alts</h3>
@@ -210,7 +217,6 @@ const UserAltAdmin = () => {
                                             <CardGallery cards={altCards} onAltClick={onAltClick} />
                                         </div>
                                     </div>
-
                                 </Panel>
 
                                 <div className='text-center'>

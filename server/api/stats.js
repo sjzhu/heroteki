@@ -41,7 +41,10 @@ module.exports.init = function (server) {
 
             let list = await userService.getAllUsers();
             list = list.filter(
-                (u) => u.eloRating && u.lastRankedGame > dtCutoff && u.rankedGamesPlayed >= 6 &&
+                (u) =>
+                    u.eloRating &&
+                    u.lastRankedGame > dtCutoff &&
+                    u.rankedGamesPlayed >= 6 &&
                     !u.settings?.eloOptOut
             );
             list.sort((a, b) => (a.eloRating > b.eloRating ? -1 : 1));
@@ -88,9 +91,9 @@ module.exports.init = function (server) {
             let otherChatMessages = [];
 
             for (let game of games) {
-                let players = game.players.map(p => p.name);
+                let players = game.players.map((p) => p.name);
                 let winner = game.winner;
-                let loser = players.find(p => p !== winner);
+                let loser = players.find((p) => p !== winner);
 
                 let chat = game.chat || '';
                 let escapedCard = cardName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -116,14 +119,22 @@ module.exports.init = function (server) {
                 }
             }
 
-            res.send({ success: true, card: cardName, totalGames, winnerPlays, loserPlays, totalPlays, otherPlays, otherChatMessages });
+            res.send({
+                success: true,
+                card: cardName,
+                totalGames,
+                winnerPlays,
+                loserPlays,
+                totalPlays,
+                otherPlays,
+                otherChatMessages
+            });
         })
     );
 
     server.get(
         '/api/cardstats/csv',
         wrapAsync(async function (req, res) {
-
             let start = req.query.start ? new Date(req.query.start) : null;
             let end = req.query.end ? new Date(req.query.end) : null;
             let includeSolo = req.query.includeSolo === 'true';
@@ -159,18 +170,23 @@ module.exports.init = function (server) {
             let cardStats = {};
 
             games.forEach((game) => {
-                if (!game.winner || game.winReason === 'Agreement' || !game.chat || game.chat === '') {
+                if (
+                    !game.winner ||
+                    game.winReason === 'Agreement' ||
+                    !game.chat ||
+                    game.chat === ''
+                ) {
                     return;
                 }
 
-                let players = game.players.map(p => p.name);
+                let players = game.players.map((p) => p.name);
                 let isSolo = game.solo || players.length !== 2;
                 if (!includeSolo && isSolo) {
                     return;
                 }
 
                 let winner = game.winner;
-                let loser = isSolo ? null : players.find(p => p !== winner);
+                let loser = isSolo ? null : players.find((p) => p !== winner);
 
                 let chat = game.chat;
                 let cardsSeen = {};
@@ -179,7 +195,9 @@ module.exports.init = function (server) {
                 while ((match = playRegex.exec(chat)) !== null) {
                     let playerName = match[1];
                     let cardName = match[2].trim();
-                    cardName = cardName.replace(/\s+(?:attaching it to|to|and)[\s\S]*$/i, '').trim();
+                    cardName = cardName
+                        .replace(/\s+(?:attaching it to|to|and)[\s\S]*$/i, '')
+                        .trim();
 
                     if (!cardsSeen[cardName]) {
                         cardsSeen[cardName] = {
@@ -204,7 +222,15 @@ module.exports.init = function (server) {
 
                 Object.keys(cardsSeen).forEach((cardName) => {
                     if (!cardStats[cardName]) {
-                        cardStats[cardName] = { totalGames: 0, winnerPlays: 0, loserPlays: 0, totalPlays: 0, otherPlays: 0, otherMessages: [], players: new Set() };
+                        cardStats[cardName] = {
+                            totalGames: 0,
+                            winnerPlays: 0,
+                            loserPlays: 0,
+                            totalPlays: 0,
+                            otherPlays: 0,
+                            otherMessages: [],
+                            players: new Set()
+                        };
                     }
 
                     cardStats[cardName].totalGames++;
@@ -219,16 +245,25 @@ module.exports.init = function (server) {
                     cardStats[cardName].otherPlays += cardsSeen[cardName].otherPlays;
                     cardStats[cardName].totalPlays += cardsSeen[cardName].otherPlays;
                     cardStats[cardName].otherMessages.push(...cardsSeen[cardName].otherMessages);
-                    cardsSeen[cardName].players.forEach((playerName) => cardStats[cardName].players.add(playerName));
+                    cardsSeen[cardName].players.forEach((playerName) =>
+                        cardStats[cardName].players.add(playerName)
+                    );
                 });
             });
 
             let csv = `Game Count: ${totalGameCount}\nCard Name,Total Games,Winner Plays,Loser Plays,Total Plays,Other Plays,Other Chat Messages,Win %,Unique Players\n`;
             Object.keys(cardStats).forEach((cardName) => {
                 const stats = cardStats[cardName];
-                const winPercent = stats.totalGames > 0 ? Math.round((stats.winnerPlays / stats.totalGames) * 100) : 0;
+                const winPercent =
+                    stats.totalGames > 0
+                        ? Math.round((stats.winnerPlays / stats.totalGames) * 100)
+                        : 0;
                 const uniquePlayerCount = stats.players.size;
-                csv += `"${cardName.replace(/"/g, '""')}",${stats.totalGames},${stats.winnerPlays},${stats.loserPlays},${stats.totalPlays},${stats.otherPlays},"${JSON.stringify(stats.otherMessages).replace(/"/g, '""')}",${winPercent},${uniquePlayerCount}\n`;
+                csv += `"${cardName.replace(/"/g, '""')}",${stats.totalGames},${
+                    stats.winnerPlays
+                },${stats.loserPlays},${stats.totalPlays},${stats.otherPlays},"${JSON.stringify(
+                    stats.otherMessages
+                ).replace(/"/g, '""')}",${winPercent},${uniquePlayerCount}\n`;
             });
 
             res.setHeader('Content-Type', 'text/csv');
@@ -278,9 +313,15 @@ module.exports.init = function (server) {
                     const pbUseStats = {};
 
                     games.forEach((game) => {
-                        let players = game.players.map(p => p.name);
+                        let players = game.players.map((p) => p.name);
                         if (![players[0], players[1]].includes(game.winner)) {
-                            console.log('Error record - no winner match:', game.winner, 'Players:', players, game.winReason);
+                            console.log(
+                                'Error record - no winner match:',
+                                game.winner,
+                                'Players:',
+                                players,
+                                game.winReason
+                            );
                             return;
                         }
                         let isSolo = game.solo || players.length !== 2;
@@ -306,13 +347,14 @@ module.exports.init = function (server) {
                     // Generate CSV
                     let csv = `Game Count: ${totalGameCount}\nPhoenixborn,Total Games,Wins,Losses\n`;
                     Object.entries(pbUseStats).forEach(([deckName, stats]) => {
-                        csv += `"${deckName.replace(',', '')}",${stats.wins + stats.losses},${stats.wins},${stats.losses}\n`;
+                        csv += `"${deckName.replace(',', '')}",${stats.wins + stats.losses},${
+                            stats.wins
+                        },${stats.losses}\n`;
                     });
 
                     res.setHeader('Content-Type', 'text/csv');
                     res.setHeader('Content-Disposition', 'attachment; filename="pbUseStats.csv"');
                     res.send(csv);
-
                 })
                 .catch((error) => {
                     console.error('Error generating stats:', error);

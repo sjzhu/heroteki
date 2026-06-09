@@ -26,7 +26,6 @@ const Zoomable = ({ children, card }) => {
                 onMouseOut={() => setImageZoom(false)}
             >
                 {children}
-
             </span>
             {imageZoom && (
                 <div

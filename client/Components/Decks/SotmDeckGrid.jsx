@@ -77,9 +77,7 @@ const SotmDeckGrid = ({ decks = [], onDeckSelected, disabledDeckIds = [] }) => {
                                     </span>
                                 )}
                                 {isDisabled && (
-                                    <div style={{ fontSize: '0.75em', color: '#888' }}>
-                                        Claimed
-                                    </div>
+                                    <div style={{ fontSize: '0.75em', color: '#888' }}>Claimed</div>
                                 )}
                             </div>
                         </div>

@@ -10,7 +10,9 @@ class DeckForge {
         this.cardsByCode = cards;
         this.allCards = Object.values(this.cardsByCode).filter((c) => c.deckType !== 'chimera');
         this.conjurations = this.allCards.filter((c) => conjuredCards.includes(c.type));
-        this.playableCards = this.allCards.filter((c) => ![...conjuredCards, 'Phoenixborn'].includes(c.type));
+        this.playableCards = this.allCards.filter(
+            (c) => ![...conjuredCards, 'Phoenixborn'].includes(c.type)
+        );
     }
 
     createDeck(pbStub, dice, constraints = {}) {
@@ -26,11 +28,13 @@ class DeckForge {
         var pbData = this.getCard(pbStub);
 
         // get legal cards in dice color
-        this.legalCards = this.playableCards.filter(card => {
+        this.legalCards = this.playableCards.filter((card) => {
             // allowed dice types only
-            return (!card.dice || this.allowedDiceTypes(card.dice, dice)) &&
+            return (
+                (!card.dice || this.allowedDiceTypes(card.dice, dice)) &&
                 // no pb uniques unless it's mine
                 (!card.phoenixborn || card.phoenixborn === pbData.name)
+            );
         });
 
         // get 30 cards
@@ -60,8 +64,8 @@ class DeckForge {
 
         // process cards to card counts
         var cardCounts = [];
-        deckCards.forEach(c => {
-            const cc = cardCounts.find(cc => cc.id === c.stub);
+        deckCards.forEach((c) => {
+            const cc = cardCounts.find((cc) => cc.id === c.stub);
             if (cc) {
                 cc.count++;
             } else {
@@ -105,7 +109,7 @@ class DeckForge {
 
     addConjurations(c, conjurationCounts) {
         c.conjurations.forEach((conj) => {
-            const cc = conjurationCounts.find(co => co.id === conj.stub);
+            const cc = conjurationCounts.find((co) => co.id === conj.stub);
             if (!cc) {
                 conjurationCounts.push({
                     id: conj.stub,
@@ -122,13 +126,15 @@ class DeckForge {
 
     setDiceCounts(dice, deckCards) {
         const diceCounts = { total: 0 };
-        dice.forEach(d => {
-            diceCounts[d.magic] = deckCards.filter(dc => dc.dice && dc.dice.includes(d.magic)).length;
+        dice.forEach((d) => {
+            diceCounts[d.magic] = deckCards.filter(
+                (dc) => dc.dice && dc.dice.includes(d.magic)
+            ).length;
             diceCounts.total += diceCounts[d.magic];
         });
         let diceTotal = 0;
-        dice.forEach(d => {
-            d.count = Math.round(diceCounts[d.magic] / diceCounts.total * 10);
+        dice.forEach((d) => {
+            d.count = Math.round((diceCounts[d.magic] / diceCounts.total) * 10);
             diceTotal += d.count;
         });
         switch (diceTotal) {
@@ -148,8 +154,8 @@ class DeckForge {
 
     removeDie(count, dice) {
         for (let i = 0; i < count; i++) {
-            let options = dice.filter(d => d.count > 1);
-            const j = Math.floor(Math.random() * (options.length));
+            let options = dice.filter((d) => d.count > 1);
+            const j = Math.floor(Math.random() * options.length);
             dice[j].count -= 1;
         }
     }
@@ -165,20 +171,22 @@ class DeckForge {
             stack.push(card);
         }
         if (extras && extras.also && typeof extras.also === 'function') {
-            extras.also(stack, this)
+            extras.also(stack, this);
         }
     }
 
     cardCanBeAdded(deckCards, nextCard, pbData, dice, constraints) {
         if (!constraints.noExtras) {
             if (nextCard.type === 'Ready Spell' && !deckCards.includes(nextCard)) {
-                const readySpellCount = _.uniq(deckCards).filter(c => c.type === 'Ready Spell' && !c.name.includes('Law')).length;
+                const readySpellCount = _.uniq(deckCards).filter(
+                    (c) => c.type === 'Ready Spell' && !c.name.includes('Law')
+                ).length;
                 if (readySpellCount > pbData.spellboard) {
                     return false;
                 }
             }
             if (nextCard.stub === 'royal-charm') {
-                if (!dice.some(d => d.magic === 'divine' || d.magic === 'charm')) {
+                if (!dice.some((d) => d.magic === 'divine' || d.magic === 'charm')) {
                     return false;
                 }
             }
@@ -186,7 +194,7 @@ class DeckForge {
                 return false;
             }
         }
-        const cardCount = deckCards.filter(c => c === nextCard).length;
+        const cardCount = deckCards.filter((c) => c === nextCard).length;
         return constraints.maxCardCount ? cardCount < constraints.maxCardCount : cardCount < 3;
     }
 
@@ -194,10 +202,8 @@ class DeckForge {
         const extras = this.getCardExtras(card, stack);
         if (extras) {
             return extras.spaceNeeded;
-        } else
-            return 1;
+        } else return 1;
     }
-
 
     diceCharToMagicType(dChar) {
         let magics = [
@@ -209,11 +215,14 @@ class DeckForge {
             { char: 'S', magic: 'sympathy' },
             { char: 'T', magic: 'time' }
         ];
-        return magics.find(m => m.char === dChar).magic;
+        return magics.find((m) => m.char === dChar).magic;
     }
 
     allowedDiceTypes(diceTypes, legalDice) {
-        return diceTypes.reduce((agg, dt) => agg && (dt === 'basic' || legalDice.some(ld => ld.magic === dt)), true)
+        return diceTypes.reduce(
+            (agg, dt) => agg && (dt === 'basic' || legalDice.some((ld) => ld.magic === dt)),
+            true
+        );
     }
 
     loadCards(directory) {
@@ -233,11 +242,11 @@ class DeckForge {
     }
 
     getCard(stub) {
-        return this.allCards.find(c => c.stub === stub);
+        return this.allCards.find((c) => c.stub === stub);
     }
 
     getPbUniqueCard(name) {
-        return this.playableCards.find(c => c.phoenixborn === name);
+        return this.playableCards.find((c) => c.phoenixborn === name);
     }
 
     getPlayableCard(filter = undefined) {
@@ -257,7 +266,7 @@ class DeckForge {
     }
 
     getRandomCard(source) {
-        const i = Math.floor(Math.random() * (source.length));
+        const i = Math.floor(Math.random() * source.length);
         return source[i];
     }
 

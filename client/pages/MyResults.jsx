@@ -11,9 +11,15 @@ const MyResults = () => {
             <div className='container'>
                 <Tabs>
                     <TabList>
-                        <Tab><span className='lobby-header'>Phoenixborn Stats</span></Tab>
-                        <Tab><span className='lobby-header'>Game List</span></Tab>
-                        <Tab><span className='lobby-header'>Survival</span></Tab>
+                        <Tab>
+                            <span className='lobby-header'>Phoenixborn Stats</span>
+                        </Tab>
+                        <Tab>
+                            <span className='lobby-header'>Game List</span>
+                        </Tab>
+                        <Tab>
+                            <span className='lobby-header'>Survival</span>
+                        </Tab>
                     </TabList>
                     <TabPanel>
                         <Stats />
@@ -25,9 +31,9 @@ const MyResults = () => {
                         <SurvivalReport />
                     </TabPanel>
                 </Tabs>
-            </div >
+            </div>
         </>
-    )
+    );
 };
 
 export default MyResults;

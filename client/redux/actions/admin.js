@@ -16,7 +16,6 @@ export function findUserAlts(username) {
     };
 }
 
-
 export function clearUserSessions(username) {
     return (dispatch, getState) => {
         var socket = getState().lobby.socket;
@@ -54,7 +53,6 @@ export function saveUserAlts(user) {
         }
     };
 }
-
 
 export function clearUserStatus() {
     return {

@@ -32,8 +32,8 @@ export function loginAccount(auth) {
     };
 }
 
+// eslint-disable-next-line no-unused-vars
 export function logoutAccount(tokenId) {
-
     return {
         type: 'ACCOUNT_LOGGEDOUT'
     };

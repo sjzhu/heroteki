@@ -214,7 +214,8 @@ export function connectLobby() {
         });
 
         socket.on('playertyping', (arg) => {
-            dispatch(lobbyMessageReceived('playertyping', username, isTyping));
+            // eslint-disable-next-line no-unused-vars
+            const _arg = arg; // playertyping event; no-op in SotMDE
         });
 
         setInterval(() => {

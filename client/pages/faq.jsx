@@ -14,16 +14,17 @@ const FAQ = () => {
                     <h3>What is SotMDE Online?</h3>
                     <div className='faq-entry'>
                         <p>
-                            SotMDE Online is a browser-based facilitator for playing Sentinels of the
-                            Multiverse: Definitive Edition. No rules are automated — all card effects
-                            are resolved manually by the players. The app tracks zone contents, HP,
-                            turn phase, and game state.
+                            SotMDE Online is a browser-based facilitator for playing Sentinels of
+                            the Multiverse: Definitive Edition. No rules are automated — all card
+                            effects are resolved manually by the players. The app tracks zone
+                            contents, HP, turn phase, and game state.
                         </p>
                     </div>
                     <h3>Where can I find other players?</h3>
                     <div className='faq-entry'>
                         <p>
-                            Check the lobby — other players will be listed there when they are online.
+                            Check the lobby — other players will be listed there when they are
+                            online.
                         </p>
                     </div>
                     <h3>Where can I learn about the game?</h3>

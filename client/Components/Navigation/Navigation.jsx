@@ -170,9 +170,7 @@ const Navigation = (props) => {
                     )}
                     {renderMenuItems(RightMenu)}
                     <ProfileDropdown menu={ProfileMenu} user={props.user} />
-
                 </Nav>
-
             </Navbar.Collapse>
         </Navbar>
     );

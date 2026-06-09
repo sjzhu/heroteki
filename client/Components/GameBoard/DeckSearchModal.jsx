@@ -16,7 +16,14 @@ import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
  *   onClose: () => void
  * }} props
  */
-const DeckSearchModal = ({ show, deckCards = [], controllerId, zoneId = 'deck', onMoveToHand, onClose }) => {
+const DeckSearchModal = ({
+    show,
+    deckCards = [],
+    controllerId,
+    zoneId = 'deck',
+    onMoveToHand,
+    onClose
+}) => {
     const [selectedCardId, setSelectedCardId] = useState(null);
     const [filter, setFilter] = useState('');
 
@@ -51,10 +58,11 @@ const DeckSearchModal = ({ show, deckCards = [], controllerId, zoneId = 'deck', 
                         padding: '6px 10px',
                         marginBottom: '10px',
                         fontSize: '0.8rem',
-                        color: '#664d03',
+                        color: '#664d03'
                     }}
                 >
-                    Note: Deck contents are currently visible to all players (known Phase 3 limitation).
+                    Note: Deck contents are currently visible to all players (known Phase 3
+                    limitation).
                 </div>
                 <Form.Control
                     type='text'
@@ -72,14 +80,25 @@ const DeckSearchModal = ({ show, deckCards = [], controllerId, zoneId = 'deck', 
                             key={card.id}
                             action
                             active={selectedCardId === card.id}
-                            onClick={() => setSelectedCardId(card.id === selectedCardId ? null : card.id)}
+                            onClick={() =>
+                                setSelectedCardId(card.id === selectedCardId ? null : card.id)
+                            }
                             style={{ cursor: 'pointer' }}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center'
+                                }}
+                            >
                                 <span>
                                     <strong>{card.name}</strong>
                                     {card.type && (
-                                        <span className='text-muted ms-2' style={{ fontSize: '0.8rem' }}>
+                                        <span
+                                            className='text-muted ms-2'
+                                            style={{ fontSize: '0.8rem' }}
+                                        >
                                             {card.type}
                                         </span>
                                     )}
@@ -95,11 +114,7 @@ const DeckSearchModal = ({ show, deckCards = [], controllerId, zoneId = 'deck', 
                 </ListGroup>
             </Modal.Body>
             <Modal.Footer>
-                <Button
-                    variant='primary'
-                    disabled={!selectedCardId}
-                    onClick={handleMoveToHand}
-                >
+                <Button variant='primary' disabled={!selectedCardId} onClick={handleMoveToHand}>
                     Move to Hand
                 </Button>
                 <Button variant='secondary' onClick={onClose}>

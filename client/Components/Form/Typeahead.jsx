@@ -1,7 +1,27 @@
 import { Typeahead } from 'react-bootstrap-typeahead';
 import React, { useRef } from 'react';
 
-function InternalTypeahead({ label, name, labelClass, fieldClass, options, labelKey, emptyLabel, onChange, placeholder, autoFocus, dropup, minLength, onInputChange, submitFormOnEnter, onKeyDown, disabled, validationMessage, children, noGroup }) {
+function InternalTypeahead({
+    label,
+    name,
+    labelClass,
+    fieldClass,
+    options,
+    labelKey,
+    emptyLabel,
+    onChange,
+    placeholder,
+    autoFocus,
+    dropup,
+    minLength,
+    onInputChange,
+    submitFormOnEnter,
+    onKeyDown,
+    disabled,
+    validationMessage,
+    children,
+    noGroup
+}) {
     const typeaheadRef = useRef(null);
 
     const clear = () => {

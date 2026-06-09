@@ -13,7 +13,7 @@ const GameMenu = ({ onSettingsClick, onManualModeClick, onManualCommandsClick })
 
     const manualClassNames = classNames('game-menu-item', {
         'text-danger': currentGame.manualMode
-    })
+    });
 
     return (
         <>
@@ -28,10 +28,10 @@ const GameMenu = ({ onSettingsClick, onManualModeClick, onManualCommandsClick })
                         setShowPopup(!showPopup);
                     }}
                 />
-
             </div>
             {showPopup && (
-                <div className='game-menu'
+                <div
+                    className='game-menu'
                     onClick={(e) => {
                         e.stopPropagation();
                         setShowPopup(!showPopup);

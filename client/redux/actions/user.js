@@ -91,5 +91,5 @@ export function changeViewSetting(setting, value) {
         type: 'view/changeViewSetting',
         setting,
         value
-    }
+    };
 }

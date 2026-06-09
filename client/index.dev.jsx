@@ -46,4 +46,3 @@ if (import.meta.hot) {
 }
 
 render();
-

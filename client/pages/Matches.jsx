@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
@@ -75,15 +76,14 @@ const Matches = () => {
         // when everything has been downloaded, we can trigger the dl
         zip.generateAsync(
             {
-                type: "blob",
-                compression: "DEFLATE"
+                type: 'blob',
+                compression: 'DEFLATE'
             },
             function updateCallback(metadata) {
                 //respond to progress callback
             }
         ).then(
             function callback(blob) {
-
                 // see FileSaver.js
                 saveAs(blob, game.gameId + '.sotmde');
 
@@ -94,7 +94,7 @@ const Matches = () => {
             }
         );
         return false;
-    }
+    };
     return (
         <div className='col-sm-offset-1 profile full-height'>
             <div className='col-md-6 inline'>
@@ -138,13 +138,20 @@ const Matches = () => {
                                 const winnerIndex = game.winner ? computeWinnerIndex(game) : -1;
                                 let soloLevel = '';
                                 if (game.solo && game.players[1]?.level) {
-                                    soloLevel = ' (' + game.players[1]?.level + game.players[1]?.stage + ')';
+                                    soloLevel =
+                                        ' (' +
+                                        game.players[1]?.level +
+                                        game.players[1]?.stage +
+                                        ')';
                                 }
 
                                 return (
                                     <tr key={game.gameId}>
-                                        <td>{moment(game.startedAt).format('YYYY-MM-DD HH:mm')}<br />
-                                            <b>{game.label}</b></td>
+                                        <td>
+                                            {moment(game.startedAt).format('YYYY-MM-DD HH:mm')}
+                                            <br />
+                                            <b>{game.label}</b>
+                                        </td>
                                         <td>{game.players[0].deck}</td>
                                         <td style={{ whiteSpace: 'nowrap' }}>
                                             {game.players[1]?.name} {soloLevel}
@@ -179,12 +186,11 @@ const Matches = () => {
                                                             dispatch(loadGameReplay(game.gameId));
                                                             navigate('/');
                                                         }}
-                                                    >Load replay</a>
-                                                    &nbsp;|&nbsp;
-                                                    <a
-                                                        href='#'
-                                                        onClick={() => downloadFile(game)}
                                                     >
+                                                        Load replay
+                                                    </a>
+                                                    &nbsp;|&nbsp;
+                                                    <a href='#' onClick={() => downloadFile(game)}>
                                                         Download replay
                                                     </a>
                                                 </>
@@ -197,9 +203,8 @@ const Matches = () => {
                             })}
                     </tbody>
                 </table>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 };
 

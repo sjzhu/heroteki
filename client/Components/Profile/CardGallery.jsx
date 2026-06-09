@@ -21,21 +21,22 @@ function CardGallery({ onAltClick, cards = [] }) {
     const onCloseClick = () => {
         setShow(false);
     };
-    return (<>
-        <div className='card-gallery'>
-            {cardList.map((c) => (
-                <div key={'alt' + (c.alt || c.imageStub)} onClick={() => onItemClick(c)}>
-                    {/* <ZoomableCard card={c} noIndex={true} /> */}
-                    <CardImage card={c} noIndex={true} />
-                </div>
-            ))}
-        </div>
-        <Modal show={show} onHide={onCloseClick} centered>
-            <Modal.Body className='card-zoom-modal' onClick={onCloseClick}>
-                {selectedCard && <CardImage card={selectedCard} noIndex={true} />}
-            </Modal.Body>
-        </Modal>
-    </>
+    return (
+        <>
+            <div className='card-gallery'>
+                {cardList.map((c) => (
+                    <div key={'alt' + (c.alt || c.imageStub)} onClick={() => onItemClick(c)}>
+                        {/* <ZoomableCard card={c} noIndex={true} /> */}
+                        <CardImage card={c} noIndex={true} />
+                    </div>
+                ))}
+            </div>
+            <Modal show={show} onHide={onCloseClick} centered>
+                <Modal.Body className='card-zoom-modal' onClick={onCloseClick}>
+                    {selectedCard && <CardImage card={selectedCard} noIndex={true} />}
+                </Modal.Body>
+            </Modal>
+        </>
     );
 }
 

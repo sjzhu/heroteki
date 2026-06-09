@@ -4,8 +4,7 @@ export function loadUserStats(months, gameType) {
         shouldCallAPI: () => true,
         APIParams: {
             url: '/api/stats',
-            data:
-            {
+            data: {
                 months: months,
                 gameType: gameType
             },

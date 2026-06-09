@@ -102,7 +102,8 @@ class GameServer {
         options.path = '/' + (process.env.SERVER || nodeName) + '/socket.io';
 
         logger.info(
-            `Listening on 0.0.0.0:${process.env.PORT || socketioPort}/${process.env.SERVER || nodeName
+            `Listening on 0.0.0.0:${process.env.PORT || socketioPort}/${
+                process.env.SERVER || nodeName
             }/socket.io`
         );
 
@@ -118,7 +119,7 @@ class GameServer {
         setInterval(() => this.checkInactiveGames(inactivityMs), 5 * 60 * 1000);
 
         // SotMDE Phase 8.5.1: ensure MongoDB indexes exist at startup (fire-and-forget)
-        ensureIndexes(getDb()).catch(err => logger.error('ensureIndexes error', err));
+        ensureIndexes(getDb()).catch((err) => logger.error('ensureIndexes error', err));
     }
 
     debugDump() {
@@ -169,7 +170,7 @@ class GameServer {
             debugData.game.messages = undefined;
 
             // SotMDE: PlayerStateWriter stubbed; skip per-player debug dump
-            debugData.players = game.getPlayers().map(p => ({ name: p.name }));
+            debugData.players = game.getPlayers().map((p) => ({ name: p.name }));
         }
 
         Sentry.configureScope((scope) => {
@@ -367,13 +368,15 @@ class GameServer {
      */
     onStartGame(pendingGame) {
         // SotMDE: load card data for all three decks from MongoDB, then start game
-        this._loadCardDataForGame(pendingGame).then((cardData) => {
-            this._startGameWithCardData(pendingGame, cardData);
-        }).catch(err => {
-            logger.error(`Failed to load card data for game ${pendingGame.id}:`, err);
-            // Fallback: start with empty card data (game will have no cards but won't crash)
-            this._startGameWithCardData(pendingGame, {});
-        });
+        this._loadCardDataForGame(pendingGame)
+            .then((cardData) => {
+                this._startGameWithCardData(pendingGame, cardData);
+            })
+            .catch((err) => {
+                logger.error(`Failed to load card data for game ${pendingGame.id}:`, err);
+                // Fallback: start with empty card data (game will have no cards but won't crash)
+                this._startGameWithCardData(pendingGame, {});
+            });
     }
 
     /**

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 
 const urlMatchingRegex = new RegExp(
@@ -76,7 +77,7 @@ export const rankTypes = [
     { name: 'competitive', label: 'Ranked' }
 ];
 export const getRankedLabel = (name) => {
-    const type = rankTypes.find(f => f.name === name);
+    const type = rankTypes.find((f) => f.name === name);
     return type?.label;
 };
 
@@ -118,7 +119,8 @@ export const cardSizes = [
 ];
 
 export const getFormatLabel = (name) => {
-    const format = gameFormats.find((f) => f.name === name) || soloGameFormats.find((f) => f.name === name);
+    const format =
+        gameFormats.find((f) => f.name === name) || soloGameFormats.find((f) => f.name === name);
     return format?.label;
 };
 
@@ -137,7 +139,7 @@ export const toBase64 = (file) =>
 export const ashesLiveShareUrl = 'https://ashes.live/decks/share/';
 export const ashesDbShareUrl = 'https://ashesdb.plaidhatgames.com/decks/share/';
 
-const sizes = ['small', 'normal', 'large', 'x-large']
+const sizes = ['small', 'normal', 'large', 'x-large'];
 export function sizeUp(size) {
     if (size === 'x-large') {
         return 'x-large';

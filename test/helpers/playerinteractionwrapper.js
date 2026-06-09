@@ -570,7 +570,8 @@ class PlayerInteractionWrapper {
 
         if (!promptButton) {
             throw new Error(
-                `Couldn't select an option for ${this.player.name
+                `Couldn't select an option for ${
+                    this.player.name
                 }. Current prompt is:\n${this.formatPrompt()}`
             );
         }

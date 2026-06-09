@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import './DiceBox.scss';
 import MovablePanel from './MovablePanel';
@@ -11,7 +12,7 @@ const DiceHistory = ({ firstFive, diceHistory, onCloseClick, side }) => {
             <div className='dice-history panel-body'>
                 <div>First Five</div>
                 <div className='cardHistory'>
-                    {(
+                    {
                         <div key={'cardRoundFF'} className='cardHistoryRow'>
                             {firstFive &&
                                 firstFive.map((c, i) => (
@@ -23,7 +24,7 @@ const DiceHistory = ({ firstFive, diceHistory, onCloseClick, side }) => {
                                     </div>
                                 ))}
                         </div>
-                    )}
+                    }
                 </div>
                 <table>
                     <tbody>
@@ -40,21 +41,25 @@ const DiceHistory = ({ firstFive, diceHistory, onCloseClick, side }) => {
                             <td></td>
                             <td></td>
                         </tr>
-                        {diceHistory && diceHistory.map((dh, index) => dh && (
-                            <tr key={'diceRound' + index}>
-                                <td>{index}</td>
-                                {dh.map(
-                                    (d, i) => (
-                                        <td><DieIcon die={d} /></td>
+                        {diceHistory &&
+                            diceHistory.map(
+                                (dh, index) =>
+                                    dh && (
+                                        <tr key={'diceRound' + index}>
+                                            <td>{index}</td>
+                                            {dh.map((d, i) => (
+                                                <td key={i}>
+                                                    <DieIcon die={d} />
+                                                </td>
+                                            ))}
+                                        </tr>
                                     )
-                                )}
-                            </tr>
-                        ))}
+                            )}
                     </tbody>
                 </table>
             </div>
         </MovablePanel>
-    )
+    );
 };
 
 export default DiceHistory;

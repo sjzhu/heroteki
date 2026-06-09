@@ -14,20 +14,29 @@ function NodeAdmin() {
         dispatch(actions.sendSocketMessage('getnodestatus'));
     }, [dispatch]);
 
-    const handleToggleNodeClick = useCallback((node, event) => {
-        event.preventDefault();
-        dispatch(actions.sendSocketMessage('togglenode', node.name));
-    }, [dispatch]);
+    const handleToggleNodeClick = useCallback(
+        (node, event) => {
+            event.preventDefault();
+            dispatch(actions.sendSocketMessage('togglenode', node.name));
+        },
+        [dispatch]
+    );
 
-    const handleRefreshClick = useCallback((event) => {
-        event.preventDefault();
-        dispatch(actions.sendSocketMessage('getnodestatus'));
-    }, [dispatch]);
+    const handleRefreshClick = useCallback(
+        (event) => {
+            event.preventDefault();
+            dispatch(actions.sendSocketMessage('getnodestatus'));
+        },
+        [dispatch]
+    );
 
-    const handleRestartNodeClick = useCallback((node, event) => {
-        event.preventDefault();
-        dispatch(actions.sendSocketMessage('restartnode', node.name));
-    }, [dispatch]);
+    const handleRestartNodeClick = useCallback(
+        (node, event) => {
+            event.preventDefault();
+            dispatch(actions.sendSocketMessage('restartnode', node.name));
+        },
+        [dispatch]
+    );
 
     const getNodesTable = useCallback(() => {
         const body = nodeStatus.map((node) => {

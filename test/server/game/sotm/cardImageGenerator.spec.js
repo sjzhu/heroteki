@@ -6,6 +6,7 @@
 'use strict';
 
 // Mock sharp before requiring the module under test
+/* eslint-disable-next-line no-undef */
 const mockToFile = jasmine.createSpy('toFile').and.returnValue(Promise.resolve());
 const mockPng = jasmine.createSpy('png').and.returnValue({ toFile: mockToFile });
 const mockSharp = jasmine.createSpy('sharp').and.returnValue({ png: mockPng });
@@ -20,12 +21,19 @@ const mockGetTemplate = jasmine.createSpy('getTemplate').and.returnValue(mockSvg
 
 describe('cardImageGenerator', () => {
     let cardImageGenerator;
+    // eslint-disable-next-line no-unused-vars
     let getTemplate;
+    // eslint-disable-next-line no-unused-vars
     let sharp;
 
     beforeAll(() => {
         // Inject mocks into require cache before loading the module
-        require.cache[require.resolve('sharp')] = { exports: mockSharp, id: require.resolve('sharp'), filename: require.resolve('sharp'), loaded: true };
+        require.cache[require.resolve('sharp')] = {
+            exports: mockSharp,
+            id: require.resolve('sharp'),
+            filename: require.resolve('sharp'),
+            loaded: true
+        };
 
         const cardTemplatesPath = require.resolve('../../../../server/game/sotm/cardTemplates');
         require.cache[cardTemplatesPath] = {
@@ -57,7 +65,9 @@ describe('cardImageGenerator', () => {
         });
 
         it('returns true when imageUrl is undefined', () => {
-            expect(cardImageGenerator.shouldGeneratePlaceholder({ imageUrl: undefined })).toBe(true);
+            expect(cardImageGenerator.shouldGeneratePlaceholder({ imageUrl: undefined })).toBe(
+                true
+            );
         });
 
         it('returns true when imageUrl is empty string', () => {
@@ -65,39 +75,51 @@ describe('cardImageGenerator', () => {
         });
 
         it('returns true when imageUrl starts with /card-images/placeholders/', () => {
-            expect(cardImageGenerator.shouldGeneratePlaceholder({
-                imageUrl: '/card-images/placeholders/legacy-01.png'
-            })).toBe(true);
+            expect(
+                cardImageGenerator.shouldGeneratePlaceholder({
+                    imageUrl: '/card-images/placeholders/legacy-01.png'
+                })
+            ).toBe(true);
         });
 
         it('returns true for any placeholder path', () => {
-            expect(cardImageGenerator.shouldGeneratePlaceholder({
-                imageUrl: '/card-images/placeholders/baron-blade-char.png'
-            })).toBe(true);
+            expect(
+                cardImageGenerator.shouldGeneratePlaceholder({
+                    imageUrl: '/card-images/placeholders/baron-blade-char.png'
+                })
+            ).toBe(true);
         });
 
         it('returns false when imageUrl is a real external URL', () => {
-            expect(cardImageGenerator.shouldGeneratePlaceholder({
-                imageUrl: 'https://example.com/card.png'
-            })).toBe(false);
+            expect(
+                cardImageGenerator.shouldGeneratePlaceholder({
+                    imageUrl: 'https://example.com/card.png'
+                })
+            ).toBe(false);
         });
 
         it('returns false when imageUrl is a non-placeholder local path', () => {
-            expect(cardImageGenerator.shouldGeneratePlaceholder({
-                imageUrl: '/card-images/official/legacy-char.jpg'
-            })).toBe(false);
+            expect(
+                cardImageGenerator.shouldGeneratePlaceholder({
+                    imageUrl: '/card-images/official/legacy-char.jpg'
+                })
+            ).toBe(false);
         });
 
         it('returns false when imageUrl is a manual upload path', () => {
-            expect(cardImageGenerator.shouldGeneratePlaceholder({
-                imageUrl: '/card-images/manual/my-card.png'
-            })).toBe(false);
+            expect(
+                cardImageGenerator.shouldGeneratePlaceholder({
+                    imageUrl: '/card-images/manual/my-card.png'
+                })
+            ).toBe(false);
         });
 
         it('returns false when imageUrl is any non-empty non-placeholder string', () => {
-            expect(cardImageGenerator.shouldGeneratePlaceholder({
-                imageUrl: '/some/other/path.png'
-            })).toBe(false);
+            expect(
+                cardImageGenerator.shouldGeneratePlaceholder({
+                    imageUrl: '/some/other/path.png'
+                })
+            ).toBe(false);
         });
     });
 
@@ -109,7 +131,7 @@ describe('cardImageGenerator', () => {
             keywords: [],
             text: 'Test card text.',
             hp: null,
-            imageUrl: null,
+            imageUrl: null
         };
 
         beforeEach(() => {

@@ -31,7 +31,7 @@ const HpDial = ({ hp, maxHp, onAdjust, isIncapacitated = false, disabled = false
         borderRadius: '4px',
         padding: '2px 6px',
         fontSize: '0.8rem',
-        position: 'relative',
+        position: 'relative'
     };
 
     const btnStyle = {
@@ -42,7 +42,7 @@ const HpDial = ({ hp, maxHp, onAdjust, isIncapacitated = false, disabled = false
         cursor: disabled ? 'not-allowed' : 'pointer',
         padding: '0 4px',
         lineHeight: '1.2',
-        fontSize: '0.75rem',
+        fontSize: '0.75rem'
     };
 
     return (
@@ -78,7 +78,7 @@ const HpDial = ({ hp, maxHp, onAdjust, isIncapacitated = false, disabled = false
                         borderRadius: '4px',
                         fontSize: '0.6rem',
                         fontWeight: 'bold',
-                        letterSpacing: '0.05em',
+                        letterSpacing: '0.05em'
                     }}
                 >
                     INCAP

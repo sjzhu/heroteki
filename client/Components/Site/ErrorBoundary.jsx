@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as Sentry from '@sentry/browser';
 
+// eslint-disable-next-line no-unused-vars
 import { withTranslation, Trans } from 'react-i18next';
 
 class ErrorBoundary extends React.Component {
@@ -50,7 +51,8 @@ class ErrorBoundary extends React.Component {
                 >
                     <p>{this.props.t(this.props.message)}</p>
                     <p>
-                        The error has been logged. Please report persistent bugs in the discord #software-dev channel.
+                        The error has been logged. Please report persistent bugs in the discord
+                        #software-dev channel.
                     </p>
                 </div>
             );

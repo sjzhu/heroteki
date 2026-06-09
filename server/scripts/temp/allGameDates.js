@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const GameService = require('../../services/AshesGameService.js');
 const ConfigService = require('../../services/ConfigService.js');
 
@@ -22,9 +23,8 @@ gameService
                         game.startedAt.getDay(),
                         game.startedAt.getTime()
                     );
-                }
-                catch (e) {
-
+                } catch (e) {
+                    /* empty */
                 }
             }
         }

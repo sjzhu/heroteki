@@ -30,7 +30,11 @@ const DeckStatus = ({ deck, status, gameFormat }) => {
         <Popover id='deck-status-popover'>
             <Popover.Body>
                 <div>
-                    <DeckStatusSummary status={status} showFormat={showFormat} showBloodCount={deck.mode === 'chimera'} />
+                    <DeckStatusSummary
+                        status={status}
+                        showFormat={showFormat}
+                        showBloodCount={deck.mode === 'chimera'}
+                    />
                 </div>
             </Popover.Body>
         </Popover>

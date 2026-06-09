@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { withTranslation } from 'react-i18next';
@@ -17,13 +18,16 @@ function OptionsSelect({ options, onOptionSelected, t }) {
         setSelectedOption(event.target.value);
     }, []);
 
-    const handleDoneClicked = useCallback((event) => {
-        event.preventDefault();
+    const handleDoneClicked = useCallback(
+        (event) => {
+            event.preventDefault();
 
-        if (onOptionSelected) {
-            onOptionSelected(selectedOption);
-        }
-    }, [selectedOption, onOptionSelected]);
+            if (onOptionSelected) {
+                onOptionSelected(selectedOption);
+            }
+        },
+        [selectedOption, onOptionSelected]
+    );
 
     return (
         <div>

@@ -45,7 +45,8 @@ class CampaignDeckValidator {
         this.doDeckPreconAnalysis(deck, result);
         this.matchPbPrecon(result, deck);
 
-        result.valid = result.pbPrecon &&
+        result.valid =
+            result.pbPrecon &&
             result.precons.length <= maxPrecons &&
             (!heroic || this.heroicCheck(level, result)) &&
             result.pbPrecon?.count >= minPbPreconCardCount; // must be 7+ cards left in the base precon
@@ -60,9 +61,11 @@ class CampaignDeckValidator {
             }, null);
 
         // if pbs don't match then replace with pb deck from set (red Rains)
-        if (result.pbPrecon &&
+        if (
+            result.pbPrecon &&
             result.pbPrecon.deck.phoenixborn[0].id !== deck.phoenixborn[0].id &&
-            result.pbPrecon.deck.precon_set) {
+            result.pbPrecon.deck.precon_set
+        ) {
             const matchingPrecon = this.findPbPreconFromSet(
                 deck.phoenixborn[0].id,
                 result.pbPrecon.deck.precon_set
@@ -73,14 +76,14 @@ class CampaignDeckValidator {
     }
 
     doDeckPreconAnalysis(deck, result) {
-        deck.cards.forEach(c => {
+        deck.cards.forEach((c) => {
             if (c.id === 'channel-magic') {
                 result.channelMagic = c.count;
             } else {
                 const card = this.cardsByCode[c.id];
                 if (!card.phoenixborn) {
                     const precon = this.findCardPrecon(card);
-                    const resPrecon = result.precons.find(p => p.name === precon.name);
+                    const resPrecon = result.precons.find((p) => p.name === precon.name);
                     if (resPrecon) {
                         resPrecon.count++;
                     } else {

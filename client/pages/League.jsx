@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { useSelector } from 'react-redux';
 
@@ -19,18 +20,19 @@ const League = ({ tag }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {tagReport && tagReport.map((record) => {
-                            const winRate = Math.round((record.wins / record.count) * 100);
+                        {tagReport &&
+                            tagReport.map((record) => {
+                                const winRate = Math.round((record.wins / record.count) * 100);
 
-                            return (
-                                <tr key={record.name}>
-                                    <td>{record.name}</td>
-                                    <td>{record.count}</td>
-                                    <td>{record.wins}</td>
-                                    <td>{winRate}%</td>
-                                </tr>
-                            );
-                        })}
+                                return (
+                                    <tr key={record.name}>
+                                        <td>{record.name}</td>
+                                        <td>{record.count}</td>
+                                        <td>{record.wins}</td>
+                                        <td>{winRate}%</td>
+                                    </tr>
+                                );
+                            })}
                     </tbody>
                 </table>
             )}

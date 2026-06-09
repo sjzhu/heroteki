@@ -133,9 +133,8 @@ const UserAdmin = () => {
                         label={permission.label}
                         inline
                         onChange={() => {
-                            currentPermissions[permission.name] = !currentPermissions[
-                                permission.name
-                            ];
+                            currentPermissions[permission.name] =
+                                !currentPermissions[permission.name];
                             let newPermissions = Object.assign({}, currentPermissions);
                             setCurrentPermissions(newPermissions);
                         }}
@@ -146,7 +145,6 @@ const UserAdmin = () => {
             );
         });
     }
-
 
     const altCards = [];
     for (const [key, value] of Object.entries(userAlts || [])) {
@@ -247,7 +245,7 @@ const UserAdmin = () => {
                             </Row>
                         </Panel>
                         {currentUser && (
-                            <div >
+                            <div>
                                 <Panel>
                                     <Tabs>
                                         <TabList>
@@ -304,7 +302,9 @@ const UserAdmin = () => {
                                                                 setfaveColor(event.target.value)
                                                             }
                                                         />
-                                                        <Button onClick={() => setfaveColor('')}>Clear</Button>
+                                                        <Button onClick={() => setfaveColor('')}>
+                                                            Clear
+                                                        </Button>
                                                     </Col>
                                                 </Row>
                                             </dl>
@@ -327,12 +327,14 @@ const UserAdmin = () => {
                                                 value='true'
                                                 checked={userVerified}
                                             ></Form.Check>
-
                                         </TabPanel>
 
                                         <TabPanel>
                                             <div style={{ display: 'flex' }}>
-                                                <select className='form-control col-md-6' onChange={handleSelectedAltChange}>
+                                                <select
+                                                    className='form-control col-md-6'
+                                                    onChange={handleSelectedAltChange}
+                                                >
                                                     <option value={null} />
                                                     {allAlts.map((a) => (
                                                         <option key={a.alt} value={a.alt}>
@@ -340,9 +342,14 @@ const UserAdmin = () => {
                                                         </option>
                                                     ))}
                                                 </select>
-                                                <button className='btn btn-primary def' onClick={addAltClick} >Add</button>
+                                                <button
+                                                    className='btn btn-primary def'
+                                                    onClick={addAltClick}
+                                                >
+                                                    Add
+                                                </button>
                                             </div>
-                                            <div className='admin-card' >
+                                            <div className='admin-card'>
                                                 {selectedAlt && <CardImage card={selectedAlt} />}
                                             </div>
                                             <h3>Currently held alts</h3>
@@ -352,7 +359,6 @@ const UserAdmin = () => {
                                                     onAltClick={onAltClick}
                                                 />
                                             </div>
-
                                         </TabPanel>
 
                                         <TabPanel>
@@ -381,7 +387,9 @@ const UserAdmin = () => {
                                                                 <tr key={token.ip}>
                                                                     <td>{token.ip}</td>
                                                                     <td>
-                                                                        {moment(token.lastUsed).format(
+                                                                        {moment(
+                                                                            token.lastUsed
+                                                                        ).format(
                                                                             'YYYY-MM-DD HH:MM'
                                                                         )}
                                                                     </td>

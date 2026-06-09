@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import classNames from 'classnames';
 
@@ -103,7 +104,8 @@ const CardPilePopup = ({
             onCloseClick={onCloseClick}
             onPlusClick={onPlusClick}
             onMinusClick={onMinusClick}
-            side={popupLocation}>
+            side={popupLocation}
+        >
             <Droppable onDragDrop={onDragDrop} source={source} manualMode={manualMode}>
                 <div className={popupClass} onClick={(event) => event.stopPropagation()}>
                     {popupMenuToRender}

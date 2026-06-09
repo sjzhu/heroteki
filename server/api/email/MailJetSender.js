@@ -8,13 +8,15 @@ class MailJetSender {
 
         // get public/private key for username / password auth
         this.apiKey =
-            process.env.MJ_APIKEY_PUBLIC || this.configService.getValueForSection('lobby', 'emailPublicKey');
+            process.env.MJ_APIKEY_PUBLIC ||
+            this.configService.getValueForSection('lobby', 'emailPublicKey');
         if (!this.apiKey) {
             logger.info(`email public key not configured.`);
             return;
         }
         this.apiSecret =
-            process.env.MJ_APIKEY_PRIVATE || this.configService.getValueForSection('lobby', 'emailPrivateKey');
+            process.env.MJ_APIKEY_PRIVATE ||
+            this.configService.getValueForSection('lobby', 'emailPrivateKey');
         if (!this.apiSecret) {
             logger.info(`email private key not configured.`);
             return;
@@ -41,11 +43,9 @@ class MailJetSender {
             Subject: subject,
             TextPart: body
         };
-        const request = mailjet
-            .post('send', { version: 'v3.1' })
-            .request({
-                Messages: [message]
-            });
+        const request = mailjet.post('send', { version: 'v3.1' }).request({
+            Messages: [message]
+        });
 
         request
             .then((result) => {
@@ -54,7 +54,6 @@ class MailJetSender {
             .catch((err) => {
                 this.logger.info('MJ-Error: ' + err.statusCode);
             });
-
     }
 }
 

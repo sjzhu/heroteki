@@ -20,7 +20,10 @@
 
 const monk = require('monk');
 const config = require('config');
-const { generatePlaceholder, shouldGeneratePlaceholder } = require('../game/sotm/cardImageGenerator');
+const {
+    generatePlaceholder,
+    shouldGeneratePlaceholder
+} = require('../game/sotm/cardImageGenerator');
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -82,7 +85,9 @@ async function main() {
             console.log(`[GEN] ${card.id} → ${generatedPath}`);
             generated++;
         } catch (err) {
-            console.error(`[ERROR] Failed to generate placeholder for '${card.id}': ${err.message}`);
+            console.error(
+                `[ERROR] Failed to generate placeholder for '${card.id}': ${err.message}`
+            );
             failed++;
         }
     }

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const logger = require('../log.js');
 const monk = require('monk');
 const util = require('../util.js');
@@ -45,7 +46,7 @@ class AshesDeckService {
     }
 
     getPreconDecks(preconGroup = 1) {
-        return this.preconDecks.find({ 'precon_group': preconGroup }, { sort: { precon_id: 1 } });
+        return this.preconDecks.find({ precon_group: preconGroup }, { sort: { precon_id: 1 } });
     }
 
     getAllPreconDecks() {
@@ -265,7 +266,7 @@ class AshesDeckService {
         let decks = [];
         switch (deckType) {
             case 0:
-                // get my decks and choose one 
+                // get my decks and choose one
                 decks = await this.findByUserName(user.username, null, false);
 
                 break;

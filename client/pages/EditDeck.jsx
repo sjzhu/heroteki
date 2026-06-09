@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -6,16 +7,16 @@ import { Col, Row } from 'react-bootstrap';
 import ViewDeck from '../Components/Decks/ViewDeck.jsx';
 import DeckEditor from '../Components/Decks/DeckEditor.jsx';
 import AlertPanel from '../Components/Site/AlertPanel.jsx';
-import { loadDeck, saveDeck, } from '../redux/actions';
+import { loadDeck, saveDeck } from '../redux/actions';
 
 function EditDeck({ deckId }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const apiError = useSelector(state => state.api.message);
-    const deck = useSelector(state => state.cards.selectedDeck);
+    const apiError = useSelector((state) => state.api.message);
+    const deck = useSelector((state) => state.cards.selectedDeck);
     const isChimera = deck?.mode === 'chimera';
-    const deckSaved = useSelector(state => state.cards.deckSaved);
-    const loading = useSelector(state => state.api.loading);
+    const deckSaved = useSelector((state) => state.cards.deckSaved);
+    const loading = useSelector((state) => state.api.loading);
 
     useEffect(() => {
         if (deckSaved) {

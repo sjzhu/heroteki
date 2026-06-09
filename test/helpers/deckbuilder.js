@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-undef */
 // STUBBED: Ashes card data removed for SotMDE port. Ashes integration tests
 // that depend on DeckBuilder are deleted in Phase 9.
 class DeckBuilder {

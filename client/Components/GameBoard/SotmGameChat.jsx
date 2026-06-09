@@ -41,7 +41,7 @@ const SotmGameChat = ({ messages = [], onSendChat, muted = false }) => {
         flexDirection: 'column',
         height: '100%',
         backgroundColor: '#161b22',
-        borderLeft: '1px solid #30363d',
+        borderLeft: '1px solid #30363d'
     };
 
     const headerStyle = {
@@ -50,7 +50,7 @@ const SotmGameChat = ({ messages = [], onSendChat, muted = false }) => {
         fontSize: '0.8rem',
         color: '#8b949e',
         textTransform: 'uppercase',
-        letterSpacing: '0.05em',
+        letterSpacing: '0.05em'
     };
 
     const messagesStyle = {
@@ -59,14 +59,14 @@ const SotmGameChat = ({ messages = [], onSendChat, muted = false }) => {
         padding: '8px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '4px',
+        gap: '4px'
     };
 
     const inputRowStyle = {
         display: 'flex',
         borderTop: '1px solid #30363d',
         padding: '6px',
-        gap: '6px',
+        gap: '6px'
     };
 
     const inputStyle = {
@@ -77,7 +77,7 @@ const SotmGameChat = ({ messages = [], onSendChat, muted = false }) => {
         color: '#f0f6fc',
         padding: '4px 8px',
         fontSize: '0.85rem',
-        outline: 'none',
+        outline: 'none'
     };
 
     const sendBtnStyle = {
@@ -87,7 +87,7 @@ const SotmGameChat = ({ messages = [], onSendChat, muted = false }) => {
         borderRadius: '4px',
         padding: '4px 10px',
         cursor: muted ? 'not-allowed' : 'pointer',
-        fontSize: '0.8rem',
+        fontSize: '0.8rem'
     };
 
     const getMessageStyle = (type) => {
@@ -106,7 +106,10 @@ const SotmGameChat = ({ messages = [], onSendChat, muted = false }) => {
             <div style={headerStyle}>Game Chat</div>
             <div style={messagesStyle}>
                 {messages.map((msg, idx) => {
-                    const text = typeof msg === 'string' ? msg : (msg.text || msg.message || JSON.stringify(msg));
+                    const text =
+                        typeof msg === 'string'
+                            ? msg
+                            : msg.text || msg.message || JSON.stringify(msg);
                     const type = msg && msg.type;
                     return (
                         <div key={idx} style={getMessageStyle(type)}>

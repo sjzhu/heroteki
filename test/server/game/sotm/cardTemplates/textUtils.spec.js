@@ -5,7 +5,10 @@
 
 'use strict';
 
-const { escapeXml, wrapText } = require('../../../../../server/game/sotm/cardTemplates/shared/textUtils');
+const {
+    escapeXml,
+    wrapText
+} = require('../../../../../server/game/sotm/cardTemplates/shared/textUtils');
 
 describe('escapeXml', () => {
     it('escapes < character', () => {

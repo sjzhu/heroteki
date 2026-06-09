@@ -203,5 +203,4 @@ module.exports.init = function (server) {
                 });
         })
     );
-
 };

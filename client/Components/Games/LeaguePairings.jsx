@@ -28,7 +28,9 @@ const LeaguePairings = ({ onCancelClick, onPlayClick }) => {
 
     const handlePlayClick = (pairing, tag) => {
         onPlayClick();
-        const gameName = `${getLeagueName(tag)}: ${pairing.ashtekiP1 || pairing.player1} vs ${pairing.ashtekiP2 || pairing.player2}`
+        const gameName = `${getLeagueName(tag)}: ${pairing.ashtekiP1 || pairing.player1} vs ${
+            pairing.ashtekiP2 || pairing.player2
+        }`;
         const isRanked = tag === 'phx';
         const values = {
             name: gameName,
@@ -68,7 +70,9 @@ const LeaguePairings = ({ onCancelClick, onPlayClick }) => {
     };
 
     const userIsInLeague = (league) => {
-        return allPairings[league].some((p) => p.pairings.some(pa => userIsInPairing(user.username, pa)));
+        return allPairings[league].some((p) =>
+            p.pairings.some((pa) => userIsInPairing(user.username, pa))
+        );
     };
 
     const getLeagueName = (tag) => {
@@ -81,57 +85,74 @@ const LeaguePairings = ({ onCancelClick, onPlayClick }) => {
             <div>
                 <div className='lobby-header'>My Pairings</div>
 
-                {allPairings && leagues.map((l) => {
-                    const userInLeague = userIsInLeague(l);
-                    return (
-                        <ul className='pairing-list' key={l}>
-                            <div className='lobby-header'>{getLeagueName(l)}</div>
+                {allPairings &&
+                    leagues.map((l) => {
+                        const userInLeague = userIsInLeague(l);
+                        return (
+                            <ul className='pairing-list' key={l}>
+                                <div className='lobby-header'>{getLeagueName(l)}</div>
 
-                            {userInLeague ? allPairings[l].map((p) => {
-                                return (
-                                    <div key={p}>
-                                        {p.pairings
-                                            .filter((p) => userIsInPairing(user.username, p))
-                                            .map((i) => {
-                                                const playable = !i.played;
-                                                return (
-
-                                                    <li className='pairing' key={i}>
-                                                        <div
-                                                            className={`decklist-entry-image ${p.tag.toLowerCase()}`}
-                                                            title='Phoenix league'
-                                                        >
-                                                            <span className='sr-only'>PHX</span>
-                                                        </div>
-                                                        <div>
-                                                            <div className='pairing-header'>{i.player1} vs {i.player2}</div>
-                                                            <div>{moment(p.datePaired).format('DD-MMM-yy')}</div>
-                                                        </div>
-                                                        {playable ? (
-                                                            <button
-                                                                className='btn btn-success def'
-                                                                onClick={() => handlePlayClick(i, l)}
-                                                            >
-                                                                Play
-                                                            </button>
-                                                        ) : (
-                                                            <div className='check-holder'>
-                                                                <FontAwesomeIcon icon={faCheck} /></div>
-                                                        )}
-                                                    </li>
-                                                )
-                                            })}
-                                    </div>
-                                )
-                            })
-                                :
-                                <li className='pairing none'>No pairings found. Sign up in the discord!</li>
-                            }
-                        </ul>)
-                }
-                )}
+                                {userInLeague ? (
+                                    allPairings[l].map((p) => {
+                                        return (
+                                            <div key={p}>
+                                                {p.pairings
+                                                    .filter((p) =>
+                                                        userIsInPairing(user.username, p)
+                                                    )
+                                                    .map((i) => {
+                                                        const playable = !i.played;
+                                                        return (
+                                                            <li className='pairing' key={i}>
+                                                                <div
+                                                                    className={`decklist-entry-image ${p.tag.toLowerCase()}`}
+                                                                    title='Phoenix league'
+                                                                >
+                                                                    <span className='sr-only'>
+                                                                        PHX
+                                                                    </span>
+                                                                </div>
+                                                                <div>
+                                                                    <div className='pairing-header'>
+                                                                        {i.player1} vs {i.player2}
+                                                                    </div>
+                                                                    <div>
+                                                                        {moment(
+                                                                            p.datePaired
+                                                                        ).format('DD-MMM-yy')}
+                                                                    </div>
+                                                                </div>
+                                                                {playable ? (
+                                                                    <button
+                                                                        className='btn btn-success def'
+                                                                        onClick={() =>
+                                                                            handlePlayClick(i, l)
+                                                                        }
+                                                                    >
+                                                                        Play
+                                                                    </button>
+                                                                ) : (
+                                                                    <div className='check-holder'>
+                                                                        <FontAwesomeIcon
+                                                                            icon={faCheck}
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                            </li>
+                                                        );
+                                                    })}
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <li className='pairing none'>
+                                        No pairings found. Sign up in the discord!
+                                    </li>
+                                )}
+                            </ul>
+                        );
+                    })}
             </div>
-
 
             <div className='text-center newgame-buttons'>
                 <button className='btn btn-primary def' onClick={onCancelClick}>

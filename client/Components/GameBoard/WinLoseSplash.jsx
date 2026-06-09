@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { clearGameReplay, closeGameSocket, sendGameMessage } from '../../redux/actions';
@@ -51,17 +52,27 @@ const WinLoseSplash = ({ game, onCloseClick }) => {
                     </div>
                     <div className='stat-column'>
                         <div className='stat-vs'>Vs</div>
-                        <div className='stat'><FontAwesomeIcon icon={faDice} className='stat-icon' title='Dice spent' /></div>
-                        <div className='stat'><img
-                            src={cardsLogo}
-                            className='stat-icon cards-icon'
-                            title='Cards played'
-                        /></div>
-                        <div className='stat'><FontAwesomeIcon
-                            icon={faDroplet}
-                            className='blood-stat-icon'
-                            title='Final Wounds'
-                        /></div>
+                        <div className='stat'>
+                            <FontAwesomeIcon
+                                icon={faDice}
+                                className='stat-icon'
+                                title='Dice spent'
+                            />
+                        </div>
+                        <div className='stat'>
+                            <img
+                                src={cardsLogo}
+                                className='stat-icon cards-icon'
+                                title='Cards played'
+                            />
+                        </div>
+                        <div className='stat'>
+                            <FontAwesomeIcon
+                                icon={faDroplet}
+                                className='blood-stat-icon'
+                                title='Final Wounds'
+                            />
+                        </div>
                     </div>
                     <div className='stat-column'>
                         <div className={`decklist-entry-image ${loser.phoenixborn.id}`} />
@@ -69,19 +80,17 @@ const WinLoseSplash = ({ game, onCloseClick }) => {
                         <div className='stat'>{loser.totalCardsPlayed}</div>
                         <div className='stat'>{loser.phoenixborn.damage}</div>
                     </div>
-                </div >
-                <div className='buttonDiv'>
-                    <button
-                        onClick={onLeaveClick}
-                        className='btn splash-button btn-default'
-                    >Leave Game</button>
-                    <button
-                        onClick={onCloseClick}
-                        className='btn splash-button btn-primary'
-                    >Close</button>
                 </div>
-            </div >
-        </Panel >
+                <div className='buttonDiv'>
+                    <button onClick={onLeaveClick} className='btn splash-button btn-default'>
+                        Leave Game
+                    </button>
+                    <button onClick={onCloseClick} className='btn splash-button btn-primary'>
+                        Close
+                    </button>
+                </div>
+            </div>
+        </Panel>
     );
 };
 

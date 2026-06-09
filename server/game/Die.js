@@ -1,4 +1,11 @@
-const { Magic, BattlefieldTypes, CardType, UpgradeCardTypes, PhoenixbornTypes } = require('../constants');
+/* eslint-disable no-unused-vars */
+const {
+    Magic,
+    BattlefieldTypes,
+    CardType,
+    UpgradeCardTypes,
+    PhoenixbornTypes
+} = require('../constants');
 const AbilityDsl = require('./abilitydsl');
 const DieAbility = require('./BaseActions/DieAbility');
 const { Costs } = require('./costs');
@@ -151,8 +158,7 @@ class Die extends PlayableObject {
                             target: this.owner.phoenixborn
                         })
                     },
-                    message:
-                        '{0} uses {1} to move {2} from discard to hand'
+                    message: '{0} uses {1} to move {2} from discard to hand'
                 });
             case 'illusion':
                 return this.action({
@@ -382,7 +388,9 @@ class Die extends PlayableObject {
                     gameAction: [
                         AbilityDsl.actions.conditional({
                             condition: (context) => context.player.anyEffect('preventAstralReturn'),
-                            falseGameAction: AbilityDsl.actions.detachDie((context) => ({ die: context.source }))
+                            falseGameAction: AbilityDsl.actions.detachDie((context) => ({
+                                die: context.source
+                            }))
                         }),
                         AbilityDsl.actions.preventDamage((context) => ({
                             event: context.event,

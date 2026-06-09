@@ -331,7 +331,7 @@ export function startGameReplay(replayData) {
     return {
         type: 'START_REPLAY',
         replayData: replayData
-    }
+    };
 }
 export function clearGameReplay() {
     return {

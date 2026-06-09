@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const _ = require('underscore');
 const monk = require('monk');
 

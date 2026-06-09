@@ -110,17 +110,14 @@ class LobbyServer {
     run() {
         // let port =
         //     process.env.PORT || this.configService.getValueForSection('lobby', 'port') || 4000;
-
         // this.server.listen(port, function onStart(err) {
         //     if (err) {
         //         logger.error(err);
         //     }
-
         //     logger.info(
         //         `==> ?? Listening on port ${port}. Open up http://localhost:${port}/ in your browser.`
         //     );
         // });
-
         // ViteExpress.bind(this.app, this.server);
     }
 

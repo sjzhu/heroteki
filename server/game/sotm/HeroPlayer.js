@@ -1,7 +1,8 @@
 // SotMDE HeroPlayer — represents one human player's hero deck and state.
 // One instance per hero deck (a single player may have multiple HeroPlayer instances).
 
-const SotmCard = require('./SotmCard');
+/* eslint-disable-next-line no-unused-vars */
+const SotmCard = require('./SotmCard'); // used in JSDoc @param types
 const EVENT_TYPES = require('./eventTypes');
 
 class HeroPlayer {
@@ -19,14 +20,14 @@ class HeroPlayer {
         this.deckVersion = null; // set by game.js after construction
 
         this.hand = [];
-        this.deck = cards.filter(c => c.type !== 'heroCharacter');
+        this.deck = cards.filter((c) => c.type !== 'heroCharacter');
         this.trash = [];
         this.playArea = [];
         this.characterCard = characterCard;
         this.auxiliaryZones = [];
 
-        this.hp = characterCard ? (characterCard.hp ?? 0) : 0;
-        this.maxHp = characterCard ? (characterCard.maxHp ?? 0) : 0;
+        this.hp = characterCard ? characterCard.hp ?? 0 : 0;
+        this.maxHp = characterCard ? characterCard.maxHp ?? 0 : 0;
         this.isIncapacitated = false;
 
         // Mark card zones
@@ -84,7 +85,7 @@ class HeroPlayer {
      * @returns {SotmCard|null}
      */
     playCard(cardId) {
-        const idx = this.hand.findIndex(c => c.id === cardId);
+        const idx = this.hand.findIndex((c) => c.id === cardId);
         if (idx === -1) return null;
 
         const card = this.hand.splice(idx, 1)[0];
@@ -110,13 +111,20 @@ class HeroPlayer {
     discardCard(cardId, fromZone) {
         let sourceArr;
         switch (fromZone) {
-            case 'hand':     sourceArr = this.hand;     break;
-            case 'playArea': sourceArr = this.playArea; break;
-            case 'deck':     sourceArr = this.deck;     break;
-            default: return null;
+            case 'hand':
+                sourceArr = this.hand;
+                break;
+            case 'playArea':
+                sourceArr = this.playArea;
+                break;
+            case 'deck':
+                sourceArr = this.deck;
+                break;
+            default:
+                return null;
         }
 
-        const idx = sourceArr.findIndex(c => c.id === cardId);
+        const idx = sourceArr.findIndex((c) => c.id === cardId);
         if (idx === -1) return null;
 
         const card = sourceArr.splice(idx, 1)[0];
@@ -162,24 +170,24 @@ class HeroPlayer {
             deckId: this.deckId,
             deckVersion: this.deckVersion,
             hand: isOwner
-                ? this.hand.map(c => c.getSummary())
+                ? this.hand.map((c) => c.getSummary())
                 : this.hand.map(() => ({ faceDown: true })),
             handCount: this.hand.length,
-            deck: this.deck.map(c => c.getSummary()),
+            deck: this.deck.map((c) => c.getSummary()),
             deckCount: this.deck.length,
-            trash: this.trash.map(c => c.getSummary()),
-            playArea: this.playArea.map(c => c.getSummary()),
+            trash: this.trash.map((c) => c.getSummary()),
+            playArea: this.playArea.map((c) => c.getSummary()),
             characterCard: this.characterCard ? this.characterCard.getSummary() : null,
-            auxiliaryZones: this.auxiliaryZones.map(az => ({
+            auxiliaryZones: this.auxiliaryZones.map((az) => ({
                 id: az.id,
                 name: az.name,
-                deck: az.deck.map(c => c.getSummary()),
-                trash: az.trash.map(c => c.getSummary()),
+                deck: az.deck.map((c) => c.getSummary()),
+                trash: az.trash.map((c) => c.getSummary())
             })),
             hp: this.hp,
             maxHp: this.maxHp,
             isIncapacitated: this.isIncapacitated,
-            controllerPlayerId: this.id,
+            controllerPlayerId: this.id
         };
     }
 }

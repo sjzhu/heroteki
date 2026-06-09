@@ -54,6 +54,7 @@ export default function (state = {}, action) {
                 user: u
             });
         case 'ACCOUNT_LINK_RESPONSE':
+            // eslint-disable-next-line no-redeclare
             var u = Object.assign({}, action.response.user);
             u.patreon = action.response.status;
             return Object.assign({}, state, {

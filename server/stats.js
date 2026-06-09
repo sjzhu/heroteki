@@ -6,7 +6,6 @@ const ConfigService = require('./services/ConfigService.js');
 
 let gameService = new GameService(new ConfigService());
 
-
 let start = new Date('2022-01-01T00:00:01');
 let end = new Date();
 
@@ -62,10 +61,22 @@ gameService
 
             _.each(game.players, (player) => {
                 if (!players[player.name]) {
-                    players[player.name] = { name: player.name, wins: 0, losses: 0, games: 0, solo: 0 };
+                    players[player.name] = {
+                        name: player.name,
+                        wins: 0,
+                        losses: 0,
+                        games: 0,
+                        solo: 0
+                    };
                 }
                 if (!playersByMonth[month][player.name]) {
-                    playersByMonth[month][player.name] = { name: player.name, wins: 0, losses: 0, games: 0, solo: 0 };
+                    playersByMonth[month][player.name] = {
+                        name: player.name,
+                        wins: 0,
+                        losses: 0,
+                        games: 0,
+                        solo: 0
+                    };
                 }
 
                 var playerStat = players[player.name];
@@ -125,8 +136,8 @@ gameService
         _.each(Object.keys(playersByMonth), (month) => {
             console.info(
                 monthNames[month] +
-                ' | ' +
-                Object.values(playersByMonth[month]).filter((p) => p.games === p.solo).length
+                    ' | ' +
+                    Object.values(playersByMonth[month]).filter((p) => p.games === p.solo).length
             );
         });
     })

@@ -364,15 +364,15 @@ const Card = ({
         let imageClass = classNames('card-image vertical', sizeClass, {
             exhausted: orientation === 'exhausted' || orientation === 'horizontal'
         });
-        const image = <div className={imageClass}>
-            <CardImage card={card} />
-            {getChainIcon(card)}
-            {getBoostedFlags(card)}
-        </div>
-            ;
-
-        const mouseOverAllowed = !disableMouseOver
-            && (!isFacedown() || !card.parent) && onMouseOver;
+        const image = (
+            <div className={imageClass}>
+                <CardImage card={card} />
+                {getChainIcon(card)}
+                {getBoostedFlags(card)}
+            </div>
+        );
+        const mouseOverAllowed =
+            !disableMouseOver && (!isFacedown() || !card.parent) && onMouseOver;
         return (
             <div className='card-frame' ref={drag}>
                 {getDragFrame(image)}
@@ -390,14 +390,18 @@ const Card = ({
                         {card.name ? (
                             <>
                                 <span className='card-name'>{card.name}&nbsp;</span>
-                                {card.target && <span className='sr-only'>{card.target} attack</span>}
+                                {card.target && (
+                                    <span className='sr-only'>{card.target} attack</span>
+                                )}
                             </>
                         ) : (
                             <span className='sr-only'>{card.blood} blood</span>
                         )}
                         {image}
                     </div>
-                    {showCounters() && <CardCounters counters={getCountersForCard(card)} size={size} />}
+                    {showCounters() && (
+                        <CardCounters counters={getCountersForCard(card)} size={size} />
+                    )}
                     <DieUpgrades card={card} onDieClick={onDieClick} />
                 </div>
                 {shouldShowMenu() && (

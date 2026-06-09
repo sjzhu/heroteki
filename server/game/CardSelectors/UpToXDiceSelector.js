@@ -24,8 +24,8 @@ class UpToXDiceSelector extends BaseDieSelector {
                 ? this.selectPrefix + ' a die'
                 : this.selectPrefix + " an opponent's die"
             : ['self', 'any'].includes(this.owner)
-                ? this.selectPrefix + ' up to ' + numDice + ' dice'
-                : this.selectPrefix + ' up to ' + numDice + " of your opponent's dice";
+            ? this.selectPrefix + ' up to ' + numDice + ' dice'
+            : this.selectPrefix + ' up to ' + numDice + " of your opponent's dice";
     }
 
     hasReachedLimit(selectedDice, context) {

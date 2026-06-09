@@ -14,7 +14,6 @@ const BehaviourPromptControl = ({ behaviour }) => {
         </div>
     );
 
-
     return (
         <div className='prompt-control-behaviour'>
             <h3>Behaviour: {behaviour.value}</h3>

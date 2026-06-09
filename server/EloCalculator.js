@@ -1,4 +1,4 @@
-const logger = require("./log");
+const logger = require('./log');
 
 // For details on Elo calculation, refer to https://en.wikipedia.org/wiki/Elo_rating_system
 const GameResult = {
@@ -21,19 +21,18 @@ class EloCalculator {
     }
 
     calculateUpdatedRating(playerRating, expectedScore, playerResult) {
-        const newValue = playerRating + this.getKFactor(playerRating) * (playerResult - expectedScore);
+        const newValue =
+            playerRating + this.getKFactor(playerRating) * (playerResult - expectedScore);
         return Math.round(newValue);
     }
 
     getKFactor(rating) {
         // The k-factor is the maximum possible adjustment
         // to a player's rating based on their current rating.
-        if (rating < RankFactors.Beginner.upper)
-            return RankFactors.Beginner.kFactor;
+        if (rating < RankFactors.Beginner.upper) return RankFactors.Beginner.kFactor;
         else if (rating >= RankFactors.Advanced.lower && rating <= RankFactors.Advanced.upper)
             return RankFactors.Advanced.kFactor;
-        else
-            return RankFactors.Pro.kFactor;
+        else return RankFactors.Pro.kFactor;
     }
 
     calculateExpectedResults(players) {

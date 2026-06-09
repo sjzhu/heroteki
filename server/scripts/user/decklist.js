@@ -1,4 +1,3 @@
-
 const DeckService = require('../../services/AshesDeckService.js');
 const GameService = require('../../services/AshesGameService.js');
 const ConfigService = require('../../services/ConfigService.js');
@@ -24,7 +23,7 @@ async function getDecks(username) {
             .findByUserName(username, {})
             .then((games) => {
                 games.forEach((game) => {
-                    const player = game.players.find(p => p.name === username);
+                    const player = game.players.find((p) => p.name === username);
                     if (player && player.deckid) {
                         const deck = decks.find((d) => d._id.toString() === player.deckid);
                         if (deck) {
@@ -32,7 +31,7 @@ async function getDecks(username) {
                             if (game.winner === username) {
                                 deck.wins++;
                             }
-                            deck.winRate = Math.round(deck.wins / deck.played * 100);
+                            deck.winRate = Math.round((deck.wins / deck.played) * 100);
                         }
                     }
                 });

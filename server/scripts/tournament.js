@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const AshesDeckService = require('../services/AshesDeckService.js');
 const GameService = require('../services/AshesGameService.js');
 const ConfigService = require('../services/ConfigService.js');
@@ -23,7 +24,7 @@ async function doIt(label) {
 
     results.forEach((r) => {
         console.log(r);
-    })
+    });
 }
 
 async function getPlayer(game, index) {
@@ -32,12 +33,13 @@ async function getPlayer(game, index) {
         const deck = await deckService.getById(player.deckid);
         const deckAudit = deck
             ? {
-                deckId: player.deckid,
-                ashesLiveModified: deck.ashesLiveModified,
-                created: deck.created,
-                lastUpdated: deck.lastUpdated,
-                checkMe: deck.lastUpdated > deck.created
-            } : null;
+                  deckId: player.deckid,
+                  ashesLiveModified: deck.ashesLiveModified,
+                  created: deck.created,
+                  lastUpdated: deck.lastUpdated,
+                  checkMe: deck.lastUpdated > deck.created
+              }
+            : null;
 
         // console.log(deckAudit);
         player.deckAudit = deckAudit;
@@ -46,7 +48,6 @@ async function getPlayer(game, index) {
 }
 
 async function getGameResult(game) {
-
     const p1 = await getPlayer(game, 0);
     const p2 = await getPlayer(game, 1);
     const result = {
@@ -59,7 +60,6 @@ async function getGameResult(game) {
     };
     // console.log("gameResult: ", result);
     return result;
-
 }
 
 doIt(label).then(() => {

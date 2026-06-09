@@ -16,7 +16,7 @@ const COOP_PHASES = new Set([
     'env_start',
     'env_play',
     'env_end',
-    'setup',
+    'setup'
 ]);
 
 const PHASE_LABELS = {
@@ -32,7 +32,7 @@ const PHASE_LABELS = {
     env_start: 'Environment — Start Phase',
     env_play: 'Environment — Play Phase',
     env_end: 'Environment — End Phase',
-    game_over: 'Game Over',
+    game_over: 'Game Over'
 };
 
 /**
@@ -75,7 +75,7 @@ const TurnTracker = ({ turnState, myPlayerId, onEndGame }) => {
         display: 'flex',
         alignItems: 'center',
         gap: '16px',
-        flexWrap: 'wrap',
+        flexWrap: 'wrap'
     };
 
     const hBadgeStyle = {
@@ -85,7 +85,7 @@ const TurnTracker = ({ turnState, myPlayerId, onEndGame }) => {
         padding: '2px 10px',
         fontWeight: 'bold',
         fontSize: '0.9rem',
-        letterSpacing: '0.03em',
+        letterSpacing: '0.03em'
     };
 
     const roundBadgeStyle = {
@@ -93,14 +93,14 @@ const TurnTracker = ({ turnState, myPlayerId, onEndGame }) => {
         color: '#f8f9fa',
         borderRadius: '4px',
         padding: '2px 10px',
-        fontSize: '0.85rem',
+        fontSize: '0.85rem'
     };
 
     const phaseLabelStyle = {
         color: '#f8f9fa',
         fontSize: '0.9rem',
         fontWeight: '500',
-        flex: 1,
+        flex: 1
     };
 
     const advanceBtnStyle = {
@@ -111,7 +111,7 @@ const TurnTracker = ({ turnState, myPlayerId, onEndGame }) => {
         padding: '4px 14px',
         cursor: canAdvance ? 'pointer' : 'not-allowed',
         fontSize: '0.85rem',
-        fontWeight: '500',
+        fontWeight: '500'
     };
 
     const endGameBtnStyle = {
@@ -121,7 +121,7 @@ const TurnTracker = ({ turnState, myPlayerId, onEndGame }) => {
         borderRadius: '4px',
         padding: '4px 14px',
         cursor: 'pointer',
-        fontSize: '0.85rem',
+        fontSize: '0.85rem'
     };
 
     return (

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import $ from 'jquery';
 import { useSelector, useDispatch } from 'react-redux';

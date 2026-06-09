@@ -14,4 +14,3 @@ collection
         console.log(result);
     })
     .then(() => db.close());
-

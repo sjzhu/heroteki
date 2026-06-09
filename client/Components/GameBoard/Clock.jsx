@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import './Clock.scss';
 
-const formattedSeconds = (sec) => (sec < 0 ? '-' : '') + Math.floor(Math.abs(sec) / 60) + ':' + ('0' + Math.abs(sec) % 60).slice(-2);
+const formattedSeconds = (sec) =>
+    (sec < 0 ? '-' : '') +
+    Math.floor(Math.abs(sec) / 60) +
+    ':' +
+    ('0' + (Math.abs(sec) % 60)).slice(-2);
 
 class Clock extends React.Component {
     constructor() {

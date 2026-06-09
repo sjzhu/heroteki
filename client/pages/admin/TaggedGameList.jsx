@@ -48,52 +48,42 @@ const TaggedGameList = () => {
                 </tr>
             </thead>
             <tbody>
-                {taggedGames && taggedGames.map((game) => {
-                    const startedAt = moment(game.startedAt);
-                    const finishedAt = moment(game.finishedAt);
-                    const duration = moment.duration(finishedAt.diff(startedAt));
+                {taggedGames &&
+                    taggedGames.map((game) => {
+                        const startedAt = moment(game.startedAt);
+                        const finishedAt = moment(game.finishedAt);
+                        const duration = moment.duration(finishedAt.diff(startedAt));
 
-                    const winnerIndex = game.winner ? computeWinnerIndex(game) : -1;
+                        const winnerIndex = game.winner ? computeWinnerIndex(game) : -1;
 
-                    return (
-                        <tr key={game.gameId}>
-                            <td>{moment(game.startedAt).format('YYYY-MM-DD HH:mm')}<br />
-                                {game.label}</td>
-                            <td>
-                                {game.players[0]?.name}
-                            </td>
-                            <td>
-                                {game.players[0]?.deck}
-                            </td>
-                            <td style={{ whiteSpace: 'nowrap' }}>
-                                {game.players[1]?.name}
-                            </td>
-                            <td>
-                                {game.players[1]?.deck}
-                            </td>
-                            <td>
-                                {computeWinner(game)}
-                            </td>
-                            <td>
-                                {game.winReason}
-                            </td>
-                            <td style={{ whiteSpace: 'nowrap' }}>
-                                {game.players[winnerIndex]?.wounds}
-                            </td>
-                            <td>
-                                {game.pairing ? 'Yes' : 'No'}
-                            </td>
-                            <td style={{ whiteSpace: 'nowrap' }}>
-                                <a href={gameApiRoot + game.gameId} download={true}>
-                                    {duration.get('hours')}h {duration.get('minutes')}m
-                                </a>
-                            </td>
-                        </tr>
-                    );
-                })}
+                        return (
+                            <tr key={game.gameId}>
+                                <td>
+                                    {moment(game.startedAt).format('YYYY-MM-DD HH:mm')}
+                                    <br />
+                                    {game.label}
+                                </td>
+                                <td>{game.players[0]?.name}</td>
+                                <td>{game.players[0]?.deck}</td>
+                                <td style={{ whiteSpace: 'nowrap' }}>{game.players[1]?.name}</td>
+                                <td>{game.players[1]?.deck}</td>
+                                <td>{computeWinner(game)}</td>
+                                <td>{game.winReason}</td>
+                                <td style={{ whiteSpace: 'nowrap' }}>
+                                    {game.players[winnerIndex]?.wounds}
+                                </td>
+                                <td>{game.pairing ? 'Yes' : 'No'}</td>
+                                <td style={{ whiteSpace: 'nowrap' }}>
+                                    <a href={gameApiRoot + game.gameId} download={true}>
+                                        {duration.get('hours')}h {duration.get('minutes')}m
+                                    </a>
+                                </td>
+                            </tr>
+                        );
+                    })}
             </tbody>
         </table>
-    )
+    );
 };
 
 export default TaggedGameList;

@@ -4,52 +4,58 @@
 // (2) update advance() transition sequence, (3) update label map.
 
 const TurnPhase = {
-    SETUP:         'setup',
+    SETUP: 'setup',
     VILLAIN_START: 'villain_start',
-    VILLAIN_PLAY:  'villain_play',
-    VILLAIN_END:   'villain_end',
-    HERO_START:    'hero_start',
-    HERO_PLAY:     'hero_play',
-    HERO_POWER:    'hero_power',
-    HERO_DRAW:     'hero_draw',
-    HERO_END:      'hero_end',
-    ENV_START:     'env_start',
-    ENV_PLAY:      'env_play',
-    ENV_END:       'env_end',
-    GAME_OVER:     'game_over',
+    VILLAIN_PLAY: 'villain_play',
+    VILLAIN_END: 'villain_end',
+    HERO_START: 'hero_start',
+    HERO_PLAY: 'hero_play',
+    HERO_POWER: 'hero_power',
+    HERO_DRAW: 'hero_draw',
+    HERO_END: 'hero_end',
+    ENV_START: 'env_start',
+    ENV_PLAY: 'env_play',
+    ENV_END: 'env_end',
+    GAME_OVER: 'game_over'
 };
 
 // Phases where all players may act (cooperative; not hero-specific)
 const VILLAIN_PHASES = new Set([
-    TurnPhase.VILLAIN_START, TurnPhase.VILLAIN_PLAY, TurnPhase.VILLAIN_END
+    TurnPhase.VILLAIN_START,
+    TurnPhase.VILLAIN_PLAY,
+    TurnPhase.VILLAIN_END
 ]);
-const ENV_PHASES = new Set([
-    TurnPhase.ENV_START, TurnPhase.ENV_PLAY, TurnPhase.ENV_END
-]);
+const ENV_PHASES = new Set([TurnPhase.ENV_START, TurnPhase.ENV_PLAY, TurnPhase.ENV_END]);
 const HERO_PHASES = new Set([
-    TurnPhase.HERO_START, TurnPhase.HERO_PLAY, TurnPhase.HERO_POWER,
-    TurnPhase.HERO_DRAW, TurnPhase.HERO_END
+    TurnPhase.HERO_START,
+    TurnPhase.HERO_PLAY,
+    TurnPhase.HERO_POWER,
+    TurnPhase.HERO_DRAW,
+    TurnPhase.HERO_END
 ]);
 
 const HERO_PHASE_SEQUENCE = [
-    TurnPhase.HERO_START, TurnPhase.HERO_PLAY, TurnPhase.HERO_POWER,
-    TurnPhase.HERO_DRAW, TurnPhase.HERO_END
+    TurnPhase.HERO_START,
+    TurnPhase.HERO_PLAY,
+    TurnPhase.HERO_POWER,
+    TurnPhase.HERO_DRAW,
+    TurnPhase.HERO_END
 ];
 
 const PHASE_LABELS = {
-    [TurnPhase.SETUP]:         'Setup',
+    [TurnPhase.SETUP]: 'Setup',
     [TurnPhase.VILLAIN_START]: 'Villain — Start of Turn',
-    [TurnPhase.VILLAIN_PLAY]:  'Villain — Play Card',
-    [TurnPhase.VILLAIN_END]:   'Villain — End of Turn',
-    [TurnPhase.HERO_START]:    'Hero — Start of Turn',
-    [TurnPhase.HERO_PLAY]:     'Hero — Play Phase',
-    [TurnPhase.HERO_POWER]:    'Hero — Power Phase',
-    [TurnPhase.HERO_DRAW]:     'Hero — Draw Phase',
-    [TurnPhase.HERO_END]:      'Hero — End of Turn',
-    [TurnPhase.ENV_START]:     'Environment — Start of Turn',
-    [TurnPhase.ENV_PLAY]:      'Environment — Play Card',
-    [TurnPhase.ENV_END]:       'Environment — End of Turn',
-    [TurnPhase.GAME_OVER]:     'Game Over',
+    [TurnPhase.VILLAIN_PLAY]: 'Villain — Play Card',
+    [TurnPhase.VILLAIN_END]: 'Villain — End of Turn',
+    [TurnPhase.HERO_START]: 'Hero — Start of Turn',
+    [TurnPhase.HERO_PLAY]: 'Hero — Play Phase',
+    [TurnPhase.HERO_POWER]: 'Hero — Power Phase',
+    [TurnPhase.HERO_DRAW]: 'Hero — Draw Phase',
+    [TurnPhase.HERO_END]: 'Hero — End of Turn',
+    [TurnPhase.ENV_START]: 'Environment — Start of Turn',
+    [TurnPhase.ENV_PLAY]: 'Environment — Play Card',
+    [TurnPhase.ENV_END]: 'Environment — End of Turn',
+    [TurnPhase.GAME_OVER]: 'Game Over'
 };
 
 class TurnManager {
@@ -90,18 +96,14 @@ class TurnManager {
             this.round = 1;
             this.currentHeroIndex = 0;
             this._enterPhase(TurnPhase.VILLAIN_START);
-
         } else if (current === TurnPhase.VILLAIN_START) {
             this._enterPhase(TurnPhase.VILLAIN_PLAY);
-
         } else if (current === TurnPhase.VILLAIN_PLAY) {
             this._enterPhase(TurnPhase.VILLAIN_END);
-
         } else if (current === TurnPhase.VILLAIN_END) {
             // Enter first hero's turn
             this.currentHeroIndex = 0;
             this._enterHeroPhase(TurnPhase.HERO_START);
-
         } else if (HERO_PHASES.has(current)) {
             const heroPhaseIdx = HERO_PHASE_SEQUENCE.indexOf(current);
 
@@ -119,18 +121,14 @@ class TurnManager {
                     this._enterPhase(TurnPhase.ENV_START);
                 }
             }
-
         } else if (current === TurnPhase.ENV_START) {
             this._enterPhase(TurnPhase.ENV_PLAY);
-
         } else if (current === TurnPhase.ENV_PLAY) {
             this._enterPhase(TurnPhase.ENV_END);
-
         } else if (current === TurnPhase.ENV_END) {
             // New round: back to villain start
             this.round++;
             this._enterPhase(TurnPhase.VILLAIN_START);
-
         } else if (current === TurnPhase.GAME_OVER) {
             // Already over; no-op
         }
@@ -222,7 +220,7 @@ class TurnManager {
             activeControllerPlayerId: this.activeControllerPlayerId,
             heroOrder: this.heroOrder,
             currentHeroIndex: this.currentHeroIndex,
-            lastActivityAt: this.lastActivityAt,
+            lastActivityAt: this.lastActivityAt
         };
     }
 }

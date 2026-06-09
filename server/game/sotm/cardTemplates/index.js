@@ -7,12 +7,12 @@
 'use strict';
 
 const templates = {
-    heroCard:         require('./heroCard'),
-    villainCard:      require('./villainCard'),
-    environmentCard:  require('./environmentCard'),
-    heroCharacter:    require('./heroCharacter'),
+    heroCard: require('./heroCard'),
+    villainCard: require('./villainCard'),
+    environmentCard: require('./environmentCard'),
+    heroCharacter: require('./heroCharacter'),
     villainCharacter: require('./villainCharacter'),
-    default:          require('./default'),
+    default: require('./default')
 };
 
 /**

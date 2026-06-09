@@ -24,43 +24,39 @@ let end = new Date();
 //console.info('Running stats between', args[0], 'and', args[1]);
 // console.info('Games between', start, 'and', end);
 
-gameService.getAllGames(start, end)
-    .then((games) => {
-        const rankedGames = games.filter(g => g.gameType === 'competitive');
-        console.log('ranked game count: ' + rankedGames.length);
-        let players = {};
-        _.each(rankedGames, (game) => {
-            if (_.size(game.players) !== 2) {
-                return;
+gameService.getAllGames(start, end).then((games) => {
+    const rankedGames = games.filter((g) => g.gameType === 'competitive');
+    console.log('ranked game count: ' + rankedGames.length);
+    let players = {};
+    _.each(rankedGames, (game) => {
+        if (_.size(game.players) !== 2) {
+            return;
+        }
+
+        _.each(game.players, (player) => {
+            if (!players[player.name]) {
+                players[player.name] = { name: player.name, played: 0 };
             }
 
-            _.each(game.players, (player) => {
-                if (!players[player.name]) {
-                    players[player.name] = { name: player.name, played: 0 };
-                }
-
-                var playerStat = players[player.name];
-                playerStat.played++;
-                playerStat.latestRanked = game.startedAt;
-            });
+            var playerStat = players[player.name];
+            playerStat.played++;
+            playerStat.latestRanked = game.startedAt;
         });
-
-        console.log('users');
-        const collection = db.get('users');
-        console.log(players);
-        _.each(players, (player) => {
-            console.log(player);
-            collection
-                .update(
-                    { username: player.name },
-                    {
-                        $set: {
-                            rankedGamesPlayed: player.played,
-                            lastRankedGame: player.latestRanked
-                        }
-                    }
-                )
-        })
-
-
     });
+
+    console.log('users');
+    const collection = db.get('users');
+    console.log(players);
+    _.each(players, (player) => {
+        console.log(player);
+        collection.update(
+            { username: player.name },
+            {
+                $set: {
+                    rankedGamesPlayed: player.played,
+                    lastRankedGame: player.latestRanked
+                }
+            }
+        );
+    });
+});

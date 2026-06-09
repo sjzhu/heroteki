@@ -1,6 +1,20 @@
 import React from 'react';
 
-function Input({ name, label, labelClass, fieldClass, type, placeholder, value, onChange, onBlur, autoFocus, validationAttributes, noGroup, children }) {
+function Input({
+    name,
+    label,
+    labelClass,
+    fieldClass,
+    type,
+    placeholder,
+    value,
+    onChange,
+    onBlur,
+    autoFocus,
+    validationAttributes,
+    noGroup,
+    children
+}) {
     const inputControl = (
         <div>
             <label htmlFor={name} className={labelClass + ' control-label'}>
@@ -35,4 +49,3 @@ function Input({ name, label, labelClass, fieldClass, type, placeholder, value, 
 Input.displayName = 'Input';
 
 export default Input;
-

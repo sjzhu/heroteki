@@ -24,7 +24,9 @@ const MyPairings = ({ pairings, onPlayClick }) => {
     };
 
     const userIsInLeague = (league) => {
-        return pairings[league].some((p) => p.pairings.some(pa => userIsInPairing(user.username, pa)));
+        return pairings[league].some((p) =>
+            p.pairings.some((pa) => userIsInPairing(user.username, pa))
+        );
     };
 
     const getLeagueName = (tag) => {
@@ -52,7 +54,6 @@ const MyPairings = ({ pairings, onPlayClick }) => {
                                         .map((i) => {
                                             const playable = !i.played;
                                             return (
-
                                                 <li className='pairing' key={i}>
                                                     <div
                                                         className={`decklist-entry-image ${p.tag.toLowerCase()}`}
@@ -61,8 +62,14 @@ const MyPairings = ({ pairings, onPlayClick }) => {
                                                         <span className='sr-only'>PHX</span>
                                                     </div>
                                                     <div>
-                                                        <div className='pairing-header'>{i.player1} vs {i.player2}</div>
-                                                        <div>{moment(p.datePaired).format('DD-MMM-yy')}</div>
+                                                        <div className='pairing-header'>
+                                                            {i.player1} vs {i.player2}
+                                                        </div>
+                                                        <div>
+                                                            {moment(p.datePaired).format(
+                                                                'DD-MMM-yy'
+                                                            )}
+                                                        </div>
                                                     </div>
                                                     {playable ? (
                                                         <button
@@ -73,18 +80,18 @@ const MyPairings = ({ pairings, onPlayClick }) => {
                                                         </button>
                                                     ) : (
                                                         <div className='check-holder'>
-                                                            <FontAwesomeIcon icon={faCheck} /></div>
+                                                            <FontAwesomeIcon icon={faCheck} />
+                                                        </div>
                                                     )}
                                                 </li>
-                                            )
+                                            );
                                         })}
                                 </div>
-                            )
-                        }
-                        )}
-                    </ul>)
-            }
-            )}
+                            );
+                        })}
+                    </ul>
+                );
+            })}
         </div>
     );
 };

@@ -16,7 +16,15 @@ import React, { useState, useRef, useEffect } from 'react';
  *   position: { x: number, y: number }
  * }} props
  */
-const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction, onClose, position }) => {
+const CardContextMenu = ({
+    card,
+    zone,
+    controllerId,
+    isVillain = false,
+    onAction,
+    onClose,
+    position
+}) => {
     const [showKeywordInput, setShowKeywordInput] = useState(false);
     const [newKeyword, setNewKeyword] = useState('');
     const [showTokenInput, setShowTokenInput] = useState(false);
@@ -54,7 +62,7 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
         minWidth: '180px',
         boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
         color: '#f8f9fa',
-        fontSize: '0.85rem',
+        fontSize: '0.85rem'
     };
 
     const itemStyle = {
@@ -65,18 +73,18 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
         border: 'none',
         color: 'inherit',
         width: '100%',
-        textAlign: 'left',
+        textAlign: 'left'
     };
 
     const dividerStyle = {
         borderTop: '1px solid #495057',
-        margin: '4px 0',
+        margin: '4px 0'
     };
 
     const inputRowStyle = {
         display: 'flex',
         gap: '4px',
-        padding: '4px 8px',
+        padding: '4px 8px'
     };
 
     const inputStyle = {
@@ -86,7 +94,7 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
         borderRadius: '3px',
         padding: '2px 6px',
         flex: 1,
-        fontSize: '0.8rem',
+        fontSize: '0.8rem'
     };
 
     const smallBtnStyle = {
@@ -96,7 +104,7 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
         borderRadius: '3px',
         padding: '2px 6px',
         cursor: 'pointer',
-        fontSize: '0.75rem',
+        fontSize: '0.75rem'
     };
 
     const tokenLabels = card && card.tokens ? Object.keys(card.tokens) : [];
@@ -104,26 +112,59 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
 
     const renderHandActions = () => (
         <>
-            <button style={itemStyle} onClick={() =>
-                act('playCard', { cardId: card.id })
-            }>Play Card</button>
-            <button style={itemStyle} onClick={() =>
-                act('discardCard', { cardId: card.id, zone: 'hand' })
-            }>Discard</button>
+            <button style={itemStyle} onClick={() => act('playCard', { cardId: card.id })}>
+                Play Card
+            </button>
+            <button
+                style={itemStyle}
+                onClick={() => act('discardCard', { cardId: card.id, zone: 'hand' })}
+            >
+                Discard
+            </button>
         </>
     );
 
     const renderPlayAreaActions = () => (
         <>
-            <button style={itemStyle} onClick={() =>
-                act('moveCard', { cardId: card.id, fromZone: 'playArea', toZone: 'trash', controllerId })
-            }>Move to Trash</button>
-            <button style={itemStyle} onClick={() =>
-                act('moveCard', { cardId: card.id, fromZone: 'playArea', toZone: 'hand', controllerId })
-            }>Return to Hand</button>
-            <button style={itemStyle} onClick={() =>
-                act('moveCard', { cardId: card.id, fromZone: 'playArea', toZone: 'deck', controllerId })
-            }>Return to Deck</button>
+            <button
+                style={itemStyle}
+                onClick={() =>
+                    act('moveCard', {
+                        cardId: card.id,
+                        fromZone: 'playArea',
+                        toZone: 'trash',
+                        controllerId
+                    })
+                }
+            >
+                Move to Trash
+            </button>
+            <button
+                style={itemStyle}
+                onClick={() =>
+                    act('moveCard', {
+                        cardId: card.id,
+                        fromZone: 'playArea',
+                        toZone: 'hand',
+                        controllerId
+                    })
+                }
+            >
+                Return to Hand
+            </button>
+            <button
+                style={itemStyle}
+                onClick={() =>
+                    act('moveCard', {
+                        cardId: card.id,
+                        fromZone: 'playArea',
+                        toZone: 'deck',
+                        controllerId
+                    })
+                }
+            >
+                Return to Deck
+            </button>
             <div style={dividerStyle} />
 
             {/* HP actions */}
@@ -143,24 +184,51 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
                                 onChange={(e) => setMaxHpValue(e.target.value)}
                                 autoFocus
                             />
-                            <button style={smallBtnStyle} onClick={() => {
-                                const n = parseInt(maxHpValue, 10);
-                                if (!isNaN(n) && n > 0) {
-                                    act('modifyCard', { cardId: card.id, controllerId, updates: { hp: n, maxHp: n } });
-                                }
-                            }}>OK</button>
+                            <button
+                                style={smallBtnStyle}
+                                onClick={() => {
+                                    const n = parseInt(maxHpValue, 10);
+                                    if (!isNaN(n) && n > 0) {
+                                        act('modifyCard', {
+                                            cardId: card.id,
+                                            controllerId,
+                                            updates: { hp: n, maxHp: n }
+                                        });
+                                    }
+                                }}
+                            >
+                                OK
+                            </button>
                         </div>
                     )}
                 </>
             )}
             {card.maxHp !== null && card.hp !== null && (
                 <>
-                    <button style={itemStyle} onClick={() =>
-                        act('modifyCard', { cardId: card.id, controllerId, updates: { hp: (card.hp || 0) + 1 } })
-                    }>Adjust HP +1</button>
-                    <button style={itemStyle} onClick={() =>
-                        act('modifyCard', { cardId: card.id, controllerId, updates: { hp: (card.hp || 0) - 1 } })
-                    }>Adjust HP −1</button>
+                    <button
+                        style={itemStyle}
+                        onClick={() =>
+                            act('modifyCard', {
+                                cardId: card.id,
+                                controllerId,
+                                updates: { hp: (card.hp || 0) + 1 }
+                            })
+                        }
+                    >
+                        Adjust HP +1
+                    </button>
+                    <button
+                        style={itemStyle}
+                        onClick={() =>
+                            act('modifyCard', {
+                                cardId: card.id,
+                                controllerId,
+                                updates: { hp: (card.hp || 0) - 1 }
+                            })
+                        }
+                    >
+                        Adjust HP −1
+                    </button>
                 </>
             )}
             <div style={dividerStyle} />
@@ -180,19 +248,39 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
                         onChange={(e) => setNewKeyword(e.target.value)}
                         autoFocus
                     />
-                    <button style={smallBtnStyle} onClick={() => {
-                        if (newKeyword.trim()) {
-                            act('modifyCard', { cardId: card.id, controllerId, updates: { addKeyword: newKeyword.trim() } });
-                        }
-                    }}>OK</button>
+                    <button
+                        style={smallBtnStyle}
+                        onClick={() => {
+                            if (newKeyword.trim()) {
+                                act('modifyCard', {
+                                    cardId: card.id,
+                                    controllerId,
+                                    updates: { addKeyword: newKeyword.trim() }
+                                });
+                            }
+                        }}
+                    >
+                        OK
+                    </button>
                 </div>
             )}
             {keywords.length > 0 && (
                 <div style={{ padding: '0 8px' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#adb5bd', padding: '2px 0' }}>Remove Keyword:</div>
+                    <div style={{ fontSize: '0.75rem', color: '#adb5bd', padding: '2px 0' }}>
+                        Remove Keyword:
+                    </div>
                     {keywords.map((kw) => (
-                        <button key={kw} style={{ ...itemStyle, paddingLeft: '16px', fontSize: '0.8rem' }}
-                            onClick={() => act('modifyCard', { cardId: card.id, controllerId, updates: { removeKeyword: kw } })}>
+                        <button
+                            key={kw}
+                            style={{ ...itemStyle, paddingLeft: '16px', fontSize: '0.8rem' }}
+                            onClick={() =>
+                                act('modifyCard', {
+                                    cardId: card.id,
+                                    controllerId,
+                                    updates: { removeKeyword: kw }
+                                })
+                            }
+                        >
                             {kw}
                         </button>
                     ))}
@@ -215,19 +303,39 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
                         onChange={(e) => setNewTokenLabel(e.target.value)}
                         autoFocus
                     />
-                    <button style={smallBtnStyle} onClick={() => {
-                        if (newTokenLabel.trim()) {
-                            act('modifyCard', { cardId: card.id, controllerId, updates: { token: { label: newTokenLabel.trim(), delta: 1 } } });
-                        }
-                    }}>OK</button>
+                    <button
+                        style={smallBtnStyle}
+                        onClick={() => {
+                            if (newTokenLabel.trim()) {
+                                act('modifyCard', {
+                                    cardId: card.id,
+                                    controllerId,
+                                    updates: { token: { label: newTokenLabel.trim(), delta: 1 } }
+                                });
+                            }
+                        }}
+                    >
+                        OK
+                    </button>
                 </div>
             )}
             {tokenLabels.length > 0 && (
                 <div style={{ padding: '0 8px' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#adb5bd', padding: '2px 0' }}>Remove Token:</div>
+                    <div style={{ fontSize: '0.75rem', color: '#adb5bd', padding: '2px 0' }}>
+                        Remove Token:
+                    </div>
                     {tokenLabels.map((label) => (
-                        <button key={label} style={{ ...itemStyle, paddingLeft: '16px', fontSize: '0.8rem' }}
-                            onClick={() => act('modifyCard', { cardId: card.id, controllerId, updates: { token: { label, delta: -1 } } })}>
+                        <button
+                            key={label}
+                            style={{ ...itemStyle, paddingLeft: '16px', fontSize: '0.8rem' }}
+                            onClick={() =>
+                                act('modifyCard', {
+                                    cardId: card.id,
+                                    controllerId,
+                                    updates: { token: { label, delta: -1 } }
+                                })
+                            }
+                        >
                             {label} ({card.tokens[label]})
                         </button>
                     ))}
@@ -238,23 +346,49 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
 
     const renderDeckActions = () => (
         <>
-            <button style={itemStyle} onClick={() =>
-                act('searchDeck', { controllerId, zoneId: 'deck' })
-            }>Search Deck</button>
-            <button style={itemStyle} onClick={() =>
-                act('shuffleDeck', { controllerId, zoneId: 'deck' })
-            }>Shuffle Deck</button>
+            <button
+                style={itemStyle}
+                onClick={() => act('searchDeck', { controllerId, zoneId: 'deck' })}
+            >
+                Search Deck
+            </button>
+            <button
+                style={itemStyle}
+                onClick={() => act('shuffleDeck', { controllerId, zoneId: 'deck' })}
+            >
+                Shuffle Deck
+            </button>
         </>
     );
 
     const renderTrashActions = () => (
         <>
-            <button style={itemStyle} onClick={() =>
-                act('moveCard', { cardId: card.id, fromZone: 'trash', toZone: 'deck', controllerId })
-            }>Return to Deck</button>
-            <button style={itemStyle} onClick={() =>
-                act('moveCard', { cardId: card.id, fromZone: 'trash', toZone: 'playArea', controllerId })
-            }>Return to Play</button>
+            <button
+                style={itemStyle}
+                onClick={() =>
+                    act('moveCard', {
+                        cardId: card.id,
+                        fromZone: 'trash',
+                        toZone: 'deck',
+                        controllerId
+                    })
+                }
+            >
+                Return to Deck
+            </button>
+            <button
+                style={itemStyle}
+                onClick={() =>
+                    act('moveCard', {
+                        cardId: card.id,
+                        fromZone: 'trash',
+                        toZone: 'playArea',
+                        controllerId
+                    })
+                }
+            >
+                Return to Play
+            </button>
         </>
     );
 
@@ -262,12 +396,18 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
         <>
             {!showSetHpInput ? (
                 <>
-                    <button style={itemStyle} onClick={() =>
-                        act('adjustHp', { controllerId, delta: 1 })
-                    }>Adjust HP +1</button>
-                    <button style={itemStyle} onClick={() =>
-                        act('adjustHp', { controllerId, delta: -1 })
-                    }>Adjust HP −1</button>
+                    <button
+                        style={itemStyle}
+                        onClick={() => act('adjustHp', { controllerId, delta: 1 })}
+                    >
+                        Adjust HP +1
+                    </button>
+                    <button
+                        style={itemStyle}
+                        onClick={() => act('adjustHp', { controllerId, delta: -1 })}
+                    >
+                        Adjust HP −1
+                    </button>
                     <button style={itemStyle} onClick={() => setShowSetHpInput(true)}>
                         Set HP Value
                     </button>
@@ -282,12 +422,17 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
                         onChange={(e) => setSetHpValue(e.target.value)}
                         autoFocus
                     />
-                    <button style={smallBtnStyle} onClick={() => {
-                        const n = parseInt(setHpValue, 10);
-                        if (!isNaN(n)) {
-                            act('adjustHp', { controllerId, delta: n - (card.hp || 0) });
-                        }
-                    }}>OK</button>
+                    <button
+                        style={smallBtnStyle}
+                        onClick={() => {
+                            const n = parseInt(setHpValue, 10);
+                            if (!isNaN(n)) {
+                                act('adjustHp', { controllerId, delta: n - (card.hp || 0) });
+                            }
+                        }}
+                    >
+                        OK
+                    </button>
                 </div>
             )}
             {isVillain && (
@@ -298,7 +443,9 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
             <div style={dividerStyle} />
             {/* Token actions on character card */}
             {!showTokenInput ? (
-                <button style={itemStyle} onClick={() => setShowTokenInput(true)}>Add Token</button>
+                <button style={itemStyle} onClick={() => setShowTokenInput(true)}>
+                    Add Token
+                </button>
             ) : (
                 <div style={inputRowStyle}>
                     <input
@@ -309,19 +456,39 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
                         onChange={(e) => setNewTokenLabel(e.target.value)}
                         autoFocus
                     />
-                    <button style={smallBtnStyle} onClick={() => {
-                        if (newTokenLabel.trim()) {
-                            act('modifyCard', { cardId: card.id, controllerId, updates: { token: { label: newTokenLabel.trim(), delta: 1 } } });
-                        }
-                    }}>OK</button>
+                    <button
+                        style={smallBtnStyle}
+                        onClick={() => {
+                            if (newTokenLabel.trim()) {
+                                act('modifyCard', {
+                                    cardId: card.id,
+                                    controllerId,
+                                    updates: { token: { label: newTokenLabel.trim(), delta: 1 } }
+                                });
+                            }
+                        }}
+                    >
+                        OK
+                    </button>
                 </div>
             )}
             {tokenLabels.length > 0 && (
                 <div style={{ padding: '0 8px' }}>
-                    <div style={{ fontSize: '0.75rem', color: '#adb5bd', padding: '2px 0' }}>Remove Token:</div>
+                    <div style={{ fontSize: '0.75rem', color: '#adb5bd', padding: '2px 0' }}>
+                        Remove Token:
+                    </div>
                     {tokenLabels.map((label) => (
-                        <button key={label} style={{ ...itemStyle, paddingLeft: '16px', fontSize: '0.8rem' }}
-                            onClick={() => act('modifyCard', { cardId: card.id, controllerId, updates: { token: { label, delta: -1 } } })}>
+                        <button
+                            key={label}
+                            style={{ ...itemStyle, paddingLeft: '16px', fontSize: '0.8rem' }}
+                            onClick={() =>
+                                act('modifyCard', {
+                                    cardId: card.id,
+                                    controllerId,
+                                    updates: { token: { label, delta: -1 } }
+                                })
+                            }
+                        >
                             {label} ({card.tokens[label]})
                         </button>
                     ))}
@@ -338,7 +505,9 @@ const CardContextMenu = ({ card, zone, controllerId, isVillain = false, onAction
             {zone === 'trash' && renderTrashActions()}
             {zone === 'character' && renderCharacterActions()}
             <div style={dividerStyle} />
-            <button style={{ ...itemStyle, color: '#adb5bd' }} onClick={onClose}>Cancel</button>
+            <button style={{ ...itemStyle, color: '#adb5bd' }} onClick={onClose}>
+                Cancel
+            </button>
         </div>
     );
 };

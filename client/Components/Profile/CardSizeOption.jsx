@@ -17,10 +17,7 @@ function CardSizeOption(props) {
     return (
         <div key={name} className='card-settings' onClick={handleClick}>
             <div className={classNames('game-card', 'vertical', name, { selected: selected })}>
-                <img
-                    className={classNames('game-card', 'vertical', name)}
-                    src={imageUrl('back')}
-                />
+                <img className={classNames('game-card', 'vertical', name)} src={imageUrl('back')} />
             </div>
             <span className='bg-label'>{label}</span>
         </div>

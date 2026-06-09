@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, no-unused-vars */
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import $ from 'jquery';
 
@@ -10,7 +11,15 @@ import ChatHeader from './ChatHeader';
 import typingIndicator from '../../assets/img/typing-dots.gif';
 import { useSelector } from 'react-redux';
 
-function GameChat({ messages, muted, onCardMouseOut, onCardMouseOver, onSendChat, onMuteClick, muteSpectators }) {
+function GameChat({
+    messages,
+    muted,
+    onCardMouseOut,
+    onCardMouseOver,
+    onSendChat,
+    onMuteClick,
+    muteSpectators
+}) {
     const oppTyping = useSelector((s) => s.lobby.currentGame?.opponentTyping);
 
     const [canScroll, setCanScroll] = useState(true);

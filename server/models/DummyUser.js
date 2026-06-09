@@ -1,4 +1,4 @@
-const User = require("./User");
+const User = require('./User');
 
 /**
  * Dummy user acts as a proxy for LOBBY
@@ -8,7 +8,7 @@ class DummyUser extends User {
         super({
             _id: 0,
             username: DummyUser.DUMMY_USERNAME
-        })
+        });
     }
 
     static DUMMY_USERNAME = 'Chimera';
@@ -28,6 +28,5 @@ class DummyUser extends User {
         return false;
     }
 }
-
 
 module.exports = DummyUser;

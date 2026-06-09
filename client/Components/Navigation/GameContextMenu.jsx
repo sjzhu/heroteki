@@ -3,6 +3,7 @@ import { Nav } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation, Trans } from 'react-i18next';
 import { toastr } from 'react-redux-toastr';
+// eslint-disable-next-line no-unused-vars
 import { sendGameMessage, closeGameSocket, clearGameReplay } from '../../redux/actions';
 import { useState } from 'react';
 

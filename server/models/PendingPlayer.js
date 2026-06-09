@@ -1,5 +1,5 @@
 class PendingPlayer {
-    constructor(id, name, isOwner, user,) {
+    constructor(id, name, isOwner, user) {
         this.id = id;
         this.name = name;
         this.owner = isOwner;

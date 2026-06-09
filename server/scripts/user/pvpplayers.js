@@ -19,7 +19,7 @@ gameService
     .then((games) => {
         // counting pvp players so pvp games only
         const soloPlayers = games
-            .filter(g => g.gameFormat !== 'solo' && g.winner)
+            .filter((g) => g.gameFormat !== 'solo' && g.winner)
             .reduce(function (agg, game) {
                 if (game.players.length < 2) {
                     return agg;

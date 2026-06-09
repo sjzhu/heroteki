@@ -21,9 +21,15 @@ const fs = require('fs');
 const path = require('path');
 
 const {
-    WIDTH: W, HEIGHT: H, PADDING: PAD,
-    NAME_SIZE, BODY_SIZE, FONT_SERIF, FONT_SANS,
-    CORNER_RADIUS, BODY_LINE_HEIGHT
+    WIDTH: W,
+    HEIGHT: H,
+    PADDING: PAD,
+    NAME_SIZE,
+    BODY_SIZE,
+    FONT_SERIF,
+    FONT_SANS,
+    CORNER_RADIUS,
+    BODY_LINE_HEIGHT
 } = require('./shared/layout');
 
 const { escapeXml, wrapText } = require('./shared/textUtils');
@@ -56,11 +62,11 @@ try {
 // ---------------------------------------------------------------------------
 
 const TYPE_BG = {
-    heroCard:         '#e8f4fd',
-    villainCard:      '#fde8e8',
-    environmentCard:  '#e8fde8',
-    heroCharacter:    '#d6ecff',
-    villainCharacter: '#ffd6d6',
+    heroCard: '#e8f4fd',
+    villainCard: '#fde8e8',
+    environmentCard: '#e8fde8',
+    heroCharacter: '#d6ecff',
+    villainCharacter: '#ffd6d6'
 };
 
 // Max characters per wrapped line given the card width and body font size.
@@ -141,7 +147,9 @@ function renderCard(card) {
     for (let i = 0; i < lines.length; i++) {
         const y = bodyStartY + i * LINE_H;
         bodyEl += `
-  <text x="${PAD}" y="${y}" font-family="${FONT_SANS}, sans-serif" font-size="${BODY_SIZE}" fill="#333">${escapeXml(lines[i])}</text>`;
+  <text x="${PAD}" y="${y}" font-family="${FONT_SANS}, sans-serif" font-size="${BODY_SIZE}" fill="#333">${escapeXml(
+            lines[i]
+        )}</text>`;
     }
 
     // Overflow indicator if text was truncated
