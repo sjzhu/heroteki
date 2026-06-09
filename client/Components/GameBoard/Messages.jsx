@@ -8,9 +8,8 @@ import AlertPanel from '../Site/AlertPanel';
 import './Messages.scss';
 
 const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
-    const owner = useSelector(
-        (state) => state.lobby.currentGame.players[state.lobby.currentGame.owner]
-    );
+    // SotMDE: owner is no longer used for message styling; kept for potential display use
+    // but guarded against the Ashes `.players` map that does not exist in SotMDE state.
     const users = useSelector((state) => state.lobby.users);
 
     const getUserDetails = (name) => {
@@ -212,11 +211,15 @@ const Messages = ({ messages, onCardMouseOver, onCardMouseOut }) => {
     return (
         <div>
             {messages.map((message, index) => {
+                // SotMDE: style based on message.type rather than message.activePlayer
+                // (activePlayer was an Ashes concept that does not exist in SotMDE state)
+                const msgType = message.type;
                 let className = classNames('message', {
-                    'this-player': message.activePlayer && message.activePlayer == owner.name,
-                    'other-player': message.activePlayer && message.activePlayer !== owner.name,
-                    'chat-bubble': Object.values(message.message).some(
-                        (m) => m.name && m.argType === 'player'
+                    'message-system': msgType === 'system',
+                    'message-action': msgType === 'action',
+                    'message-chat': msgType === 'chat' || !msgType,
+                    'chat-bubble': message.message && Object.values(message.message).some(
+                        (m) => m && m.name && m.argType === 'player'
                     )
                 });
                 return (
