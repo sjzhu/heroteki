@@ -735,6 +735,25 @@ class Game extends EventEmitter {
     }
 
     /**
+     * Count the number of events of a given type for a player in this game.
+     * Used by finaliseGame() to populate cardsPlayed on each hero.
+     * @param {string} playerId - actor id (socket user id)
+     * @param {string} eventType - one of EVENT_TYPES values
+     * @returns {Promise<number>}
+     */
+    async countEventsForPlayer(playerId, eventType) {
+        try {
+            const db = getDb();
+            const gameEvents = db.get('gameEvents');
+            const count = await gameEvents.count({ gameId: this.id, actorId: playerId, eventType });
+            return count;
+        } catch (err) {
+            logger.error('countEventsForPlayer failed', err);
+            return 0;
+        }
+    }
+
+    /**
      * Finalize the game: write to gameOutcomes, set GAME_OVER phase, broadcast.
      */
     async finaliseGame(result, notes, tags) {
@@ -765,7 +784,7 @@ class Game extends EventEmitter {
                 villainWasFlipped: this.villain ? this.villain.isFlipped : false,
                 environmentDeckId: this.environment ? this.environment.deckId : null,
                 environmentDeckVersion: this.environment ? this.environment.deckVersion : null,
-                heroes: this.heroPlayers.map(h => ({
+                heroes: await Promise.all(this.heroPlayers.map(async h => ({
                     playerId: h.id,
                     playerName: h.name,
                     heroDeckId: h.deckId,
@@ -773,7 +792,8 @@ class Game extends EventEmitter {
                     heroCharacterVersion: h.characterCard ? (h.characterCard.version || null) : null,
                     finalHp: h.hp,
                     wasIncapacitated: h.isIncapacitated,
-                })),
+                    cardsPlayed: await this.countEventsForPlayer(h.id, EVENT_TYPES.PLAY_CARD),
+                }))),
                 notes,
                 tags: mergedTags,
             });
