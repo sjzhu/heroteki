@@ -136,8 +136,13 @@ const SotmBoard = () => {
 
             {/* Main content area */}
             <div style={mainAreaStyle}>
-                {/* Three-row board */}
-                <div style={boardContentStyle}>
+                {/* Three-row board — wrapped for game-over overlay */}
+                <div style={{ ...boardContentStyle, position: 'relative' }}>
+                    {/* Phase 8.5.3d: non-interactive overlay when game is over */}
+                    {isGameOver && (
+                        <div style={gameOverOverlayStyle} aria-hidden='true' />
+                    )}
+
                     {/* Row 1: Villain */}
                     <VillainArea
                         villain={villain}
@@ -264,6 +269,16 @@ const chatToggleStyle = {
     cursor: 'pointer',
     fontSize: '0.75rem',
     zIndex: 200,
+};
+
+// Phase 8.5.3d: overlay that blocks pointer events on play areas when game is over
+const gameOverOverlayStyle = {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    zIndex: 10,
+    pointerEvents: 'all', // absorb all clicks/hovers so play areas become non-interactive
+    cursor: 'not-allowed',
 };
 
 const loadingStyle = {
