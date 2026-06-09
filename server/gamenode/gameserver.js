@@ -16,6 +16,7 @@ const ConfigService = require('../services/ConfigService');
 const version = require('../../version');
 const DummyUser = require('../models/DummyUser');
 const GameStateWriter = require('./GameStateWriter');
+const { ensureIndexes } = require('../game/sotm/ensureIndexes');
 
 // Lazy monk DB for SotMDE card/state loading
 let _db = null;
@@ -115,6 +116,9 @@ class GameServer {
         // SotMDE: inactivity check — every 5 minutes, finalise abandoned games
         const inactivityMs = (config.get('inactivityTimeoutHours') || 48) * 60 * 60 * 1000;
         setInterval(() => this.checkInactiveGames(inactivityMs), 5 * 60 * 1000);
+
+        // SotMDE Phase 8.5.1: ensure MongoDB indexes exist at startup (fire-and-forget)
+        ensureIndexes(getDb()).catch(err => logger.error('ensureIndexes error', err));
     }
 
     debugDump() {
