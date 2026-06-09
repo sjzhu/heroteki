@@ -338,7 +338,9 @@ class Game extends EventEmitter {
 
         // Wire TurnManager
         this.turnManager = new TurnManager(H, heroOrder, {
-            onHeroStart: (slot) => this._onHeroStart(slot)
+            onHeroStart: (slot) => this._onHeroStart(slot),
+            // Phase 8.2: push system message to chat log on each phase advance
+            onAdvance: (label) => this._pushSystemMessage(label),
         });
 
         // Shuffle all decks
@@ -431,7 +433,13 @@ class Game extends EventEmitter {
 
     sendMessage(playerName, { text } = {}) {
         if (!text) return;
-        this.gameChat.addMessage(`${playerName}: ${text}`);
+        this.gameChat.messages.push({
+            mid: `chat-${Date.now()}-${Math.random()}`,
+            date: new Date(),
+            type: 'chat',
+            text: `${playerName}: ${text}`,
+            message: { '0': `${playerName}: ${text}` },
+        });
     }
 
     advancePhase(playerName) {
@@ -456,7 +464,8 @@ class Game extends EventEmitter {
         const card = hero.playCard(cardId);
         if (!card) return;
 
-        this.gameChat.addMessage(`${playerName} played ${card.name} (${card.keywords && card.keywords.includes('one-shot') ? 'one-shot' : 'ongoing'})`);
+        const dest = card.keywords && card.keywords.includes('one-shot') ? 'trash (one-shot)' : 'play area';
+        this._pushActionMessage(`${playerName}: played ${card.name} → ${dest}`);
         this.logEvent(EVENT_TYPES.PLAY_CARD, playerName, { cardId, heroId: hero.deckId });
         this.saveState().catch(err => logger.error('saveState failed', err));
     }
@@ -467,8 +476,10 @@ class Game extends EventEmitter {
         const { card } = this._findCardInGame(cardId);
         if (!card) return;
 
+        const cardName = card.name || cardId;
         // Find the controller that holds this card
         this._moveCardToTrash(cardId, zone, playerName);
+        this._pushActionMessage(`${playerName}: discarded ${cardName} from ${zone || 'unknown zone'}`);
         this.logEvent(EVENT_TYPES.DISCARD_CARD, playerName, { cardId, zone });
         this.saveState().catch(err => logger.error('saveState failed', err));
     }
@@ -478,11 +489,13 @@ class Game extends EventEmitter {
 
         // Call clearPlayState if leaving playArea or character zone
         const { card } = this._findCardInGame(cardId);
+        const cardName = card ? (card.name || cardId) : cardId;
         if (card && (fromZone === 'playArea' || fromZone === 'character')) {
             card.clearPlayState();
         }
 
         this._genericMoveCard(cardId, fromZone, toZone, controllerId);
+        this._pushActionMessage(`${playerName}: moved ${cardName} from ${fromZone} → ${toZone}`);
         this.logEvent(EVENT_TYPES.MOVE_CARD, playerName, { cardId, fromZone, toZone, controllerId });
         this.saveState().catch(err => logger.error('saveState failed', err));
     }
@@ -505,7 +518,7 @@ class Game extends EventEmitter {
 
         const card = controller.playTopCard();
         if (card) {
-            this.gameChat.addMessage(`${playerName} played top card: ${card.name}`);
+            this._pushActionMessage(`${playerName}: played top card of ${controllerId} — ${card.name}`);
         }
         this.logEvent(EVENT_TYPES.PLAY_TOP_CARD, playerName, { controllerId });
         this.saveState().catch(err => logger.error('saveState failed', err));
@@ -525,6 +538,8 @@ class Game extends EventEmitter {
         if (!controller || typeof controller.adjustHp !== 'function') return;
 
         controller.adjustHp(delta);
+        const sign = delta >= 0 ? '+' : '';
+        this._pushActionMessage(`${playerName}: adjusted HP of ${controllerId} by ${sign}${delta} → ${controller.hp}`);
         this.logEvent(EVENT_TYPES.ADJUST_HP, playerName, { controllerId, delta });
         this.saveState().catch(err => logger.error('saveState failed', err));
     }
@@ -794,6 +809,36 @@ class Game extends EventEmitter {
             tags.push(`deck:${this.environment.deckId}@${this.environment.deckVersion}`);
         }
         return tags;
+    }
+
+    // ---- Chat log helpers (Phase 8.2, 8.3) ----
+
+    /**
+     * Push a system message (phase transitions, server notices) to the chat log.
+     * @param {string} text
+     */
+    _pushSystemMessage(text) {
+        this.gameChat.messages.push({
+            mid: `sys-${Date.now()}-${Math.random()}`,
+            date: new Date(),
+            type: 'system',
+            text,
+            message: { '0': text },
+        });
+    }
+
+    /**
+     * Push an action message (card moves, HP changes) to the chat log.
+     * @param {string} text
+     */
+    _pushActionMessage(text) {
+        this.gameChat.messages.push({
+            mid: `act-${Date.now()}-${Math.random()}`,
+            date: new Date(),
+            type: 'action',
+            text,
+            message: { '0': text },
+        });
     }
 
     // ---- Internal helpers ----

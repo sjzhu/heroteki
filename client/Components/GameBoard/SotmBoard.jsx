@@ -181,11 +181,9 @@ const SotmBoard = () => {
                 {/* Chat panel */}
                 {showChat && (
                     <div style={chatPanelStyle}>
-                        <GameChat
+                        <SotmGameChat
                             messages={currentGame.chatLog || currentGame.messages || []}
                             onSendChat={handleSendChat}
-                            onCardMouseOver={() => {}}
-                            onCardMouseOut={() => {}}
                             muted={false}
                         />
                     </div>
