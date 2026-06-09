@@ -56,12 +56,15 @@ class TurnManager {
     /**
      * @param {number} H                        - total hero deck count; never changes
      * @param {{ heroId: string, controllerPlayerId: string }[]} heroOrder
-     * @param {{ onHeroStart?: (heroSlot) => void }} [callbacks]
+     * @param {{ onHeroStart?: (heroSlot) => void, onAdvance?: (label: string) => void }} [callbacks]
      */
     constructor(H, heroOrder, callbacks = {}) {
         this.H = H;
         this.heroOrder = heroOrder;
         this.onHeroStart = callbacks.onHeroStart || null;
+        // onAdvance(label): called after each phase change with a human-readable system message.
+        // Used by game.js to push { type: 'system', text } entries to the chat log.
+        this.onAdvance = callbacks.onAdvance || null;
 
         this.round = 0;
         this.phase = TurnPhase.SETUP;
@@ -130,6 +133,15 @@ class TurnManager {
 
         } else if (current === TurnPhase.GAME_OVER) {
             // Already over; no-op
+        }
+
+        // Phase 8.2: push a system message to the game's chat log after each phase change
+        if (this.onAdvance && this.phase !== current) {
+            try {
+                this.onAdvance(this.getCurrentTurnLabel());
+            } catch (err) {
+                // Never crash a game due to logging failure
+            }
         }
 
         return this.getState();
