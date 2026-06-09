@@ -54,6 +54,17 @@ Create `config/local.json5` with local overrides (this file is gitignored — do
 }
 ```
 
+### Seed Card Data
+
+Import the exemplar card and deck data into MongoDB:
+
+```bash
+node server/scripts/importSotmData.js --skip-count-validation
+```
+
+The `--skip-count-validation` flag bypasses the strict 40/25/15 card count check for the
+exemplar data. Omit it when importing full production decks.
+
 ### Running
 
 There are two executable components:
@@ -84,6 +95,23 @@ Set `privateUser` and `privatePassword` in `config/local.json5` (never commit cr
 }
 ```
 
+#### Docker Deployment with privateMode
+
+For Docker deployments, pass the config as an environment variable override in
+`docker-compose.override.yml`:
+
+```yaml
+# docker-compose.override.yml
+version: '3.5'
+services:
+  lobby:
+    environment:
+      - NODE_CONFIG={"privateMode":true,"privateUser":"user","privatePassword":"pass"}
+```
+
+The `NODE_CONFIG` environment variable is read by the `config` package as a JSON override
+on top of `config/default.json5`.
+
 **Note:** HTTP Basic Auth can alternatively be applied at the reverse proxy level (nginx/Caddy)
 to cover both the lobby and game node with a single rule. HTTPS is required for Basic Auth to
 be secure — credentials are base64-encoded, not encrypted, without TLS.
@@ -98,6 +126,16 @@ npm run lint
 ### Coding Guidelines
 
 All JavaScript should pass ESLint according to the rules in `.eslintrc`.
+
+## Documentation
+
+- [Setup guide](docs/setup.md)
+- [Card and deck JSON format](docs/card-data.md)
+- [User deck upload](docs/user-decks.md)
+- [SVG card template system](docs/card-templates.md)
+- [Server-side game model](docs/game-model.md)
+- [Game event and outcome logging](docs/logging.md)
+- [Admin operations](docs/admin.md)
 
 ## License
 
