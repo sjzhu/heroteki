@@ -30,6 +30,7 @@ import TaggedGames from './pages/admin/TaggedGames';
 import UserAltAdmin from './pages/UserAltAdmin';
 import CardStatsAdmin from './pages/CardStatsAdmin';
 import ChimeraPage from './pages/ChimeraPage';
+import StatsPage from './Components/Admin/StatsPage';
 
 const AppRoutes = ({ currentGame, user }) => {
     const [searchParams] = useSearchParams();
@@ -108,6 +109,7 @@ const AppRoutes = ({ currentGame, user }) => {
                 element={requirePermission('canManageTournaments', <UserAltAdmin />)}
             />
             <Route path='/cardstats' element={requirePermission('isAdmin', <CardStatsAdmin />)} />
+            <Route path='/admin/stats' element={requirePermission('isAdmin', <StatsPage />)} />
 
             <Route path='*' element={<NotFound />} />
         </Routes>
