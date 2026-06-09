@@ -216,6 +216,19 @@ decisions made along the way.
 
 ---
 
+## Inter-Wave Fix (2026-06-09)
+
+- **`client/Application.jsx` `blinkTab` rewritten** to use `currentGame.activeControllerPlayerId`
+  instead of `currentGame.players`. The Ashteki `players` map does not exist in SotMDE game
+  state (`game.getState()` returns `heroes` instead). The old guard `!currentGame.players`
+  silently suppressed the tab-blink feature entirely. The new check
+  `currentGame.activeControllerPlayerId === user?.username` is correct for the cooperative
+  model: blink fires when it is specifically this player's hero turn, and is silent during
+  villain/environment phases (when `activeControllerPlayerId` is null). One player controlling
+  multiple heroes is handled correctly — the blink fires whenever any of their heroes is active.
+
+---
+
 ## Wave 4 — Integration, Testing, Cleanup
 
 ### Agent-5: Chat, Game Log, and Data Logging (Phases 8 + 8.5)

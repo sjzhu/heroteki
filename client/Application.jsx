@@ -36,16 +36,12 @@ function Application() {
     );
 
     const blinkTab = useCallback(() => {
-        if (!currentGame || !currentGame.players) {
+        if (!currentGame || !currentGame.started) {
             return;
         }
 
-        if (Object.keys(currentGame.players).length < 2) {
-            return;
-        }
-
-        const activePlayer = Object.values(currentGame.players).find((x) => x.activePlayer);
-        if (activePlayer && user && activePlayer.name === user.username) {
+        const isMyTurn = currentGame.activeControllerPlayerId === user?.username;
+        if (isMyTurn) {
             let oldTitle = document.title;
             let msg = 'Alert!';
             let timeoutId = false;
