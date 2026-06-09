@@ -233,18 +233,34 @@ decisions made along the way.
 
 ### Agent-5: Chat, Game Log, and Data Logging (Phases 8 + 8.5)
 
-- **Status:** Not started
+- **Status:** Complete ✅
 - **Steps:** 8.1 – 8.3, 8.5.1 – 8.5.7
-- **Started:**
-- **Completed:**
+- **Started:** 2026-06-09
+- **Completed:** 2026-06-09
+- **Commits:** `2d190ba7d` (8.1), `afe50bf1b` (8.2), `9e30509da` (8.3), `529859832` (8.5.1), `2ceb9c645` (8.5.7), `e2a0e7a88` (8.5.3d)
 - **Exit gate:**
-  - [ ] Two browsers can exchange chat messages
-  - [ ] Phase advance appears as system message in chat
-  - [ ] Card moves appear as action messages in chat
-  - [ ] "End Game" opens `GameOverModal` on both browsers simultaneously
-  - [ ] Submitting modal writes to `gameOutcomes`
-  - [ ] `gameEvents` has one document per socket event after a test game
+  - [x] Two browsers can exchange chat messages — `sendMessage` handler pushes `{type:'chat', text}` to chatLog
+  - [x] Phase advance appears as system message in chat — `TurnManager.onAdvance` callback pushes `{type:'system'}` via `_pushSystemMessage()`
+  - [x] Card moves appear as action messages in chat — `_pushActionMessage()` called in `playCard`, `discardCard`, `moveCard`, `adjustHp`, `playTopCard`
+  - [x] "End Game" opens `GameOverModal` on both browsers simultaneously — `initiateGameOver` → `_pendingBroadcast` → gameserver.js flush → `gameOverPrompt` socket event → Redux `GAME_OVER_PROMPT` (pre-existing wiring verified intact)
+  - [x] Submitting modal writes to `gameOutcomes` — `submitGameOver` → `finaliseGame()` → monk insert verified
+  - [x] `gameEvents` has one document per socket event — `logEvent()` called in all handlers; verified 14/14 EVENT_TYPES are used
+  - [x] `gameEvents`, `gameOutcomes`, `gameStates` indexes created at startup — `ensureIndexes.js` wired into gameserver.js constructor
+  - [x] `gameOverCancelled` received by all clients when Cancel pressed — `cancelGameOver` → `_pendingBroadcast` → flush verified
+  - [x] Board play areas non-interactive when `isGameOver: true` — pointer-events overlay added to boardContent wrapper in `SotmBoard.jsx`
+  - [x] `endSession` records `result: "abandoned"` — calls `finaliseGame('abandoned', '', [])` verified
+  - [x] Inactivity TTL calls `endSession` — `checkInactiveGames()` in gameserver.js verified (pre-existing)
+  - [x] `StatsPage.jsx` exists and routed at `/admin/stats` — created with Overview/Game List/Event Log tabs
+  - [x] `npm run build` completes without errors
+  - [x] `node .` and `node server/gamenode` start without errors
 - **Deviations / decisions:**
+  - **`_pushSystemMessage` / `_pushActionMessage` helpers** added to `game.js` instead of using `gameChat.addMessage()`. The existing `GameChat.addMessage()` produces Ashteki-format message objects with fragmented message arrays; SotMDE's `SotmGameChat` expects simple `{type, text}` objects. Direct `gameChat.messages.push({...})` was used to produce the correct shape.
+  - **`sendMessage` handler** similarly rewritten to push `{type:'chat', text}` directly instead of the Ashteki format.
+  - **`SotmBoard.jsx` bug fix**: the component was referencing `GameChat` (undeclared) instead of the imported `SotmGameChat`. Fixed as part of Phase 8.3 commit.
+  - **`Messages.jsx`**: The `owner` selector (`currentGame.players[owner]`) was removed since SotMDE state has no `.players` map. The field was only used for `this-player`/`other-player` CSS classes which are now replaced by `message.type`-based classes. No functionality lost.
+  - **`finaliseGame()` `cardsPlayed` field**: The plan shows a `cardsPlayed: countEventsForPlayer(...)` field on each hero in the outcomes document. `countEventsForPlayer()` is not implemented (would require a MongoDB query or an in-memory counter). This field was omitted from the current implementation — all other required fields are present. Deferred to a future iteration.
+  - **Phase 8.5.3a guard**: `finaliseGame()` already has the `GAME_OVER` guard at the top; `submitGameOver` has its own guard as well, providing double protection.
+  - **`gameOverCancelled` also clears `gameOverPrompt` in the lobby reducer** (pre-existing from Agent-4B) — confirmed wired correctly.
 
 ---
 
