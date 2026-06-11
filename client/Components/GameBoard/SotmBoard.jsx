@@ -57,6 +57,13 @@ const SotmBoard = () => {
     // Determine active hero id from turn state
     const activeHeroId = turnState?.activeHeroId;
 
+    // Hand destinations for deck-search "Move to Hand" (any card may be moved
+    // to any hero's hand; villain/environment have no hand of their own)
+    const heroHandTargets = heroes.map((h) => ({
+        deckId: h.deckId,
+        name: h.name || h.deckId
+    }));
+
     // Determine if it's the villain's or environment's active turn
     const phase = turnState?.phase || 'setup';
     const isVillainTurn = phase.startsWith('villain_');
@@ -143,6 +150,7 @@ const SotmBoard = () => {
                         isActiveTurn={isVillainTurn}
                         onAction={handleAction}
                         isGameOver={isGameOver}
+                        allHeroes={heroHandTargets}
                     />
 
                     {/* Row 2: Environment */}
@@ -151,6 +159,7 @@ const SotmBoard = () => {
                         isActiveTurn={isEnvTurn}
                         onAction={handleAction}
                         isGameOver={isGameOver}
+                        allHeroes={heroHandTargets}
                     />
 
                     {/* Row 3: Hero columns (horizontally scrollable) */}
@@ -166,6 +175,7 @@ const SotmBoard = () => {
                                     isActiveTurn={isActiveTurn}
                                     onAction={handleAction}
                                     isGameOver={isGameOver}
+                                    allHeroes={heroHandTargets}
                                 />
                             );
                         })}

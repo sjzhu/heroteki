@@ -44,7 +44,13 @@ const TokenBadges = ({ tokens }) => {
  *   isGameOver?: boolean
  * }} props
  */
-const EnvironmentArea = ({ environment, isActiveTurn, onAction, isGameOver = false }) => {
+const EnvironmentArea = ({
+    environment,
+    isActiveTurn,
+    onAction,
+    isGameOver = false,
+    allHeroes = []
+}) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [deckSearchOpen, setDeckSearchOpen] = useState(false);
 
@@ -197,11 +203,20 @@ const EnvironmentArea = ({ environment, isActiveTurn, onAction, isGameOver = fal
                 deckCards={deck}
                 controllerId={controllerId}
                 zoneId='deck'
+                heroes={allHeroes}
                 onMoveToHand={(cardId, cid, zoneId) =>
                     onAction('moveCard', {
                         cardId,
                         fromZone: zoneId,
                         toZone: 'hand',
+                        controllerId: cid
+                    })
+                }
+                onPlay={(cardId, cid, zoneId) =>
+                    onAction('moveCard', {
+                        cardId,
+                        fromZone: zoneId,
+                        toZone: 'playArea',
                         controllerId: cid
                     })
                 }

@@ -44,7 +44,7 @@ const TokenBadges = ({ tokens }) => {
  *   isGameOver?: boolean
  * }} props
  */
-const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) => {
+const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false, allHeroes = [] }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [deckSearchOpen, setDeckSearchOpen] = useState(false);
 
@@ -243,11 +243,20 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false }) =>
                 deckCards={deck}
                 controllerId={controllerId}
                 zoneId='deck'
+                heroes={allHeroes}
                 onMoveToHand={(cardId, cid, zoneId) =>
                     onAction('moveCard', {
                         cardId,
                         fromZone: zoneId,
                         toZone: 'hand',
+                        controllerId: cid
+                    })
+                }
+                onPlay={(cardId, cid, zoneId) =>
+                    onAction('moveCard', {
+                        cardId,
+                        fromZone: zoneId,
+                        toZone: 'playArea',
                         controllerId: cid
                     })
                 }

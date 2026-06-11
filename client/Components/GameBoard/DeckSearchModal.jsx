@@ -1,18 +1,25 @@
 // SotMDE DeckSearchModal component (Phase 5, Step 5.7).
 // Triggered by "Search Deck" button on any deck pile.
-// Displays all cards in the deck as a scrollable list.
+// Displays all cards in the deck as a scrollable list, in true deck order
+// (position 1 = top of deck = next card drawn).
 // Note: server currently broadcasts deck contents to all players — known limitation from Phase 3.
 
 import React, { useState } from 'react';
-import { Modal, Button, Form, ListGroup } from 'react-bootstrap';
+import { Modal, Button, Form, ListGroup, Badge, Dropdown, DropdownButton } from 'react-bootstrap';
 
 /**
+ * `heroes` lists the hand destinations the player may move a card to
+ * ({ deckId, name }). Empty list hides the Move to Hand option (the server
+ * rejects hand moves for controllers without a hand zone).
+ *
  * @param {{
  *   show: boolean,
  *   deckCards: object[],
  *   controllerId: string,
  *   zoneId: string,
- *   onMoveToHand: (cardId: string, controllerId: string) => void,
+ *   heroes?: { deckId: string, name: string }[],
+ *   onMoveToHand: (cardId: string, destControllerId: string, zoneId: string) => void,
+ *   onPlay: (cardId: string, controllerId: string, zoneId: string) => void,
  *   onClose: () => void
  * }} props
  */
@@ -21,25 +28,38 @@ const DeckSearchModal = ({
     deckCards = [],
     controllerId,
     zoneId = 'deck',
+    heroes = [],
     onMoveToHand,
+    onPlay,
     onClose
 }) => {
     const [selectedCardId, setSelectedCardId] = useState(null);
     const [filter, setFilter] = useState('');
 
-    const filteredCards = deckCards.filter((card) => {
-        if (!filter) return true;
-        const q = filter.toLowerCase();
-        return (
-            (card.name && card.name.toLowerCase().includes(q)) ||
-            (card.type && card.type.toLowerCase().includes(q)) ||
-            (card.keywords && card.keywords.some((k) => k.toLowerCase().includes(q)))
-        );
-    });
+    // Attach 1-based deck position before filtering so positions stay
+    // meaningful (and the TOP badge stays on the real top card) while filtered.
+    const filteredCards = deckCards
+        .map((card, index) => ({ card, position: index + 1 }))
+        .filter(({ card }) => {
+            if (!filter) return true;
+            const q = filter.toLowerCase();
+            return (
+                (card.name && card.name.toLowerCase().includes(q)) ||
+                (card.type && card.type.toLowerCase().includes(q)) ||
+                (card.keywords && card.keywords.some((k) => k.toLowerCase().includes(q)))
+            );
+        });
 
-    const handleMoveToHand = () => {
+    const handleMoveToHand = (destControllerId) => {
         if (selectedCardId) {
-            onMoveToHand(selectedCardId, controllerId, zoneId);
+            onMoveToHand(selectedCardId, destControllerId, zoneId);
+            onClose();
+        }
+    };
+
+    const handlePlay = () => {
+        if (selectedCardId) {
+            onPlay(selectedCardId, controllerId, zoneId);
             onClose();
         }
     };
@@ -64,6 +84,9 @@ const DeckSearchModal = ({
                     Note: Deck contents are currently visible to all players (known Phase 3
                     limitation).
                 </div>
+                <div className='text-muted' style={{ fontSize: '0.8rem', marginBottom: '6px' }}>
+                    Cards are shown in deck order — #1 is the top of the deck (next card drawn).
+                </div>
                 <Form.Control
                     type='text'
                     placeholder='Filter by name, type, or keyword…'
@@ -75,7 +98,7 @@ const DeckSearchModal = ({
                     {filteredCards.length === 0 && (
                         <ListGroup.Item className='text-muted'>No cards found.</ListGroup.Item>
                     )}
-                    {filteredCards.map((card) => (
+                    {filteredCards.map(({ card, position }) => (
                         <ListGroup.Item
                             key={card.id}
                             action
@@ -93,7 +116,23 @@ const DeckSearchModal = ({
                                 }}
                             >
                                 <span>
+                                    <span
+                                        className='text-muted me-2'
+                                        style={{
+                                            fontSize: '0.8rem',
+                                            display: 'inline-block',
+                                            minWidth: '2.2em',
+                                            textAlign: 'right'
+                                        }}
+                                    >
+                                        #{position}
+                                    </span>
                                     <strong>{card.name}</strong>
+                                    {position === 1 && (
+                                        <Badge bg='info' className='ms-2'>
+                                            TOP
+                                        </Badge>
+                                    )}
                                     {card.type && (
                                         <span
                                             className='text-muted ms-2'
@@ -114,9 +153,35 @@ const DeckSearchModal = ({
                 </ListGroup>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant='primary' disabled={!selectedCardId} onClick={handleMoveToHand}>
-                    Move to Hand
+                <Button variant='success' disabled={!selectedCardId} onClick={handlePlay}>
+                    Play
                 </Button>
+                {heroes.length === 1 && (
+                    <Button
+                        variant='primary'
+                        disabled={!selectedCardId}
+                        onClick={() => handleMoveToHand(heroes[0].deckId)}
+                    >
+                        Move to Hand
+                    </Button>
+                )}
+                {heroes.length > 1 && (
+                    <DropdownButton
+                        drop='up'
+                        variant='primary'
+                        title='Move to Hand of…'
+                        disabled={!selectedCardId}
+                    >
+                        {heroes.map((h) => (
+                            <Dropdown.Item
+                                key={h.deckId}
+                                onClick={() => handleMoveToHand(h.deckId)}
+                            >
+                                {h.name || h.deckId}
+                            </Dropdown.Item>
+                        ))}
+                    </DropdownButton>
+                )}
                 <Button variant='secondary' onClick={onClose}>
                     Close
                 </Button>

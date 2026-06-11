@@ -43,10 +43,11 @@ const TokenBadges = ({ tokens }) => {
  *   isMe: boolean,
  *   isActiveTurn: boolean,
  *   onAction: (event: string, payload: object) => void,
- *   isGameOver?: boolean
+ *   isGameOver?: boolean,
+ *   allHeroes?: { deckId: string, name: string }[]
  * }} props
  */
-const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) => {
+const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false, allHeroes = [] }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [deckSearchOpen, setDeckSearchOpen] = useState(false);
 
@@ -338,11 +339,24 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                 deckCards={deck}
                 controllerId={controllerId}
                 zoneId='deck'
+                heroes={
+                    allHeroes.length > 0
+                        ? allHeroes
+                        : [{ deckId: controllerId, name: hero.name || controllerId }]
+                }
                 onMoveToHand={(cardId, cid, zoneId) =>
                     onAction('moveCard', {
                         cardId,
                         fromZone: zoneId,
                         toZone: 'hand',
+                        controllerId: cid
+                    })
+                }
+                onPlay={(cardId, cid, zoneId) =>
+                    onAction('moveCard', {
+                        cardId,
+                        fromZone: zoneId,
+                        toZone: 'playArea',
                         controllerId: cid
                     })
                 }
