@@ -2,15 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Program",
-            "program": "${workspaceFolder}/server/scripts/game/deleteOldReplays.js",
-            "request": "launch",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "type": "node"
-        },
-        {
             "name": "Launch (Lobby Server)",
             "type": "node",
             "request": "launch",
@@ -69,15 +60,6 @@
             "request": "attach",
             "name": "Attach by Process ID",
             "processId": "${command:PickProcess}"
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to Remote",
-            "address": "127.0.0.1",
-            "port": 9229,
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/home/keyteki/keyteki-lobby"
         },
         {
             "type": "edge",

@@ -319,17 +319,23 @@ decisions made along the way.
   - **playertyping socket handler bug fixed:** The `socket.on('playertyping')` handler in `client/redux/actions/socket.js` referenced undefined variables `username` and `isTyping`. This was a pre-existing bug. Fixed to a no-op since playertyping notifications are not used in SotMDE.
   - **Step 10.4 auto-fix scope:** `npm run lint:js:fix` auto-fixed 1827 formatting/prettier issues across 229 files. This is a larger footprint than expected but is purely formatting with no semantic changes.
 
-- **Status:** Not started
-- **Steps:** 10.1 – 10.3
-- **Started:**
-- **Completed:**
-- **Exit gate:**
-  - [ ] `npm run lint` exits with zero warnings
-  - [ ] `npm test` still passes after dead-code removal
-  - [ ] Docker compose file has no `ashteki` labels
-  - [ ] All seven doc files exist in `docs/`
-  - [ ] None of the deleted GameBoard components appear in any import statement
-- **Deviations / decisions:**
+---
+
+## Post-Phase 10 Cleanup (2026-06-11)
+
+Leftover items found during a log-vs-repo audit:
+
+- **Removed orphaned Agent-7 template block** from this log (an empty "Not started"
+  duplicate left below the completed Agent-7 entry).
+- **Deleted three dead Ashes/Keyforge docs** missed by Step 10.2's "replace existing
+  guides" instruction: `docs/card_tutorial.md`, `docs/damage-events.md`,
+  `docs/implementing-cards.md`. Retained `docs/development-process.md` (already
+  rewritten for SotMDE) and `docs/azure-storage-migration.md` (documents the still-live
+  avatar/background storage feature in `server/services/AzureStorageService.js`).
+- **Pruned Ashes-specific entries from `.vscode/launch.json`** per Step 10.1: the
+  `deleteOldReplays.js` launcher (replay system disabled in Phase 1) and the
+  "Attach to Remote" config pointing at `/home/keyteki/keyteki-lobby`. All other
+  launch configs (lobby/game server, Docker attach, Jasmine debug) remain valid.
 
 ---
 
