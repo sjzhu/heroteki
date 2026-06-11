@@ -1029,12 +1029,10 @@ class Game extends EventEmitter {
         const { card, controller } = this._findCardInGame(cardId);
         if (!card || !controller) return;
 
-        // Remove from source zone
         const sourceArr = controller[fromZone];
         if (!Array.isArray(sourceArr)) return;
         const idx = sourceArr.findIndex((c) => c.id === cardId);
         if (idx === -1) return;
-        sourceArr.splice(idx, 1);
 
         // Determine destination controller
         let destController = controller;
@@ -1042,10 +1040,13 @@ class Game extends EventEmitter {
             destController = this._findController(controllerId) || controller;
         }
 
-        // Add to destination zone
+        // Validate the destination zone exists BEFORE removing from source —
+        // villain/environment controllers have no hand, and removing first
+        // would silently delete the card from the game.
         const destArr = destController[toZone];
         if (!Array.isArray(destArr)) return;
 
+        sourceArr.splice(idx, 1);
         card.zone = toZone;
         destArr.push(card);
     }
