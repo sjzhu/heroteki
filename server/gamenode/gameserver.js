@@ -360,12 +360,23 @@ class GameServer {
         // SotMDE: load card data for all three decks from MongoDB, then start game
         this._loadCardDataForGame(pendingGame)
             .then((cardData) => {
-                this._startGameWithCardData(pendingGame, cardData);
+                const hasDecks =
+                    pendingGame.villainDeckId ||
+                    pendingGame.environmentDeckId ||
+                    (pendingGame.heroOrder || []).length > 0;
+                const cardLoadFailed = hasDecks && Object.keys(cardData).length === 0;
+                if (cardLoadFailed) {
+                    logger.error(
+                        `No card data found for game ${pendingGame.id} (decks: ${pendingGame.villainDeckId}, ${pendingGame.environmentDeckId})`
+                    );
+                }
+                this._startGameWithCardData(pendingGame, cardData, { cardLoadFailed });
             })
             .catch((err) => {
                 logger.error(`Failed to load card data for game ${pendingGame.id}:`, err);
-                // Fallback: start with empty card data (game will have no cards but won't crash)
-                this._startGameWithCardData(pendingGame, {});
+                // Players have already been handed off to this node, so the game must
+                // still be created — but tell them loudly that it is unplayable.
+                this._startGameWithCardData(pendingGame, {}, { cardLoadFailed: true });
             });
     }
 
@@ -393,26 +404,21 @@ class GameServer {
             return {};
         }
 
-        try {
-            const db = getDb();
-            const cards = db.get('sotmCards');
-            const cardDocs = await cards.find({ deckId: { $in: deckIds } });
-            const cardMap = {};
-            for (const doc of cardDocs) {
-                cardMap[doc.id] = doc;
-            }
-            logger.info(`Loaded ${Object.keys(cardMap).length} cards for game ${pendingGame.id}`);
-            return cardMap;
-        } catch (err) {
-            logger.error('Failed to load cards from MongoDB:', err);
-            return {};
+        const db = getDb();
+        const cards = db.get('sotmCards');
+        const cardDocs = await cards.find({ deckId: { $in: deckIds } });
+        const cardMap = {};
+        for (const doc of cardDocs) {
+            cardMap[doc.id] = doc;
         }
+        logger.info(`Loaded ${Object.keys(cardMap).length} cards for game ${pendingGame.id}`);
+        return cardMap;
     }
 
     /**
      * Internal: create and initialise a Game with already-loaded card data.
      */
-    _startGameWithCardData(pendingGame, cardData) {
+    _startGameWithCardData(pendingGame, cardData, { cardLoadFailed = false } = {}) {
         let game = new Game(pendingGame, { router: this, cardData });
 
         game.on('onTimeExpired', () => {
@@ -432,6 +438,12 @@ class GameServer {
         game.initialise();
         if (pendingGame.rematch) {
             game.addAlert('info', 'The rematch is ready');
+        }
+        if (cardLoadFailed) {
+            game.addAlert(
+                'danger',
+                'Card data could not be loaded for this game. The game is unplayable — please leave and create a new game.'
+            );
         }
         this.sendGameState(game);
     }
