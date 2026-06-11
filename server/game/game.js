@@ -470,7 +470,7 @@ class Game extends EventEmitter {
         this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
-    playCard(playerName, { cardId } = {}) {
+    playCard(playerName, { cardId, targetControllerId } = {}) {
         if (!cardId) return;
 
         // Find the active hero controlled by this player
@@ -480,10 +480,29 @@ class Game extends EventEmitter {
         const card = hero.playCard(cardId);
         if (!card) return;
 
-        const dest =
+        let dest =
             card.keywords && card.keywords.includes('one-shot') ? 'trash (one-shot)' : 'play area';
+
+        // Some cards are played directly into another controller's play area.
+        // One-shots still resolve to the playing hero's trash.
+        if (targetControllerId && card.zone === 'playArea') {
+            const target = this._findController(targetControllerId);
+            if (target && target !== hero && Array.isArray(target.playArea)) {
+                const idx = hero.playArea.findIndex((c) => c.id === card.id);
+                if (idx !== -1) {
+                    hero.playArea.splice(idx, 1);
+                    target.playArea.push(card);
+                    dest = `${targetControllerId} play area`;
+                }
+            }
+        }
+
         this._pushActionMessage(`${playerName}: played ${card.name} → ${dest}`);
-        this.logEvent(EVENT_TYPES.PLAY_CARD, playerName, { cardId, heroId: hero.deckId });
+        this.logEvent(EVENT_TYPES.PLAY_CARD, playerName, {
+            cardId,
+            heroId: hero.deckId,
+            targetControllerId: targetControllerId || null
+        });
         this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 
@@ -506,10 +525,11 @@ class Game extends EventEmitter {
     moveCard(playerName, { cardId, fromZone, toZone, controllerId } = {}) {
         if (!cardId || !fromZone || !toZone) return;
 
-        // Call clearPlayState if leaving playArea or character zone
+        // Call clearPlayState when leaving play — but a card moving between
+        // play areas stays in play and keeps its tokens/state.
         const { card } = this._findCardInGame(cardId);
         const cardName = card ? card.name || cardId : cardId;
-        if (card && (fromZone === 'playArea' || fromZone === 'character')) {
+        if (card && (fromZone === 'playArea' || fromZone === 'character') && toZone !== 'playArea') {
             card.clearPlayState();
         }
 

@@ -13,6 +13,7 @@ import React, { useState, useRef, useEffect } from 'react';
  *   isVillain?: boolean,
  *   isHero?: boolean,
  *   isIncapacitated?: boolean,
+ *   playAreaTargets?: { deckId: string, name: string }[],
  *   onAction: (event: string, payload: object) => void,
  *   onClose: () => void,
  *   position: { x: number, y: number }
@@ -25,6 +26,7 @@ const CardContextMenu = ({
     isVillain = false,
     isHero = false,
     isIncapacitated = false,
+    playAreaTargets = [],
     onAction,
     onClose,
     position
@@ -37,6 +39,8 @@ const CardContextMenu = ({
     const [maxHpValue, setMaxHpValue] = useState('');
     const [showSetHpInput, setShowSetHpInput] = useState(false);
     const [setHpValue, setSetHpValue] = useState('');
+    const [showPlayTargets, setShowPlayTargets] = useState(false);
+    const [showMoveTargets, setShowMoveTargets] = useState(false);
     const menuRef = useRef(null);
 
     useEffect(() => {
@@ -80,6 +84,12 @@ const CardContextMenu = ({
         textAlign: 'left'
     };
 
+    const subItemStyle = {
+        ...itemStyle,
+        paddingLeft: '24px',
+        fontSize: '0.8rem'
+    };
+
     const dividerStyle = {
         borderTop: '1px solid #495057',
         margin: '4px 0'
@@ -119,6 +129,28 @@ const CardContextMenu = ({
             <button style={itemStyle} onClick={() => act('playCard', { cardId: card.id })}>
                 Play Card
             </button>
+            {playAreaTargets.length > 0 && (
+                <>
+                    <button style={itemStyle} onClick={() => setShowPlayTargets(!showPlayTargets)}>
+                        Play to Play Area…
+                    </button>
+                    {showPlayTargets &&
+                        playAreaTargets.map((t) => (
+                            <button
+                                key={t.deckId}
+                                style={subItemStyle}
+                                onClick={() =>
+                                    act('playCard', {
+                                        cardId: card.id,
+                                        targetControllerId: t.deckId
+                                    })
+                                }
+                            >
+                                → {t.name}
+                            </button>
+                        ))}
+                </>
+            )}
             <button
                 style={itemStyle}
                 onClick={() => act('discardCard', { cardId: card.id, zone: 'hand' })}
@@ -169,6 +201,30 @@ const CardContextMenu = ({
             >
                 Return to Deck
             </button>
+            {playAreaTargets.length > 0 && (
+                <>
+                    <button style={itemStyle} onClick={() => setShowMoveTargets(!showMoveTargets)}>
+                        Move to Play Area…
+                    </button>
+                    {showMoveTargets &&
+                        playAreaTargets.map((t) => (
+                            <button
+                                key={t.deckId}
+                                style={subItemStyle}
+                                onClick={() =>
+                                    act('moveCard', {
+                                        cardId: card.id,
+                                        fromZone: 'playArea',
+                                        toZone: 'playArea',
+                                        controllerId: t.deckId
+                                    })
+                                }
+                            >
+                                → {t.name}
+                            </button>
+                        ))}
+                </>
+            )}
             <div style={dividerStyle} />
 
             {/* HP actions */}

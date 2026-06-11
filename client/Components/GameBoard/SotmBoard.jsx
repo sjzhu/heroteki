@@ -64,6 +64,14 @@ const SotmBoard = () => {
         name: h.name || h.deckId
     }));
 
+    // Play-area destinations for "Move to Play Area" / "Play to Play Area".
+    // 'villain'/'environment' are ids the server's _findController resolves.
+    const playAreaTargets = [
+        ...heroHandTargets,
+        ...(villain ? [{ deckId: 'villain', name: 'Villain' }] : []),
+        ...(environment ? [{ deckId: 'environment', name: 'Environment' }] : [])
+    ];
+
     // Determine if it's the villain's or environment's active turn
     const phase = turnState?.phase || 'setup';
     const isVillainTurn = phase.startsWith('villain_');
@@ -151,6 +159,7 @@ const SotmBoard = () => {
                         onAction={handleAction}
                         isGameOver={isGameOver}
                         allHeroes={heroHandTargets}
+                        playAreaTargets={playAreaTargets}
                     />
 
                     {/* Row 2: Environment */}
@@ -160,6 +169,7 @@ const SotmBoard = () => {
                         onAction={handleAction}
                         isGameOver={isGameOver}
                         allHeroes={heroHandTargets}
+                        playAreaTargets={playAreaTargets}
                     />
 
                     {/* Row 3: Hero columns (horizontally scrollable) */}
@@ -176,6 +186,7 @@ const SotmBoard = () => {
                                     onAction={handleAction}
                                     isGameOver={isGameOver}
                                     allHeroes={heroHandTargets}
+                                    playAreaTargets={playAreaTargets}
                                 />
                             );
                         })}

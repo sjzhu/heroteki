@@ -1,3 +1,4 @@
+/* global Promise */
 /**
  * Unit tests for Game._genericMoveCard().
  *
@@ -87,5 +88,141 @@ describe('Game._genericMoveCard', () => {
         expect(villain.deck.length).toBe(0);
         expect(hero.hand.map((c) => c.id)).toEqual(['v1']);
         expect(hero.hand[0].zone).toBe('hand');
+    });
+});
+
+describe('Game.moveCard play-state handling', () => {
+    function makeTokenCard(id) {
+        return {
+            id,
+            name: id,
+            zone: 'playArea',
+            tokens: { charge: 2 },
+            clearPlayState() {
+                this.tokens = {};
+            }
+        };
+    }
+
+    function makeGame(source, controllers) {
+        return {
+            _findCardInGame(cardId) {
+                for (const zone of ['deck', 'trash', 'playArea', 'hand']) {
+                    const arr = source[zone];
+                    if (Array.isArray(arr)) {
+                        const card = arr.find((c) => c.id === cardId);
+                        if (card) return { card, controller: source };
+                    }
+                }
+                return { card: null, controller: null };
+            },
+            _findController(controllerId) {
+                return controllers[controllerId] || null;
+            },
+            _genericMoveCard: Game.prototype._genericMoveCard,
+            _pushActionMessage() {},
+            logEvent() {},
+            saveState() {
+                return Promise.resolve();
+            },
+            moveCard: Game.prototype.moveCard
+        };
+    }
+
+    it('keeps tokens when moving between play areas', () => {
+        const villain = { deck: [], trash: [], playArea: [makeTokenCard('c1')] };
+        const hero = { deck: [], trash: [], playArea: [], hand: [] };
+        const game = makeGame(villain, { 'hero-1': hero });
+
+        game.moveCard('alice', {
+            cardId: 'c1',
+            fromZone: 'playArea',
+            toZone: 'playArea',
+            controllerId: 'hero-1'
+        });
+
+        expect(hero.playArea.length).toBe(1);
+        expect(hero.playArea[0].tokens).toEqual({ charge: 2 });
+    });
+
+    it('clears tokens when leaving play (playArea → trash)', () => {
+        const villain = { deck: [], trash: [], playArea: [makeTokenCard('c1')] };
+        const game = makeGame(villain, { villain });
+
+        game.moveCard('alice', {
+            cardId: 'c1',
+            fromZone: 'playArea',
+            toZone: 'trash',
+            controllerId: 'villain'
+        });
+
+        expect(villain.trash.length).toBe(1);
+        expect(villain.trash[0].tokens).toEqual({});
+    });
+});
+
+describe('Game.playCard with targetControllerId', () => {
+    const HeroPlayer = require('../../../../server/game/sotm/HeroPlayer');
+
+    function makeCard(id, keywords = []) {
+        return { id, name: id, zone: 'hand', keywords };
+    }
+
+    function makeGame(hero, controllers) {
+        return {
+            _findActiveHeroForPlayer() {
+                return hero;
+            },
+            _findController(controllerId) {
+                return controllers[controllerId] || null;
+            },
+            _pushActionMessage() {},
+            logEvent() {},
+            saveState() {
+                return Promise.resolve();
+            },
+            playCard: Game.prototype.playCard
+        };
+    }
+
+    function makeHero(cards) {
+        return {
+            deckId: 'hero-1',
+            hand: cards,
+            playArea: [],
+            trash: [],
+            playCard: HeroPlayer.prototype.playCard
+        };
+    }
+
+    it("plays into another controller's play area when targetControllerId is given", () => {
+        const hero = makeHero([makeCard('c1')]);
+        const env = { playArea: [], deck: [], trash: [] };
+        const game = makeGame(hero, { environment: env });
+
+        game.playCard('alice', { cardId: 'c1', targetControllerId: 'environment' });
+
+        expect(hero.playArea.length).toBe(0);
+        expect(env.playArea.map((c) => c.id)).toEqual(['c1']);
+    });
+
+    it("one-shots still go to the playing hero's trash even with a target", () => {
+        const hero = makeHero([makeCard('c1', ['one-shot'])]);
+        const env = { playArea: [], deck: [], trash: [] };
+        const game = makeGame(hero, { environment: env });
+
+        game.playCard('alice', { cardId: 'c1', targetControllerId: 'environment' });
+
+        expect(hero.trash.map((c) => c.id)).toEqual(['c1']);
+        expect(env.playArea.length).toBe(0);
+    });
+
+    it('plays to own play area when no target is given', () => {
+        const hero = makeHero([makeCard('c1')]);
+        const game = makeGame(hero, {});
+
+        game.playCard('alice', { cardId: 'c1' });
+
+        expect(hero.playArea.map((c) => c.id)).toEqual(['c1']);
     });
 });

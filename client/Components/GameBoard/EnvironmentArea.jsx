@@ -49,7 +49,8 @@ const EnvironmentArea = ({
     isActiveTurn,
     onAction,
     isGameOver = false,
-    allHeroes = []
+    allHeroes = [],
+    playAreaTargets = []
 }) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [deckSearchOpen, setDeckSearchOpen] = useState(false);
@@ -191,6 +192,7 @@ const EnvironmentArea = ({
                     zone={contextMenu.zone}
                     controllerId={controllerId}
                     isVillain={false}
+                    playAreaTargets={playAreaTargets.filter((t) => t.deckId !== 'environment')}
                     onAction={handleAction}
                     onClose={() => setContextMenu(null)}
                     position={{ x: contextMenu.x, y: contextMenu.y }}

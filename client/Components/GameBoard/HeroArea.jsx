@@ -47,7 +47,15 @@ const TokenBadges = ({ tokens }) => {
  *   allHeroes?: { deckId: string, name: string }[]
  * }} props
  */
-const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false, allHeroes = [] }) => {
+const HeroArea = ({
+    hero,
+    isMe,
+    isActiveTurn,
+    onAction,
+    isGameOver = false,
+    allHeroes = [],
+    playAreaTargets = []
+}) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [deckSearchOpen, setDeckSearchOpen] = useState(false);
 
@@ -327,6 +335,7 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false, allH
                     isVillain={false}
                     isHero={true}
                     isIncapacitated={hero.isIncapacitated}
+                    playAreaTargets={playAreaTargets.filter((t) => t.deckId !== controllerId)}
                     onAction={handleAction}
                     onClose={() => setContextMenu(null)}
                     position={{ x: contextMenu.x, y: contextMenu.y }}

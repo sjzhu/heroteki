@@ -44,7 +44,14 @@ const TokenBadges = ({ tokens }) => {
  *   isGameOver?: boolean
  * }} props
  */
-const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false, allHeroes = [] }) => {
+const VillainArea = ({
+    villain,
+    isActiveTurn,
+    onAction,
+    isGameOver = false,
+    allHeroes = [],
+    playAreaTargets = []
+}) => {
     const [contextMenu, setContextMenu] = useState(null);
     const [deckSearchOpen, setDeckSearchOpen] = useState(false);
 
@@ -231,6 +238,7 @@ const VillainArea = ({ villain, isActiveTurn, onAction, isGameOver = false, allH
                     zone={contextMenu.zone}
                     controllerId={controllerId}
                     isVillain={true}
+                    playAreaTargets={playAreaTargets.filter((t) => t.deckId !== 'villain')}
                     onAction={handleAction}
                     onClose={() => setContextMenu(null)}
                     position={{ x: contextMenu.x, y: contextMenu.y }}
