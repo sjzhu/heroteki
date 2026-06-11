@@ -79,8 +79,9 @@ class HeroPlayer {
     }
 
     /**
-     * Play a card from hand.
-     * One-shots go to trash; all others go to playArea.
+     * Play a card from hand to the play area.
+     * One-shots also go to the play area — players resolve their effects
+     * manually and then move them to trash themselves.
      * @param {string} cardId
      * @returns {SotmCard|null}
      */
@@ -89,14 +90,8 @@ class HeroPlayer {
         if (idx === -1) return null;
 
         const card = this.hand.splice(idx, 1)[0];
-
-        if (card.keywords && card.keywords.includes('one-shot')) {
-            card.zone = 'trash';
-            this.trash.push(card);
-        } else {
-            card.zone = 'playArea';
-            this.playArea.push(card);
-        }
+        card.zone = 'playArea';
+        this.playArea.push(card);
 
         return card;
     }

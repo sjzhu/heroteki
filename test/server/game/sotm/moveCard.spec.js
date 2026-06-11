@@ -206,15 +206,15 @@ describe('Game.playCard with targetControllerId', () => {
         expect(env.playArea.map((c) => c.id)).toEqual(['c1']);
     });
 
-    it("one-shots still go to the playing hero's trash even with a target", () => {
+    it('one-shots play to the play area like any other card (manual trash after resolution)', () => {
         const hero = makeHero([makeCard('c1', ['one-shot'])]);
         const env = { playArea: [], deck: [], trash: [] };
         const game = makeGame(hero, { environment: env });
 
         game.playCard('alice', { cardId: 'c1', targetControllerId: 'environment' });
 
-        expect(hero.trash.map((c) => c.id)).toEqual(['c1']);
-        expect(env.playArea.length).toBe(0);
+        expect(hero.trash.length).toBe(0);
+        expect(env.playArea.map((c) => c.id)).toEqual(['c1']);
     });
 
     it('plays to own play area when no target is given', () => {

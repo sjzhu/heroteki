@@ -480,11 +480,9 @@ class Game extends EventEmitter {
         const card = hero.playCard(cardId);
         if (!card) return;
 
-        let dest =
-            card.keywords && card.keywords.includes('one-shot') ? 'trash (one-shot)' : 'play area';
+        let dest = 'play area';
 
         // Some cards are played directly into another controller's play area.
-        // One-shots still resolve to the playing hero's trash.
         if (targetControllerId && card.zone === 'playArea') {
             const target = this._findController(targetControllerId);
             if (target && target !== hero && Array.isArray(target.playArea)) {
@@ -529,7 +527,11 @@ class Game extends EventEmitter {
         // play areas stays in play and keeps its tokens/state.
         const { card } = this._findCardInGame(cardId);
         const cardName = card ? card.name || cardId : cardId;
-        if (card && (fromZone === 'playArea' || fromZone === 'character') && toZone !== 'playArea') {
+        if (
+            card &&
+            (fromZone === 'playArea' || fromZone === 'character') &&
+            toZone !== 'playArea'
+        ) {
             card.clearPlayState();
         }
 

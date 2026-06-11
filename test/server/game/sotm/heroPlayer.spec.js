@@ -161,7 +161,7 @@ describe('HeroPlayer', () => {
             expect(hero.playArea[0].zone).toBe('playArea');
         });
 
-        it('moves one-shot cards directly to trash', () => {
+        it('plays one-shot cards to the play area (manual resolution, then manual trash)', () => {
             const charCard = makeCharCard('char-legacy');
             const oneShotCard = makeCard('shot-1', 'heroCard', ['one-shot'], null);
             const normalCard = makeCard('normal-1', 'heroCard', [], null);
@@ -181,21 +181,10 @@ describe('HeroPlayer', () => {
             const result = hero.playCard('shot-1');
             expect(result).toBeTruthy();
             expect(hero.hand.length).toBe(0);
-            expect(hero.playArea.length).toBe(0);
-            expect(hero.trash.length).toBe(1);
-            expect(hero.trash[0].id).toBe('shot-1');
-        });
-
-        it('sets zone to "trash" for one-shot card', () => {
-            const charCard = makeCharCard('char-legacy');
-            const oneShotCard = makeCard('shot-2', 'heroCard', ['one-shot'], null);
-            const hero = new HeroPlayer('player1', 'Alice', 'legacy', [oneShotCard], charCard);
-            hero.hand.push(oneShotCard);
-            hero.deck.splice(hero.deck.indexOf(oneShotCard), 1);
-            oneShotCard.zone = 'hand';
-
-            hero.playCard('shot-2');
-            expect(hero.trash[0].zone).toBe('trash');
+            expect(hero.trash.length).toBe(0);
+            expect(hero.playArea.length).toBe(1);
+            expect(hero.playArea[0].id).toBe('shot-1');
+            expect(hero.playArea[0].zone).toBe('playArea');
         });
 
         it('returns null if card is not in hand', () => {
