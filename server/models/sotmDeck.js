@@ -33,7 +33,7 @@ class SotmDeckModel {
             const mongoUrl = process.env.MONGO_URL || configService.getValue('mongo');
             db = monk(mongoUrl);
         }
-        this.collection = db.get('decks');
+        this.collection = db.get('sotmDecks');
         this._db = db;
     }
 

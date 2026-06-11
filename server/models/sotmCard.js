@@ -33,7 +33,7 @@ class SotmCardModel {
             const mongoUrl = process.env.MONGO_URL || configService.getValue('mongo');
             db = monk(mongoUrl);
         }
-        this.collection = db.get('cards');
+        this.collection = db.get('sotmCards');
         this._db = db;
     }
 

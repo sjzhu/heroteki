@@ -39,7 +39,7 @@ for (const arg of args) {
 
 const mongoUrl = process.env.MONGO_URL || config.get('mongo');
 const db = monk(mongoUrl);
-const cardsCollection = db.get('cards');
+const cardsCollection = db.get('sotmCards');
 
 // ---------------------------------------------------------------------------
 // Main

@@ -405,7 +405,7 @@ class GameServer {
 
         try {
             const db = getDb();
-            const cards = db.get('cards');
+            const cards = db.get('sotmCards');
             const cardDocs = await cards.find({ deckId: { $in: deckIds } });
             const cardMap = {};
             for (const doc of cardDocs) {

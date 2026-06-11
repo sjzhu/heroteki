@@ -49,8 +49,8 @@ const SKIP_COUNT_VALIDATION = args.includes('--skip-count-validation');
 const mongoUrl = process.env.MONGO_URL || config.get('mongo');
 const db = monk(mongoUrl);
 
-const cardsCollection = db.get('cards');
-const decksCollection = db.get('decks');
+const cardsCollection = db.get('sotmCards');
+const decksCollection = db.get('sotmDecks');
 
 // ---------------------------------------------------------------------------
 // Helpers
