@@ -131,7 +131,7 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                                 maxHp={charCard.maxHp !== undefined ? charCard.maxHp : hero.maxHp}
                                 onAdjust={(delta) => onAction('adjustHp', { controllerId, delta })}
                                 isIncapacitated={hero.isIncapacitated}
-                                disabled={isGameOver}
+                                disabled={isGameOver || hero.isIncapacitated}
                             />
                             <div style={{ marginTop: '4px' }}>
                                 <TokenBadges tokens={charCard.tokens} />
@@ -324,6 +324,8 @@ const HeroArea = ({ hero, isMe, isActiveTurn, onAction, isGameOver = false }) =>
                     zone={contextMenu.zone}
                     controllerId={controllerId}
                     isVillain={false}
+                    isHero={true}
+                    isIncapacitated={hero.isIncapacitated}
                     onAction={handleAction}
                     onClose={() => setContextMenu(null)}
                     position={{ x: contextMenu.x, y: contextMenu.y }}

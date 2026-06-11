@@ -9,6 +9,7 @@ const EVENT_TYPES = {
     PLAY_TOP_CARD: 'playTopCard',
     SHUFFLE_DECK: 'shuffleDeck',
     ADJUST_HP: 'adjustHp',
+    TOGGLE_INCAPACITATE: 'toggleIncapacitate',
     FLIP_VILLAIN: 'flipVillain',
     DRAW_CARD: 'drawCard',
     MODIFY_CARD: 'modifyCard',

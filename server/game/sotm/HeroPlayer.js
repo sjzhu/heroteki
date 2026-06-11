@@ -140,20 +140,27 @@ class HeroPlayer {
 
     setHp(n) {
         this.hp = n;
-        if (n <= 0) {
-            this.isIncapacitated = true;
-        }
     }
 
     adjustHp(delta) {
+        // HP is frozen while incapacitated; restore() first to change it.
+        if (this.isIncapacitated) return;
         this.setHp(this.hp + delta);
     }
 
+    // Incapacitation is an explicit manual action, not derived from HP:
+    // incapacitating forces HP to 0, but HP reaching 0 on its own does not
+    // incapacitate, and healing does not restore.
     incapacitate() {
         this.isIncapacitated = true;
+        this.hp = 0;
         if (this.characterCard) {
             this.characterCard.clearPlayState();
         }
+    }
+
+    restore() {
+        this.isIncapacitated = false;
     }
 
     /**

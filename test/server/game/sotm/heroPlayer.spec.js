@@ -333,8 +333,8 @@ describe('HeroPlayer', () => {
             expect(state.isIncapacitated).toBe(false);
         });
 
-        it('isIncapacitated is true after setHp to 0', () => {
-            hero.setHp(0);
+        it('isIncapacitated is true after incapacitate()', () => {
+            hero.incapacitate();
             const state = hero.getState('player1');
             expect(state.isIncapacitated).toBe(true);
         });
@@ -352,16 +352,16 @@ describe('HeroPlayer', () => {
             expect(hero.hp).toBe(15);
         });
 
-        it('setHp(0) sets isIncapacitated = true', () => {
+        it('setHp(0) does not set isIncapacitated', () => {
             const hero = makeHero(3, 30);
             hero.setHp(0);
-            expect(hero.isIncapacitated).toBe(true);
+            expect(hero.isIncapacitated).toBe(false);
         });
 
-        it('setHp negative sets isIncapacitated = true', () => {
+        it('setHp negative does not set isIncapacitated', () => {
             const hero = makeHero(3, 30);
             hero.setHp(-5);
-            expect(hero.isIncapacitated).toBe(true);
+            expect(hero.isIncapacitated).toBe(false);
         });
 
         it('adjustHp adds delta to current hp', () => {
@@ -370,12 +370,37 @@ describe('HeroPlayer', () => {
             expect(hero.hp).toBe(20);
         });
 
-        it('incapacitate() sets flag and clears character card tokens', () => {
+        it('incapacitate() sets flag, sets hp to 0, and clears character card tokens', () => {
             const hero = makeHero(3, 30);
             hero.characterCard.tokens['test'] = 5;
             hero.incapacitate();
             expect(hero.isIncapacitated).toBe(true);
+            expect(hero.hp).toBe(0);
             expect(Object.keys(hero.characterCard.tokens).length).toBe(0);
+        });
+
+        it('adjustHp is ignored while incapacitated', () => {
+            const hero = makeHero(3, 30);
+            hero.incapacitate();
+            hero.adjustHp(10);
+            expect(hero.hp).toBe(0);
+            expect(hero.isIncapacitated).toBe(true);
+        });
+
+        it('restore() clears isIncapacitated without touching hp', () => {
+            const hero = makeHero(3, 30);
+            hero.incapacitate();
+            hero.restore();
+            expect(hero.isIncapacitated).toBe(false);
+            expect(hero.hp).toBe(0);
+        });
+
+        it('adjustHp works again after restore()', () => {
+            const hero = makeHero(3, 30);
+            hero.incapacitate();
+            hero.restore();
+            hero.adjustHp(10);
+            expect(hero.hp).toBe(10);
         });
     });
 });

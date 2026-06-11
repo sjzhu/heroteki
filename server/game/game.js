@@ -562,6 +562,7 @@ class Game extends EventEmitter {
 
         const controller = this._findController(controllerId);
         if (!controller || typeof controller.adjustHp !== 'function') return;
+        if (controller.isIncapacitated) return;
 
         controller.adjustHp(delta);
         const sign = delta >= 0 ? '+' : '';
@@ -569,6 +570,24 @@ class Game extends EventEmitter {
             `${playerName}: adjusted HP of ${controllerId} by ${sign}${delta} → ${controller.hp}`
         );
         this.logEvent(EVENT_TYPES.ADJUST_HP, playerName, { controllerId, delta });
+        this.saveState().catch((err) => logger.error('saveState failed', err));
+    }
+
+    toggleIncapacitate(playerName, { controllerId } = {}) {
+        const hero = this.heroPlayers.find((h) => h.deckId === controllerId);
+        if (!hero) return;
+
+        if (hero.isIncapacitated) {
+            hero.restore();
+            this._pushActionMessage(`${playerName}: restored ${controllerId} from incapacitated`);
+        } else {
+            hero.incapacitate();
+            this._pushActionMessage(`${playerName}: incapacitated ${controllerId}`);
+        }
+        this.logEvent(EVENT_TYPES.TOGGLE_INCAPACITATE, playerName, {
+            controllerId,
+            isIncapacitated: hero.isIncapacitated
+        });
         this.saveState().catch((err) => logger.error('saveState failed', err));
     }
 

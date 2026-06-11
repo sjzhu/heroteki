@@ -11,6 +11,8 @@ import React, { useState, useRef, useEffect } from 'react';
  *   zone: string,
  *   controllerId: string,
  *   isVillain?: boolean,
+ *   isHero?: boolean,
+ *   isIncapacitated?: boolean,
  *   onAction: (event: string, payload: object) => void,
  *   onClose: () => void,
  *   position: { x: number, y: number }
@@ -21,6 +23,8 @@ const CardContextMenu = ({
     zone,
     controllerId,
     isVillain = false,
+    isHero = false,
+    isIncapacitated = false,
     onAction,
     onClose,
     position
@@ -392,52 +396,64 @@ const CardContextMenu = ({
         </>
     );
 
+    // HP is frozen while a hero is incapacitated; Restore Hero first.
+    const hpLocked = isHero && isIncapacitated;
+
     const renderCharacterActions = () => (
         <>
-            {!showSetHpInput ? (
-                <>
-                    <button
-                        style={itemStyle}
-                        onClick={() => act('adjustHp', { controllerId, delta: 1 })}
-                    >
-                        Adjust HP +1
-                    </button>
-                    <button
-                        style={itemStyle}
-                        onClick={() => act('adjustHp', { controllerId, delta: -1 })}
-                    >
-                        Adjust HP −1
-                    </button>
-                    <button style={itemStyle} onClick={() => setShowSetHpInput(true)}>
-                        Set HP Value
-                    </button>
-                </>
-            ) : (
-                <div style={inputRowStyle}>
-                    <input
-                        style={inputStyle}
-                        type='number'
-                        placeholder='HP'
-                        value={setHpValue}
-                        onChange={(e) => setSetHpValue(e.target.value)}
-                        autoFocus
-                    />
-                    <button
-                        style={smallBtnStyle}
-                        onClick={() => {
-                            const n = parseInt(setHpValue, 10);
-                            if (!isNaN(n)) {
-                                act('adjustHp', { controllerId, delta: n - (card.hp || 0) });
-                            }
-                        }}
-                    >
-                        OK
-                    </button>
-                </div>
-            )}
+            {!hpLocked &&
+                (!showSetHpInput ? (
+                    <>
+                        <button
+                            style={itemStyle}
+                            onClick={() => act('adjustHp', { controllerId, delta: 1 })}
+                        >
+                            Adjust HP +1
+                        </button>
+                        <button
+                            style={itemStyle}
+                            onClick={() => act('adjustHp', { controllerId, delta: -1 })}
+                        >
+                            Adjust HP −1
+                        </button>
+                        <button style={itemStyle} onClick={() => setShowSetHpInput(true)}>
+                            Set HP Value
+                        </button>
+                    </>
+                ) : (
+                    <div style={inputRowStyle}>
+                        <input
+                            style={inputStyle}
+                            type='number'
+                            placeholder='HP'
+                            value={setHpValue}
+                            onChange={(e) => setSetHpValue(e.target.value)}
+                            autoFocus
+                        />
+                        <button
+                            style={smallBtnStyle}
+                            onClick={() => {
+                                const n = parseInt(setHpValue, 10);
+                                if (!isNaN(n)) {
+                                    act('adjustHp', { controllerId, delta: n - (card.hp || 0) });
+                                }
+                            }}
+                        >
+                            OK
+                        </button>
+                    </div>
+                ))}
             {isVillain && (
                 <button style={itemStyle} onClick={() => act('flipVillain', {})}>
                     Flip Villain
+                </button>
+            )}
+            {isHero && (
+                <button
+                    style={itemStyle}
+                    onClick={() => act('toggleIncapacitate', { controllerId })}
+                >
+                    {isIncapacitated ? 'Restore Hero' : 'Incapacitate'}
                 </button>
             )}
             <div style={dividerStyle} />

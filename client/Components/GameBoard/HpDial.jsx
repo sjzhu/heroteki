@@ -4,7 +4,8 @@
 // maxHp === null means no HP tracking for this card.
 //
 // Two usage contexts (same component, parent decides which event to dispatch):
-//   1. Character card: isIncapacitated prop provided; shows overlay at hp <= 0
+//   1. Character card: isIncapacitated prop provided; shows overlay when set
+//      (incapacitation is an explicit action, not derived from hp <= 0)
 //   2. Play-area card: no isIncapacitated prop; shows hp / maxHp
 
 import React from 'react';
@@ -20,7 +21,7 @@ const HpDial = ({ hp, maxHp, onAdjust, isIncapacitated = false, disabled = false
 
     const pct = maxHp > 0 ? hp / maxHp : 0;
     const isLow = pct < 0.25;
-    const isIncap = isIncapacitated || hp <= 0;
+    const isIncap = isIncapacitated;
 
     const dialStyle = {
         display: 'inline-flex',
