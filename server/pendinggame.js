@@ -95,7 +95,10 @@ class PendingGame {
             label: this.label,
             players: players,
             startedAt: this.createdAt,
-            swap: this.swap
+            swap: this.swap,
+            villainDeckId: this.villainDeckId,
+            environmentDeckId: this.environmentDeckId,
+            heroOrder: this.heroOrder
         };
     }
 
