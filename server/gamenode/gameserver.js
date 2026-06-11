@@ -4,7 +4,6 @@ const Sentry = require('@sentry/node');
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
-const monk = require('monk');
 const config = require('config');
 
 const { detectBinary } = require('../util');
@@ -17,16 +16,7 @@ const version = require('../../version');
 const DummyUser = require('../models/DummyUser');
 const GameStateWriter = require('./GameStateWriter');
 const { ensureIndexes } = require('../game/sotm/ensureIndexes');
-
-// Lazy monk DB for SotMDE card/state loading
-let _db = null;
-function getDb() {
-    if (!_db) {
-        const mongoUrl = process.env.MONGO_URL || config.get('mongo');
-        _db = monk(mongoUrl);
-    }
-    return _db;
-}
+const { getDb } = require('../db');
 
 class GameServer {
     constructor() {

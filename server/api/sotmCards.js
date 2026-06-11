@@ -8,13 +8,8 @@
 'use strict';
 
 const passport = require('passport');
-const monk = require('monk');
 const { wrapAsync } = require('../util.js');
-
-function getDb() {
-    const mongoUrl = process.env.MONGO_URL || require('config').get('mongo');
-    return monk(mongoUrl);
-}
+const { getDb } = require('../db.js');
 
 module.exports.init = function (server) {
     server.get(
@@ -44,8 +39,6 @@ module.exports.init = function (server) {
             const cards = await cardsCollection.find(query, {
                 sort: { name: 1 }
             });
-
-            await db.close();
 
             res.send(cards);
         })

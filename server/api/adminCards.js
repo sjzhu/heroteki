@@ -17,8 +17,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const monk = require('monk');
 const { wrapAsync } = require('../util.js');
+const { getDb } = require('../db.js');
 const logger = require('../log.js');
 
 const MANUAL_DIR = path.join(__dirname, '../../public/card-images/manual');
@@ -66,11 +66,6 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-function getDb() {
-    const mongoUrl = process.env.MONGO_URL || require('config').get('mongo');
-    return monk(mongoUrl);
-}
-
 module.exports.init = function (server) {
     server.post(
         '/api/admin/cards/upload-image',
@@ -109,7 +104,6 @@ module.exports.init = function (server) {
 
             const card = await cardsCollection.findOne({ id: cardId });
             if (!card) {
-                await db.close();
                 // Clean up the uploaded file
                 fs.unlink(req.file.path, () => {});
                 return res
@@ -118,8 +112,6 @@ module.exports.init = function (server) {
             }
 
             await cardsCollection.findOneAndUpdate({ id: cardId }, { $set: { imageUrl } });
-
-            await db.close();
 
             logger.info(
                 `Admin ${req.user.username} uploaded image for card ${cardId}: ${imageUrl}`

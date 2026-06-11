@@ -9,8 +9,8 @@
 'use strict';
 
 const passport = require('passport');
-const monk = require('monk');
 const { wrapAsync } = require('../util.js');
+const { getDb } = require('../db.js');
 const logger = require('../log.js');
 const {
     generatePlaceholder,
@@ -20,11 +20,6 @@ const {
 const DECK_SIZES = { hero: 40, villain: 25, environment: 15 };
 const REQUIRED_CARD_FIELDS = ['id', 'name', 'deckId', 'type', 'keywords', 'text'];
 const REQUIRED_DECK_FIELDS = ['id', 'name', 'deckType', 'version'];
-
-function getDb() {
-    const mongoUrl = process.env.MONGO_URL || require('config').get('mongo');
-    return monk(mongoUrl);
-}
 
 module.exports.init = function (server) {
     // -------------------------------------------------------------------------
@@ -66,8 +61,6 @@ module.exports.init = function (server) {
                 },
                 sort: { name: 1 }
             });
-
-            await db.close();
 
             res.send(
                 decks.map((d) => ({
@@ -139,7 +132,6 @@ module.exports.init = function (server) {
             );
 
             if (collisions.length > 0) {
-                await db.close();
                 return res.status(409).send({
                     success: false,
                     message: 'Card ID collision(s) with existing non-user cards',
@@ -215,8 +207,6 @@ module.exports.init = function (server) {
             if (generationErrors.length > 0) {
                 warnings.push(`Placeholder generation failed for: ${generationErrors.join(', ')}`);
             }
-
-            await db.close();
 
             // --- 9. Return success ---
             return res.send({

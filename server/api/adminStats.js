@@ -21,19 +21,14 @@
 'use strict';
 
 const passport = require('passport');
-const monk = require('monk');
 const { wrapAsync } = require('../util.js');
+const { getDb } = require('../db.js');
 
 function requireAdmin(req, res, next) {
     if (!req.user || !req.user.permissions?.isAdmin) {
         return res.status(403).send({ success: false, message: 'Admin role required' });
     }
     next();
-}
-
-function getDb() {
-    const mongoUrl = process.env.MONGO_URL || require('config').get('mongo');
-    return monk(mongoUrl);
 }
 
 function buildDateFilter(dateFrom, dateTo) {
@@ -84,8 +79,6 @@ module.exports.init = function (server) {
             }
 
             const games = await outcomes.find(query, { sort: { endedAt: -1 } });
-
-            await db.close();
 
             if (games.length === 0) {
                 return res.send({
@@ -239,8 +232,6 @@ module.exports.init = function (server) {
                 outcomes.count(query)
             ]);
 
-            await db.close();
-
             return res.send({
                 total,
                 page,
@@ -282,8 +273,6 @@ module.exports.init = function (server) {
             const eventDocs = await events.find(query, {
                 sort: { round: 1, timestamp: 1 }
             });
-
-            await db.close();
 
             return res.send({
                 gameId: req.params.gameId,
