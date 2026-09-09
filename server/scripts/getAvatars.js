@@ -2,7 +2,6 @@
 const monk = require('monk');
 const _ = require('underscore');
 const fs = require('fs');
-const request = require('request');
 const crypto = require('crypto');
 
 const mongoUrl = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/sentinels';
@@ -21,16 +20,9 @@ function writeFile(path, data, opts = 'utf8') {
     });
 }
 
-function httpRequest(url, options = {}) {
-    return new Promise((resolve, reject) => {
-        request(url, options, (err, res, body) => {
-            if (err) {
-                return reject(err);
-            }
-
-            resolve(body);
-        });
-    });
+async function httpRequest(url) {
+    const res = await fetch(url);
+    return Buffer.from(await res.arrayBuffer());
 }
 
 const getProfilePics = async () => {
@@ -51,8 +43,7 @@ const getProfilePics = async () => {
         for (let user of users) {
             let randomHash = crypto.randomBytes(32).toString('hex');
             let avatar = await httpRequest(
-                `https://www.gravatar.com/avatar/${randomHash}?d=identicon&s=24`,
-                { encoding: null }
+                `https://www.gravatar.com/avatar/${randomHash}?d=identicon&s=24`
             );
             await writeFile(`public/img/avatar/${user.username}.png`, avatar, 'binary');
         }

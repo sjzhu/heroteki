@@ -1,29 +1,29 @@
-const request = require('request');
-
 function escapeRegex(regex) {
     return regex.replace(/[-[\]/{}()*+?.\\^$|]/g, '\\$&');
 }
-function httpRequest(url, options = {}) {
-    return new Promise((resolve, reject) => {
-        request(url, options, (err, res, body) => {
-            if (err) {
-                if (res) {
-                    err.statusCode = res.statusCode;
-                }
 
-                return reject(err);
-            }
+/**
+ * Minimal GET helper backed by the global fetch (Node 18+).
+ * Resolves with the response body as a string, or as a Buffer when
+ * `options.encoding === null`. Rejects with an Error carrying `statusCode`
+ * on any non-200 response.
+ */
+async function httpRequest(url, options = {}) {
+    const { encoding, ...fetchOptions } = options;
 
-            if (res.statusCode !== 200) {
-                let err = new Error('Request failed');
-                err.statusCode = res.statusCode;
+    const res = await fetch(url, fetchOptions);
 
-                return reject(err);
-            }
+    if (res.status !== 200) {
+        const err = new Error('Request failed');
+        err.statusCode = res.status;
+        throw err;
+    }
 
-            resolve(body);
-        });
-    });
+    if (encoding === null) {
+        return Buffer.from(await res.arrayBuffer());
+    }
+
+    return res.text();
 }
 
 function wrapAsync(fn) {
