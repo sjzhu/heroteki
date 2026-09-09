@@ -1,47 +1,82 @@
-<!-- Copied/created by assistant: concise repo-specific instructions for AI coding agents -->
-# Copilot instructions for the Ashteki repo
+<!-- Repo-specific guidance for AI coding agents. Keep this short and current. -->
+# Copilot instructions — SotMDE Online
 
-Summary
-- Ashteki is a web app split into two main runtime pieces: the lobby server (Express + REST/API + UI) and one or more game nodes (game engine processes). The frontend is a React + Redux app built with Webpack. Persistent data is stored in MongoDB (monk). Redis is used for realtime/session needs and socket.io is used for all real-time communication.
+## What this project is
 
-Quick start (dev)
-- Install: npm install
-- Import data (one-time): node server/scripts/importdata && node server/scripts/importprecons
-- Run lobby (dev with HMR): npm start (runs node . -> server/index.js uses webpack dev middleware when NODE_ENV != production)
-- Run a game node: npm run game (runs node server/gamenode)
-- Alternative: docker-compose up then run the import scripts inside the container (see README).
+A browser-based **manual-play** facilitator for *Sentinels of the Multiverse: Definitive
+Edition* (SotMDE). **No card rules are automated** — the server only tracks zone contents,
+HP, tokens, turn phase, chat, and event/outcome logs. Players resolve every card effect
+themselves.
 
-Important scripts (package.json)
-- start: node . (lobby)
-- game: node server/gamenode (game engine/process)
-- build: npm install && webpack --config webpack.production.js
-- test: cross-env JASMINE_CONFIG_PATH=./jasmine.json jasmine
-- lint / lint:js:fix: ESLint rules are enforced — follow .eslintrc
+It is a fork of [Ashteki](https://github.com/Ashteki/ashteki) (← ringteki/keyteki). The
+Node/React/Socket.IO/MongoDB/Redis infrastructure was kept; the Ashes rules engine was
+removed and replaced with the SotMDE model in `server/game/sotm/`. The full conversion
+(phases 0–10) is complete — see `IMPLEMENTATION_LOG.md`. Ashes-era files still linger in
+`server/services/Ashes*.js`, `server/stats_old.js`, parts of `client/Components/GameBoard/`,
+and `test/helpers/` — treat anything Ashes/Ashteki/Phoenixborn/dice/Chimera as dead unless
+you can trace a live import to it.
 
-Project layout and where to look
-- client/ — React app and Redux store. Key files: `client/index.jsx`, `client/index.dev.jsx`, `client/configureStore.dev.js`, `client/Components/` and `client/pages/`.
-- server/ — Express server, APIs, game node code, and scripts. Key files: `server/index.js` (launcher), `server/server.js` (Express wiring, passport JWT, webpack dev middleware), `server/gamenode` (game node process), `server/api/` (REST endpoints), `server/scripts/` (importdata, user tooling).
-- data/ — card data, sets and decks used by the engine (imported by scripts).
-- public/ and dist/ — static assets and the built frontend.
-- webpack.*.js — webpack configs (dev/prod/common). Use webpack.dev.js to understand HMR setup (webpackHotMiddleware + dev middleware).
+## Runtime shape
 
-Runtime and integration notes (examples to reference in code)
-- Two distinct processes must run: the lobby (Express + static UI) and at least one game node. Lobby spawns/coordinates nodes via `server/gamenode` and `lobby.js`.
-- Auth: passport-jwt (see `server/server.js` JWT strategy); tokens are expected as Bearer tokens.
-- Realtime: socket.io/socket.io-client are used for game messages. Search for `socket.io` and `gamenode` to find communication flows.
-- DB: monk (MongoDB) — config via `config/default.json5` or `config/local.json5`. Do not hardcode connection strings; prefer config service (`server/services/ConfigService`).
+Two processes, both started from the repo root:
 
-Conventions and patterns
-- Game engine changes require unit tests before merging. See README and jasmine.json. Tests run with `npm test`.
-- Frontend uses SCSS and imports via Webpack. Keep style files under `client/styles/` and component styles near pages when present (e.g., `pages/*.scss`).
-- Linting: ESLint (AirBnB config) is enforced. Run `npm run lint` and `npm run lint:js:fix`.
+```bash
+node .                # lobby server (Express + REST API + static/dev client) → http://localhost:4000
+node server/gamenode  # game node (raw http + socket.io, all in-game events) → :9500
+```
 
-What to do when editing the engine or network code
-- If changing game logic, update/add jasmine tests under `test/` covering new behavior. Engine logic often references files in `server/script/` and `server/gamenode`.
-- When touching authentication or APIs, update `server/api/` endpoints and check usages in `client/util.js` or `client/Components/*`.
+- **Build tool is Vite** (`vite.config.mjs`), not Webpack. Dev client: `npm run dev`.
+  Production bundle: `npm run build` (`vite build`). There are no webpack configs.
+- **DB access is `monk`** (not Mongoose). Use the shared singleton from `server/db.js`
+  (`getDb()`) — do not open per-request connections and do not call `.close()`.
+- Card/deck data lives in MongoDB collections **`sotmCards`** and **`sotmDecks`**.
+- Config: the `config` package reads `config/default.json5` + `config/local.json5`
+  (gitignored) + the `NODE_CONFIG` env override. Never hardcode connection strings.
+- Auth: passport-jwt (Bearer tokens); see `server/lobbyserver.js`. Optional site-wide
+  HTTP Basic Auth gate when `config.privateMode` is true (`server/index.js`).
 
-:notes:
-- When you need to find the lobby startup flow, open `server/index.js` and `server/server.js` (they show initialization order and middleware). For hot-reload front-end behaviour inspect `webpack.dev.js` and `client/index.dev.jsx`.
-- If you need card/game data, check `data/` and the import scripts in `server/scripts/`.
+## Where things are
 
-If anything here is unclear or you want deeper examples (e.g., step-by-step to run a local hot-reload dev session on Windows), tell me which area and I will expand with concrete commands and file references.
+- `server/game/sotm/` — the game model: `HeroPlayer`, `VillainController`,
+  `EnvironmentController`, `TurnManager`, `SotmCard`, `zones.js`, `eventTypes.js`.
+  `server/game/game.js` is the orchestrator that socket commands dispatch into.
+- `server/gamenode/` — the game node process and `GameStateWriter` (per-player state
+  serialization broadcast on the `gamestate` socket channel).
+- `server/api/` — REST routes. SotMDE endpoints are under `/api/sotm/*`
+  (`sotmDecks.js`, `sotmCards.js`) and `/api/admin/*` (`adminCards.js`, `adminStats.js`).
+- `server/models/` — monk wrapper classes (`sotmCard.js`, `sotmDeck.js`) with
+  `ensureIndexes()`.
+- `server/scripts/importSotmData.js` — seeds `sotmCards`/`sotmDecks` from
+  `data/sotm/cards/` and `data/sotm/decks/`, and generates placeholder card PNGs.
+- `client/` — React + Redux. Board entry point is
+  `client/Components/GameBoard/SotmBoard.jsx` (wired in `client/AppRoutes.jsx`).
+  Game-state selectors: `client/redux/selectors/game.js`.
+
+## Game-state shape (important)
+
+`game.getState(playerName)` returns
+`{ gameId, round, phase, H, activeHeroId, activeControllerPlayerId, villain, environment,
+heroes[], chatLog, setupInstructions, isGameOver }`.
+
+- There is **no `currentGame.players` map** (that was Ashteki). Use `heroes[]`, each with a
+  `controllerPlayerId`. `H` is the fixed hero-deck count and never changes.
+- `playersAndSpectators` is keyed by username — one entry per human regardless of how many
+  heroes they control.
+
+See `docs/game-model.md` for the full model, zone list, event types, and the socket
+command table.
+
+## Conventions
+
+- Server game-model changes **must** come with Jasmine tests under
+  `test/server/game/sotm/`. Run `npm test` (jasmine) and `npm run lint` (ESLint, airbnb +
+  prettier — `npm run lint:js:fix` to auto-fix).
+- All logging is fire-and-forget: log failures are caught and never crash a game
+  (`docs/logging.md`).
+- Node version: see `.node-version`.
+
+## Docs
+
+`README.md` plus `docs/`: `setup.md`, `card-data.md`, `user-decks.md`, `card-templates.md`,
+`game-model.md`, `logging.md`, `admin.md`, `development-process.md`,
+`azure-storage-migration.md`.

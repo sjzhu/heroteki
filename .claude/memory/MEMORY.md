@@ -1,3 +1,3 @@
 # Memory Index
 
-- [SotMDE implementation status](project_sotmde_status.md) — current phase (Phase 3 next), completed phases 0–2, plan file locations
+- [SotMDE implementation status](project_sotmde_status.md) — conversion phases 0–10 complete plus post-orchestration gameplay work; key architectural facts and plan-file locations

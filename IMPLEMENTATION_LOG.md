@@ -339,9 +339,62 @@ Leftover items found during a log-vs-repo audit:
 
 ---
 
+## Post-orchestration feature work (2026-06-11)
+
+The 11-phase orchestration plan is complete. Work after the Post-Phase 10 Cleanup commit
+is tracked here rather than per-agent. All commits below are on `main`, dated 2026-06-11.
+
+### Data / infrastructure fixes
+
+- `39cfe55e1` — **Standardize SotMDE data on `sotmCards` / `sotmDecks` collections.**
+  Renamed the collections referenced by `server/models/sotmCard.js`, `sotmDeck.js`,
+  `server/scripts/importSotmData.js`, `generatePlaceholders.js`, and `gameserver.js`.
+- `3660f8783` — **Single cached Mongo connection.** Added `server/db.js` (`getDb()`
+  lazy monk singleton); removed per-request `monk(url)` + `db.close()` from
+  `adminCards.js`, `adminStats.js`, `sotmCards.js`, `sotmDecks.js`, `gameserver.js`.
+- `93fe30c57` — **Surface card-data load failures.** `gameserver.js onStartGame` now
+  fails loudly (and aborts the game start) when card/deck data cannot be loaded from
+  MongoDB, instead of silently constructing an empty game.
+- `bd7d00a6c` — **Persist SotMDE fields in `PendingGame.getSaveState`** (`villainDeckId`,
+  `environmentDeckId`, `heroSelection`, `heroOrder`) so a lobby restart preserves them.
+
+### Gameplay features
+
+- `4b2b581c6` — **Explicit incapacitate / restore action.** New `toggleIncapacitate`
+  socket command + `TOGGLE_INCAPACITATE` event type. `HeroPlayer.incapacitate()` forces
+  HP to 0 and clears character play-state; `restore()` clears the flag. HP is frozen
+  (`adjustHp` is a no-op, and `game.adjustHp` early-returns) while incapacitated.
+  Incapacitation is no longer derived from HP ≤ 0. Client: `CardContextMenu`, `HpDial`,
+  `HeroArea` updated.
+- `918491912` — **Validate destination zone before removing from source** in
+  `_genericMoveCard` — villain/environment controllers have no `hand`, and removing first
+  would delete the card from the game.
+- `27abcd1da` — **Deck search UX.** `DeckSearchModal` shows cards in deck order, adds a
+  Play action and a per-hero "Move to Hand". Deck contents are read from broadcast state
+  (every deck zone is fully serialized); no separate private emit was added, so the
+  `socket.send('deckContents')` path in `game.searchDeck` is dead code.
+- `5fb2a2cbb` — **Move and play cards to any play area.** `game.moveCard` /
+  `_genericMoveCard` support cross-controller moves; `game.playCard` accepts
+  `targetControllerId` to play a card straight into another controller's play area. A
+  card moving between play areas keeps its tokens (no `clearPlayState`). Client:
+  `CardContextMenu`, `HeroArea`, `VillainArea`, `EnvironmentArea`, `SotmBoard`.
+- `8b37eced1` — **One-shots play to the play area.** `HeroPlayer.playCard` no longer
+  routes `one-shot` cards to trash — they go to the play area for manual resolution, and
+  players move them to trash themselves.
+
+### Housekeeping
+
+- `747ca268c` — Committed `.claude/memory/` files.
+
+---
+
 ## Open Decisions / Blockers
 
 _(Updated as they arise)_
 
-| # | Agent | Description | Status |
+| # | Area | Description | Status |
 |---|---|---|---|
+| 1 | game.js | `searchDeck` retains a dead `socket.send('deckContents')` branch — `gameserver.js` dispatches `game[command](username, ...args)` with no socket. Deck contents ride in broadcast state instead. | Open — harmless; remove the branch + stale comment |
+| 2 | cleanup | Ashes-era files still present: `server/services/Ashes*.js`, `server/stats_old.js`, `server/api/{decks,games,banlist}.js`, much of `client/Components/GameBoard/`, `test/helpers/` Ashteki chain. Kept where an import chain still touches them (`ChimeraPage` → DeckList → DeckDice; test helper → Die → AbilityContext). | Open — needs `ChimeraPage` removal + test-helper decoupling first |
+| 3 | lint | 10 file-level `react-hooks/exhaustive-deps` eslint-disables in legacy client components. | Open — needs React refactors (useRef/useReducer) |
+| 4 | env | This machine runs an older Node than `.node-version` pins. | Open — Node upgrade pending |
