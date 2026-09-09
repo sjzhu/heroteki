@@ -24,13 +24,12 @@ userService
             }
             if (brief) {
                 console.log(
-                    '%s | %s | %d | %d | %s | %s',
+                    '%s | %s | %d | %d | %s',
                     user.username,
                     user.email,
                     user.registered.getFullYear(),
                     user.registered.getMonth(),
-                    user.permissions?.isSupporter ? 'supporter' : '',
-                    user.permissions?.keepsSupporterWithNoPatreon ? 'true' : ''
+                    user.permissions?.isSupporter ? 'supporter' : ''
                 );
             } else {
                 console.log(user);

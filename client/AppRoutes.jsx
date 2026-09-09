@@ -13,7 +13,6 @@ import Login from './pages/LoginContainer';
 import Logout from './pages/Logout';
 import NodesAdmin from './pages/NodesAdmin';
 import NotFound from './pages/NotFound';
-import Patreon from './pages/Patreon';
 import Profile from './pages/profile/Profile';
 import Register from './pages/Register';
 import ResetPassword from './pages/ResetPassword';
@@ -90,7 +89,6 @@ const AppRoutes = ({ currentGame, user }) => {
             <Route path='/login' element={<Login />} />
             <Route path='/logout' element={<Logout />} />
             <Route path='/nodes' element={requirePermission('canManageNodes', <NodesAdmin />)} />
-            <Route path='/patreon' element={<Patreon code={getParam('code')} />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/register' element={<Register />} />
             <Route

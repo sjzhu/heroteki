@@ -53,29 +53,6 @@ export default function (state = {}, action) {
             return Object.assign({}, state, {
                 user: u
             });
-        case 'ACCOUNT_LINK_RESPONSE':
-            // eslint-disable-next-line no-redeclare
-            var u = Object.assign({}, action.response.user);
-            u.patreon = action.response.status;
-            return Object.assign({}, state, {
-                accountLinked: true,
-                user: u
-            });
-        case 'CLEAR_LINK_STATUS':
-            return Object.assign({}, state, {
-                accountLinked: undefined
-            });
-        case 'ACCOUNT_UNLINKED':
-            var user = state.user;
-
-            if (user) {
-                user.patreon = undefined;
-            }
-
-            return Object.assign({}, state, {
-                accountLinked: undefined,
-                user: user
-            });
         case 'view/changeViewSetting':
             var newState = Object.assign({}, state);
             if (action.setting === 'cardSize') {

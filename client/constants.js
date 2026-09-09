@@ -18,6 +18,3 @@ export const MagicTypes = [
 export const UpgradeCardTypes = ['Alteration Spell', 'Conjured Alteration Spell'];
 
 export const storageBaseUrl = '';
-
-// SotMDE: Patreon removed; export empty string so ProfileMain.jsx doesn't crash
-export const patreonUrl = '';

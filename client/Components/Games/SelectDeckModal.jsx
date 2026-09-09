@@ -8,13 +8,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loadDecks, loadMyChimeraDecks } from '../../redux/actions/deck.js';
 import DeckFilter from '../Decks/DeckFilter.jsx';
 import debounce from 'lodash.debounce';
-import { PatreonStatus } from '../../types/patreon.js';
 import DeckGrid from '../Decks/DeckGrid.jsx';
 
 const SelectDeckModal = ({ gameFormat, onClose, onDeckSelected, onChooseForMe, playerIsMe }) => {
     const user = useSelector((state) => state.account.user);
     const showRestricted = user?.permissions.canVerifyDecks;
-    const allowPremium = user?.patreon === PatreonStatus.Pledged || user?.permissions?.isSupporter;
+    const allowPremium = !!user?.permissions?.isSupporter;
     const isSolo = ['standard', 'survival'].includes(gameFormat);
 
     const {

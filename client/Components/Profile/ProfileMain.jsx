@@ -1,17 +1,11 @@
 import React, { createContext, useContext, useRef, useState } from 'react';
 import { Col, Form, Button, Row } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
 
-import { PatreonStatus } from '../../types';
 import Panel from '../Site/Panel';
 import Avatar from '../Site/Avatar';
-import { unlinkPatreon } from '../../redux/actions';
-const PatreonImage = new URL('../../assets/img/Patreon_Mark_Coral.jpg', import.meta.url).href;
 import { Link } from 'react-router-dom';
-import './ProfileMain.scss';
 
-import { patreonUrl } from '../../constants';
 export const EloContext = createContext(false);
 
 /**
@@ -31,7 +25,6 @@ const ProfileMain = ({ user, formProps, handleEloChange }) => {
     const { t } = useTranslation();
     const inputFile = useRef(null);
     const [localAvatar, setAvatar] = useState(null);
-    const dispatch = useDispatch();
 
     const onAvatarUploadClick = () => {
         if (!inputFile.current) {
@@ -131,25 +124,6 @@ const ProfileMain = ({ user, formProps, handleEloChange }) => {
                         </Form.Control.Feedback>
                     </Form.Group>
                 </Col>
-                <Form.Group as={Col} md='3'>
-                    <Form.Label>{t('Patreon')}</Form.Label>
-                    <div>
-                        <img
-                            className='profile-patreon-icon'
-                            src={PatreonImage}
-                            alt={t('Patreon Logo')}
-                        />
-                        {!user?.patreon || user?.patreon === PatreonStatus.Unlinked ? (
-                            <Button variant='secondary' href={patreonUrl}>
-                                Link Account
-                            </Button>
-                        ) : (
-                            <Button variant='secondary' onClick={() => dispatch(unlinkPatreon())}>
-                                Unlink Account
-                            </Button>
-                        )}
-                    </div>
-                </Form.Group>
                 <Form.Group as={Col} md='4'>
                     <Form.Label>{t('Elo Rating')}</Form.Label>
                     <div>
