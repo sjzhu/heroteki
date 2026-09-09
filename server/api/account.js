@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const moment = require('moment');
 const _ = require('underscore');
-const sendgrid = require('@sendgrid/mail');
 const fs = require('fs');
 const { fabric } = require('fabric');
 
@@ -41,32 +40,8 @@ function isValidImage(base64Image) {
 }
 
 async function sendEmail(address, subject, email) {
-    // await sendViaSendgrid(address, subject, email);
     const mailjetSender = new MailJetSender(logger);
     await mailjetSender.sendEmail(address, subject, email);
-}
-
-// eslint-disable-next-line no-unused-vars
-async function sendViaSendgrid(address, subject, email) {
-    let emailKey =
-        process.env.SENDGRID_API_KEY || configService.getValueForSection('lobby', 'emailKey');
-    if (!emailKey) {
-        logger.info(`Trying to send email to ${address}, but email key not configured.`);
-        return;
-    }
-
-    const message = {
-        to: address,
-        from: `${appName} <${configService.getValueForSection('lobby', 'emailFromAddress')}>`,
-        subject: subject,
-        text: email
-    };
-
-    try {
-        return sendgrid.send(message);
-    } catch (err) {
-        logger.error('Unable to send email', err);
-    }
 }
 
 function validateUserName(username) {
@@ -239,12 +214,6 @@ async function processCustomBackground(newUser, user) {
 module.exports.init = function (server, options) {
     userService = options.userService || new UserService(options.configService);
     banlistService = new BanlistService(configService);
-
-    let emailKey =
-        process.env.SENDGRID_API_KEY || configService.getValueForSection('lobby', 'emailKey');
-    if (emailKey) {
-        sendgrid.setApiKey(emailKey);
-    }
 
     server.post(
         '/api/account/register',
