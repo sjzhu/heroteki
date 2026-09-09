@@ -59,8 +59,9 @@ the "Post-orchestration feature work" section was added):
   `H` is the fixed hero-deck count, never changes on incapacitation.
 - `playersAndSpectators` keyed by username — one entry per human regardless of hero count.
 - `controllerId` in socket payloads = `'villain'` | `'environment'` | hero `deckId`.
-- Node: this machine runs an older Node than the primary dev machine; `.node-version`
-  pins the target. Node upgrade on this machine is a pending task (as of 2026-09-09).
+- Node 22.12.0, pinned in `.nvmrc` + `.node-version` (22.12 is the Vite 8 floor). CI
+  (`.github/workflows/node.js.yml`) reads `.nvmrc` and runs on `main`. The committed
+  `package-lock.json` was regenerated 2026-09-09 to un-stick `npm ci`.
 
 ## How to apply
 
