@@ -7,9 +7,7 @@
         emailFromAddress: 'mailer@sentinels-online.local',
         blockDisposableEmail: false,
         requireActivation: false,
-        hmacSecret: 'somethingevenmoresecret',
-        patreonCallbackUrl: '',
-        patreonClientId: ''
+        hmacSecret: 'somethingevenmoresecret'
 
         /*
          * Other server configurations used, but not specified, include:

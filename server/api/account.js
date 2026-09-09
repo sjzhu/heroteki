@@ -13,14 +13,12 @@ const { wrapAsync } = require('../util.js');
 const UserService = require('../services/AshesUserService');
 const ConfigService = require('../services/ConfigService.js');
 const BanlistService = require('../services/AshesBanlistService');
-const PatreonService = require('../services/PatreonService');
 const util = require('../util.js');
 const MailJetSender = require('./email/MailJetSender.js');
 
 let configService = new ConfigService();
 let userService;
 let banlistService;
-let patreonService;
 
 const appName = configService.getValueForSection('lobby', 'appName');
 
@@ -241,12 +239,6 @@ async function processCustomBackground(newUser, user) {
 module.exports.init = function (server, options) {
     userService = options.userService || new UserService(options.configService);
     banlistService = new BanlistService(configService);
-    patreonService = new PatreonService(
-        configService.getValueForSection('lobby', 'patreonClientId'),
-        process.env.PATREON_SECRET || configService.getValueForSection('lobby', 'patreonSecret'),
-        userService,
-        configService.getValueForSection('lobby', 'patreonCallbackUrl')
-    );
 
     let emailKey =
         process.env.SENDGRID_API_KEY || configService.getValueForSection('lobby', 'emailKey');
@@ -545,34 +537,6 @@ module.exports.init = function (server, options) {
         wrapAsync(async (req, res) => {
             let user = await userService.getFullUserByUsername(req.user.username);
             let userDetails = user.getWireSafeDetails();
-            let patreonSupporter = false;
-
-            // if patreon is linked, then update details
-            if (user.patreon && user.patreon.refresh_token) {
-                userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
-
-                if (userDetails.patreon === 'none') {
-                    delete userDetails.patreon;
-
-                    let ret = await patreonService.refreshTokenForUser(user);
-                    if (ret) {
-                        userDetails.patreon = await patreonService.getPatreonStatusForUser(user);
-                    }
-                }
-            }
-
-            if (userDetails.patreon === 'pledged') {
-                patreonSupporter = true;
-            }
-
-            // should only trigger if supporter status does not reflect permission set
-            const changed = patreonSupporter !== !!user.permissions.isSupporter;
-            if (changed) {
-                if (!user.permissions.keepsSupporterWithNoPatreon) {
-                    userDetails.permissions.isSupporter = patreonSupporter;
-                    await userService.setSupporterStatus(user, patreonSupporter);
-                }
-            }
 
             res.send({ success: true, user: userDetails });
         })
@@ -1109,75 +1073,6 @@ module.exports.init = function (server, options) {
                 username: lowerCaseUser,
                 user: updatedUser.getWireSafeDetails()
             });
-        })
-    );
-
-    server.post(
-        '/api/account/linkPatreon',
-        passport.authenticate('jwt', { session: false }),
-        wrapAsync(async (req, res) => {
-            req.params.username = req.user ? req.user.username : undefined;
-
-            let user = await checkAuth(req, res);
-
-            if (!user) {
-                return;
-            }
-
-            if (!req.body.code) {
-                return res.send({ success: false, message: 'Code is required' });
-            }
-
-            user = await patreonService.linkAccount(req.params.username, req.body.code);
-            if (!user) {
-                return res.send({
-                    success: false,
-                    message:
-                        'An error occured syncing your patreon account.  Please try again later.'
-                });
-            }
-
-            let status = await patreonService.getPatreonStatusForUser(user);
-
-            try {
-                if (status === 'pledged' && !user.permissions.isSupporter) {
-                    await userService.setSupporterStatus(user, true);
-                    // eslint-disable-next-line require-atomic-updates
-                    user.permissions.isSupporter = req.user.permissions.isSupporter = true;
-                } else if (status !== 'pledged' && user.permissions.isSupporter) {
-                    await userService.setSupporterStatus(user, false);
-                    // eslint-disable-next-line require-atomic-updates
-                    user.permissions.isSupporter = req.user.permissions.isSupporter = false;
-                }
-                // eslint-disable-next-line no-empty
-            } catch (err) {}
-
-            return res.send({ success: true, user: user, status: status });
-        })
-    );
-
-    server.post(
-        '/api/account/unlinkPatreon',
-        passport.authenticate('jwt', { session: false }),
-        wrapAsync(async (req, res) => {
-            req.params.username = req.user ? req.user.username : undefined;
-
-            let user = await checkAuth(req, res);
-
-            if (!user) {
-                return;
-            }
-
-            let ret = await patreonService.unlinkAccount(req.params.username);
-            if (!ret) {
-                return res.send({
-                    success: false,
-                    message:
-                        'An error occured unlinking your patreon account.  Please try again later.'
-                });
-            }
-
-            return res.send({ success: true });
         })
     );
 };

@@ -89,10 +89,6 @@ class User {
         return this.userData.permissions && this.userData.permissions.isPreviousWinner;
     }
 
-    get keepsSupporter() {
-        return this.userData.permissions && this.userData.permissions.keepsSupporterWithNoPatreon;
-    }
-
     get isContributor() {
         return this.userData.permissions && this.userData.permissions.isContributor;
     }
@@ -131,14 +127,6 @@ class User {
 
     get avatar() {
         return this.userData && this.userData.settings && this.userData.settings.avatar;
-    }
-
-    get patreon() {
-        return this.userData.patreon;
-    }
-
-    set patreon(value) {
-        this.userData.patreon = value;
     }
 
     get eloRating() {

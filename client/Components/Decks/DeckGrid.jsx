@@ -5,13 +5,12 @@ import classNames from 'classnames';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDeck } from '../../redux/actions';
-import { PatreonStatus } from '../../types';
 import DeckDice from './DeckDice';
 import './DeckGrid.scss';
 
 const DeckGrid = ({ decks, onDeckSelected, showWinRate }) => {
     const user = useSelector((state) => state.account.user);
-    const allowPremium = user?.patreon === PatreonStatus.Pledged || user?.permissions?.isSupporter;
+    const allowPremium = !!user?.permissions?.isSupporter;
 
     const { selectedDeck } = useSelector((state) => ({
         selectedDeck: state.cards.selectedDeck

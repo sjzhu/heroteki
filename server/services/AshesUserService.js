@@ -142,7 +142,6 @@ class UserService extends EventEmitter {
             settings: user.settings,
             promptedActionWindows: user.promptedActionWindows,
             permissions: user.permissions,
-            patreon: user.patreon,
             altArts: user.altArts,
             disabled: user.disabled
         };
@@ -377,9 +376,9 @@ class UserService extends EventEmitter {
                 { $set: { 'permissions.isSupporter': isSupporter } }
             )
             .catch((err) => {
-                logger.error('Error setting patreon supporter status: ', err);
+                logger.error('Error setting supporter status: ', err);
 
-                throw new Error('Error setting patreon supporter status');
+                throw new Error('Error setting supporter status');
             });
     }
 

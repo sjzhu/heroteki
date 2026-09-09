@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectDeck } from '../../redux/actions';
-import { PatreonStatus } from '../../types';
 import DeckDice from './DeckDice';
 import './DeckListEx.scss';
 import CardListText from './CardListText';
@@ -15,7 +14,7 @@ import { Button } from 'react-bootstrap';
 const DeckListEx = ({ decks, onDeckSelected, showWinRate, allowInvalidSelection }) => {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.account.user);
-    const allowPremium = user?.patreon === PatreonStatus.Pledged || user?.permissions?.isSupporter;
+    const allowPremium = !!user?.permissions?.isSupporter;
     const [magicHover, setMagicHover] = useState('');
     const [showNotes, setShowNotes] = useState(false);
     const [notesState, setNotesState] = useState(new Set());
