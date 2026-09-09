@@ -1,39 +1,68 @@
 ---
 name: project-sotmde-status
-description: SotMDE implementation status — current phase, completed work, and what's next
+description: SotMDE implementation status — completed work, current state, and key architectural facts
 metadata:
   type: project
 ---
 
-This repo (`/home/sjzhu/repos/heroteki`) is a fork of Ashteki being converted into a Sentinels of the Multiverse: Definitive Edition (SotMDE) online facilitator. The plan files are `sotmde-implementation-plan.md` and `sotmde-agent-orchestration.md`. Progress is tracked in `IMPLEMENTATION_LOG.md`.
+This repo (working dir `/mnt/data/sentinels/heroteki`, project name `heroteki` /
+"SotMDE Online") is a fork of Ashteki converted into a **manual-play** facilitator for
+Sentinels of the Multiverse: Definitive Edition. No card rules are automated — the server
+only tracks zones, HP, tokens, turn phase, chat, and event/outcome logs.
 
-**Waves 1–3 complete (as of 2026-06-06):**
-- Phase 0 — repo rename/setup
-- Phase 1 — purge Ashes rules engine
-- Phase 2A/2B — card/deck schemas, import script, placeholder image gen, SotmCard class
-- Phase 3 — server-side game model (HeroPlayer, VillainController, EnvironmentController, TurnManager, game.js rewrite, async play, pendinggame/lobby wiring)
-- Phase 4 — lobby UI (villain/env dropdowns, SotmHeroSelectModal, HeroOrderPanel, UploadDeck, Card Library)
-- Phase 5 — game board UI (SotmBoard, VillainArea, EnvironmentArea, HeroArea, TurnTracker, CardContextMenu, HpDial, GameOverModal, PostGameSummary, AppRoutes wired)
-- Phase 6 — API routes (/api/sotm/decks, /api/sotm/cards, deck upload, admin image upload, stats endpoints)
-- Phase 7 — game state serialization (GameStateWriter finalized, 3 stale writers deleted, 8 Redux selectors)
+Plan files (historical, conversion is done): `sotmde-implementation-plan.md`,
+`sotmde-agent-orchestration.md`. Per-phase notes: `IMPLEMENTATION_LOG.md`.
 
-**Inter-wave fix (2026-06-09):** `Application.jsx` `blinkTab` updated to use `activeControllerPlayerId` instead of the missing `currentGame.players` field.
+## Status — conversion complete
 
-**Next: Wave 4 — sequential (Agent-5 → Agent-6 → Agent-7)**
-- Agent-5: Phases 8 + 8.5 — chat log styling, phase-transition log entries, card-move log entries, MongoDB indexes for gameEvents/gameOutcomes/gameStates, logEvent() wiring, finaliseGame(), abandoned game handling, admin stats React page
-- Agent-6: Phase 9 — manual smoke tests + new test files
-- Agent-7: Phase 10 — dead code cleanup, docs, Docker labels
+**Phases 0–10 all complete** (finished 2026-06-11):
+- 0 repo rename/setup · 1 purge Ashes engine · 2 card/deck schemas + import + placeholder
+  images · 3 server game model · 4 lobby UI · 5 game board UI (`SotmBoard`) · 6 `/api/sotm/*`
+  routes · 7 state serialization · 8 + 8.5 chat/log/outcomes + admin stats · 9 tests ·
+  10 dead-code cleanup + docs
 
-**Critical known deviations Agent-5 must know:**
-- Agent-4B already implemented `initiateGameOver`/`cancelGameOver` socket wiring and `gameOverPrompt`/`gameOverCancelled` Redux handling (Phase 8.5.3b) — Agent-5 must NOT redo this; verify it exists before touching those handlers
-- `searchDeck` currently broadcasts deck contents to all players (not just requester) — noted as known limitation; Phase 7 exit gate item deferred; Agent-5 or later should address via a private emit path
-- Two `cdn.ashes.live` refs remain in `client/util.js` and `client/Components/Decks/DeckSummary.jsx` — unreachable in SotMDE paths, Phase 10 cleanup
+**Post-orchestration gameplay work** (2026-06-11, not tracked per-phase in the log until
+the "Post-orchestration feature work" section was added):
+- Move/play cards to any play area (`_genericMoveCard`, cross-controller) + destination
+  validation
+- Deck search modal: deck-order display, Play action, per-hero Move to Hand
+- Explicit incapacitate/restore toggle; HP frozen while incapacitated
+- One-shots go to the play area for manual resolution (not auto-trashed)
+- Infra: single cached monk connection (`server/db.js`), standardized on `sotmCards` /
+  `sotmDecks` collections, surface card-load failures, persist SotMDE fields in
+  `PendingGame.getSaveState`
 
-**Key architectural facts:**
-- DB: uses monk (not Mongoose) everywhere
-- Socket channel for game state: `gamestate`
-- `game.getState(forPlayerName)` shape: `{ gameId, round, phase, H, activeHeroId, activeControllerPlayerId, villain, environment, heroes[], chatLog, setupInstructions, isGameOver }`
-- `currentGame.players` does NOT exist in SotMDE game state — use `heroes[]` with `controllerPlayerId` field instead
-- `playersAndSpectators` is keyed by username (one entry per human, regardless of hero count) — no duplicate socket emissions
+## Known leftovers / tech debt
 
-**How to apply:** For Wave 4, use `sotmde-agent-orchestration.md` Agent-5 section for the exact prompt. Always read IMPLEMENTATION_LOG.md first for deviations from prior agents.
+- Ashes-era cruft still present: `server/services/Ashes*.js`, `server/stats_old.js`,
+  `server/api/{decks,games,banlist}.js`, much of `client/Components/GameBoard/`,
+  `test/helpers/` (deckbuilder/integrationhelper/gameflowwrapper — Ashteki chain). Kept
+  where an import chain still touches them (e.g. `ChimeraPage` → DeckList → DeckDice).
+- `searchDeck` in `game.js` has a dead `socket.send('deckContents')` path — `socket` is
+  never passed by `gameserver.js`. Deck contents already ride in broadcast state; the
+  client `DeckSearchModal` reads from there.
+- 10 file-level `react-hooks/exhaustive-deps` eslint-disables in legacy client components.
+- `test/` coverage is server-only: 6 spec files under `test/server/game/sotm/`. No client
+  tests.
+
+## Key architectural facts
+
+- DB: `monk` (not Mongoose), shared singleton via `server/db.js` `getDb()` — never
+  `.close()` it.
+- Two processes: `node .` (lobby, :4000) and `node server/gamenode` (game node, :9500).
+- Build: **Vite** (`vite.config.mjs`), not Webpack. `npm run dev` / `npm run build`.
+- Socket channel for game state: `gamestate`.
+- `game.getState(forPlayerName)` shape: `{ gameId, round, phase, H, activeHeroId,
+  activeControllerPlayerId, villain, environment, heroes[], chatLog, setupInstructions,
+  isGameOver }`.
+- **No `currentGame.players` map** (Ashteki-ism) — use `heroes[]` with `controllerPlayerId`.
+  `H` is the fixed hero-deck count, never changes on incapacitation.
+- `playersAndSpectators` keyed by username — one entry per human regardless of hero count.
+- `controllerId` in socket payloads = `'villain'` | `'environment'` | hero `deckId`.
+- Node: this machine runs an older Node than the primary dev machine; `.node-version`
+  pins the target. Node upgrade on this machine is a pending task (as of 2026-09-09).
+
+## How to apply
+
+Read `IMPLEMENTATION_LOG.md` for per-agent deviations before touching converted areas.
+`docs/game-model.md` has the current server model + socket command table.
