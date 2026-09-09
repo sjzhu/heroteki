@@ -2,7 +2,8 @@
 
 ## Prerequisites
 
-- **Node.js 18** — Use [nvm](https://github.com/nvm-sh/nvm) to manage versions
+- **Node.js 22.12.0** — pinned in `.nvmrc` / `.node-version`; run `nvm use` to switch.
+  22.12 is the floor required by the Vite 8 build.
 - **Docker** — For running MongoDB and Redis infrastructure
 
 ## Infrastructure

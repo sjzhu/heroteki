@@ -17,11 +17,12 @@ the Ashes rules engine with the SotMDE cooperative game model.
 ### Prerequisites
 
 - Git
-- Node.js 18
+- Node.js 22.12.0 (see `.node-version`; 22.12 is the minimum for the Vite 8 build)
 - MongoDB
 - Redis
 
-The best way to install Node is using nvm (node version manager).
+The best way to install Node is using nvm (node version manager); run `nvm use`
+in the repo root to pick up the pinned version from `.nvmrc`.
 
 ### Docker (infrastructure only)
 

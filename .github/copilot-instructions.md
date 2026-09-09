@@ -73,7 +73,8 @@ command table.
   prettier — `npm run lint:js:fix` to auto-fix).
 - All logging is fire-and-forget: log failures are caught and never crash a game
   (`docs/logging.md`).
-- Node version: see `.node-version`.
+- Node version: 22.12.0, pinned in `.nvmrc` / `.node-version` (22.12 is the Vite 8
+  floor). CI reads `.nvmrc`.
 
 ## Docs
 
