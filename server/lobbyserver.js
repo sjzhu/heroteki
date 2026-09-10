@@ -26,14 +26,16 @@ class LobbyServer {
 
     async init(options) {
         const app = this.app;
+        const sentryEnabled = !this.isDeveloping;
 
-        if (!this.isDeveloping) {
+        if (sentryEnabled) {
+            // For request tracing/isolation the SDK would need Sentry.init() to run
+            // before Express is required (a --require preload); we only rely on error
+            // capture here, which setupExpressErrorHandler() provides after the routes.
             Sentry.init({
                 dsn: process.env.SENTRY_DSN || this.configService.getValue('sentryDsn'),
                 release: process.env.VERSION || 'Local build'
             });
-            app.use(Sentry.Handlers.requestHandler());
-            app.use(Sentry.Handlers.errorHandler());
         }
 
         var opts = {};
@@ -101,6 +103,11 @@ class LobbyServer {
             app.get('/{*splat}', (req, res) => {
                 res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
             });
+        }
+
+        // Sentry's error handler: after all routes, before other error middleware.
+        if (sentryEnabled) {
+            Sentry.setupExpressErrorHandler(app);
         }
 
         // Define error middleware last

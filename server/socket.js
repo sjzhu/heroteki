@@ -54,10 +54,7 @@ class Socket extends EventEmitter {
             callback(this, ...args);
         } catch (err) {
             logger.info(err);
-            Sentry.configureScope((scope) => {
-                scope.setExtra('extra', args);
-            });
-            Sentry.captureException(err);
+            Sentry.captureException(err, { extra: { extra: args } });
         }
     }
 

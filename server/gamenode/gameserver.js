@@ -163,10 +163,7 @@ class GameServer {
             debugData.players = game.getPlayers().map((p) => ({ name: p.name }));
         }
 
-        Sentry.configureScope((scope) => {
-            scope.setExtra('extra', debugData);
-        });
-        Sentry.captureException(e);
+        Sentry.captureException(e, { extra: { extra: debugData } });
         if (game) {
             game.addMessage(
                 'A Server error has occured processing your game state, apologies.  Your game may now be in an inconsistent state, or you may be able to continue.  The error has been logged.'
