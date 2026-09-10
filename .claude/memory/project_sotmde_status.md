@@ -34,17 +34,23 @@ the "Post-orchestration feature work" section was added):
 
 ## Dependency / security state (as of 2026-09-10)
 
-- `npm audit` is at **2 moderate** (`express` → `qs`), down from 57. Clearing the last
-  two needs an **express 4 → 5 migration** (breaking: routing wildcards, `req.query`
-  getter, error handling).
-- `@sentry/node` is still v6; its vulnerable `cookie` transitive is pinned via a
-  `package.json` `overrides` block. A proper `@sentry/node` v6 → v10 migration
-  (`Sentry.Handlers.*` / `configureScope` are gone) is deferred — touches
-  `lobbyserver.js`, `gameserver.js`, `socket.js`, pairs with `@sentry/browser@8`.
-- Removed this session: `request` (→ native fetch in `server/util.js`), the whole
+- **`npm audit` is at 0** (down from 57 at the start of the cleanup).
+- **Express 5** (`server/lobbyserver.js`): catch-all routes are `app.get('/{*splat}', …)`;
+  a middleware normalises `req.body` to `{}` (body-parser 2 leaves it undefined for
+  bodyless requests); uses built-in `express.json`/`express.urlencoded` — the
+  `body-parser` dep is gone. Dev-mode SSR path was NOT manually run with Mongo/Redis up
+  yet (syntactically identical to the verified prod path).
+- **`@sentry/node` v10** — `Sentry.Handlers.*` → `Sentry.setupExpressErrorHandler(app)`
+  (after routes); `configureScope` → `captureException(e, { extra })`. Init is not
+  hoisted, so no request tracing/isolation — error capture only (this fork sets no DSN).
+  `@sentry/browser` is still **v8** (own package/runtime, client code already uses
+  v10-safe APIs; client DSN looks stale — points at a foreign `o496056.ingest.sentry.io`
+  project). A browser-SDK pass is the remaining Sentry item.
+- Removed during the cleanup: `request` (→ native fetch in `server/util.js`), the whole
   Patreon integration, `@sendgrid/mail` (mail goes through `MailJetSender`), `jest` /
-  `babel-jest`, and a pile of unused eslint/build deps. `bcrypt`→6, `sharp`→0.35,
-  `nodemailer`→10, `uuid`→11.
+  `babel-jest`, `body-parser`, `query-string-es5`, and a pile of unused eslint/build
+  deps. `bcrypt`→6, `sharp`→0.35, `nodemailer`→10, `uuid`→11, `express`→5,
+  `@sentry/node`→10.
 - `.eslintrc.js` now extends only `eslint:recommended` + react/react-hooks/prettier/
   jasmine. No airbnb/import/node/jsx-a11y/typescript-eslint.
 
