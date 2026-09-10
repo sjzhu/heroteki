@@ -49,9 +49,12 @@ class Lobby {
     }
 
     async init() {
-        // pre cache card list so the first user to the site doesn't have a slowdown
-        this.cards = await this.cardService.getAllCards();
-        this.precons = await this.deckService.getPrecons();
+        // Legacy Ashes card/precon cache. Both collections are empty post-SotMDE
+        // migration; these only feed the unused Ashes selectDeck() path. Kept as
+        // empty defaults so that path degrades gracefully rather than hitting
+        // `undefined`.
+        this.cards = (await this.cardService.getAllCards()) || {};
+        this.precons = (await this.deckService.getPrecons()) || [];
     }
 
     // External methods
