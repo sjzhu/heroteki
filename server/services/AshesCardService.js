@@ -71,7 +71,12 @@ class AshesCardService {
                 });
                 const chains = this.getChainedList();
                 chains.forEach((c) => {
-                    cards[c].isChained = true;
+                    // The chained list is a fixed set of Ashes stubs; skip any that
+                    // aren't in the loaded card set (e.g. the empty Ashes `cards`
+                    // collection after the SotMDE migration).
+                    if (cards[c]) {
+                        cards[c].isChained = true;
+                    }
                 });
 
                 return cards;
