@@ -1,4 +1,3 @@
-const bodyParser = require('body-parser');
 const ConfigService = require('./services/ConfigService');
 const passport = require('passport');
 const logger = require('./log.js');
@@ -59,8 +58,17 @@ class LobbyServer {
         );
         app.use(passport.initialize());
 
-        app.use(bodyParser.json({ limit: '5mb' }));
-        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(express.json({ limit: '5mb' }));
+        app.use(express.urlencoded({ extended: false }));
+        // express 5 / body-parser 2 leave req.body undefined for bodyless
+        // requests; route handlers assume an object, so normalise it.
+        app.use((req, res, next) => {
+            if (req.body == null) {
+                req.body = {};
+            }
+
+            next();
+        });
 
         api.init(app, options);
 
@@ -78,7 +86,7 @@ class LobbyServer {
 
             app.use(vite.middlewares);
 
-            app.get('*', async (req, res, next) => {
+            app.get('/{*splat}', async (req, res, next) => {
                 try {
                     const url = req.originalUrl;
                     const template = fs.readFileSync(templatePath, 'utf-8');
@@ -90,7 +98,7 @@ class LobbyServer {
                 }
             });
         } else {
-            app.get('*', (req, res) => {
+            app.get('/{*splat}', (req, res) => {
                 res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
             });
         }
