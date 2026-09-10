@@ -32,6 +32,22 @@ the "Post-orchestration feature work" section was added):
   `sotmDecks` collections, surface card-load failures, persist SotMDE fields in
   `PendingGame.getSaveState`
 
+## Dependency / security state (as of 2026-09-10)
+
+- `npm audit` is at **2 moderate** (`express` → `qs`), down from 57. Clearing the last
+  two needs an **express 4 → 5 migration** (breaking: routing wildcards, `req.query`
+  getter, error handling).
+- `@sentry/node` is still v6; its vulnerable `cookie` transitive is pinned via a
+  `package.json` `overrides` block. A proper `@sentry/node` v6 → v10 migration
+  (`Sentry.Handlers.*` / `configureScope` are gone) is deferred — touches
+  `lobbyserver.js`, `gameserver.js`, `socket.js`, pairs with `@sentry/browser@8`.
+- Removed this session: `request` (→ native fetch in `server/util.js`), the whole
+  Patreon integration, `@sendgrid/mail` (mail goes through `MailJetSender`), `jest` /
+  `babel-jest`, and a pile of unused eslint/build deps. `bcrypt`→6, `sharp`→0.35,
+  `nodemailer`→10, `uuid`→11.
+- `.eslintrc.js` now extends only `eslint:recommended` + react/react-hooks/prettier/
+  jasmine. No airbnb/import/node/jsx-a11y/typescript-eslint.
+
 ## Known leftovers / tech debt
 
 - Ashes-era cruft still present: `server/services/Ashes*.js`, `server/stats_old.js`,
