@@ -54,12 +54,32 @@ the "Post-orchestration feature work" section was added):
 - `.eslintrc.js` now extends only `eslint:recommended` + react/react-hooks/prettier/
   jasmine. No airbnb/import/node/jsx-a11y/typescript-eslint.
 
+## Ashes deck-selection removal (done, 2026-09-11)
+
+Executed `docs/ashes-deck-selection-removal-plan.md` in full (4 PRs, `7fa22089d`
+→ `75440f7de`): deleted the Ashes card-preload (`/api/cards`, kept
+`/api/cards/alts` for alt-art admin), `CampaignDeckValidator.js`, and gutted
+`lobby.js`'s `selectDeck`/`onSelectDeck`/`coaloff`/`solo`/`checkConjurations`
+path plus the matching client dispatches. `onGameRematch` no longer copies
+Ashes decks (removed — was reading `player.deck`, which doesn't exist for
+SotMDE) and now calls `onStartGame` directly with a TODO: it won't
+auto-start a rematch until SotMDE gets its own hero-selection-copy logic.
+Verified with a Node harness driving the real `Lobby` class against a live
+game node (no real two-browser pass was done — recommend one). Surfaced two
+more wholly-orphaned files as a byproduct: `GameFormats.jsx` /
+`GameFormatInfo.jsx` (zero importers) — folded into the deck-building
+follow-up below, not touched.
+
 ## Known leftovers / tech debt
 
 - Ashes-era cruft still present: `server/services/Ashes*.js`, `server/stats_old.js`,
   `server/api/{decks,games,banlist}.js`, much of `client/Components/GameBoard/`,
   `test/helpers/` (deckbuilder/integrationhelper/gameflowwrapper — Ashteki chain). Kept
   where an import chain still touches them (e.g. `ChimeraPage` → DeckList → DeckDice).
+  The Ashes deck-*building* backend (`/api/decks*`, `AshesDeckService`,
+  `SelectDeckModal`, `DeckList*`, `DeckEditor`, `CardsPage`, `ChimeraPage`,
+  `GameFormats.jsx`/`GameFormatInfo.jsx`, `/results`) is next in line — see the
+  Follow-ups section of the plan doc above.
 - `searchDeck` in `game.js` has a dead `socket.send('deckContents')` path — `socket` is
   never passed by `gameserver.js`. Deck contents already ride in broadcast state; the
   client `DeckSearchModal` reads from there.
