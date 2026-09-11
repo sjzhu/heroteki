@@ -75,7 +75,7 @@ All already verified while writing this plan, re-confirm before starting:
 Gate: `node -e "require('./server/api/index.js')"` loads; `node .` boots and no
 longer logs the `isChained` line.
 
-## Step 2 — server: strip deck-selection from `lobby.js`
+## Step 2 — server: strip deck-selection from `lobby.js` (DONE, `2a9bf1d43`)
 
 Remove, in `server/lobby.js`:
 
@@ -111,7 +111,7 @@ Delete `server/CampaignDeckValidator.js`.
 Gate: `node .` boots; create a game from two browsers, both pick heroes, start —
 verify `onNewGame` / `onJoinGame` / `onStartGame` still work end to end.
 
-## Step 3 — client: drop the preload dispatches & dead actions
+## Step 3 — client: drop the preload dispatches & dead actions (DONE, `739202aa9`)
 
 1. `client/Application.jsx`: remove `dispatch(actions.loadCards());` and
    `dispatch(actions.loadAllPreconsDecks());` (lines ~84–85).
@@ -129,14 +129,18 @@ verify `onNewGame` / `onJoinGame` / `onStartGame` still work end to end.
    `/faq`, create-game modal — no console errors, no failed `/api/cards*`
    requests in the network tab.
 
-## Step 4 — sweep
+## Step 4 — sweep (DONE, folded into `2a9bf1d43`)
 
 - `grep -rn "isChained\|getChainedList\|coaloff\|CoalOff\|soloLevel\|soloStage\|selectdeck\|loadCards\b\|CampaignDeckValidator" server/ client/ --include=*.js --include=*.jsx | grep -v node_modules`
   — every remaining hit should be either a test, an out-of-scope file, or a
   deliberate keep (document each). `ServiceFactory` / `AshesCardService` are
   excluded from this grep — they're a permanent keep for `/api/cards/alts`.
-- `client/util.js` `coaloff` format entry and
-  `client/Components/Games/GameFormatInfo.jsx` `case 'coaloff':` — remove.
+- `client/util.js` `coaloff` format entry and `GameFormatInfo.jsx`
+  `case 'coaloff':` — left as-is: `GameFormats.jsx` (the only importer of
+  `GameFormatInfo`) has zero importers itself, so both are wholly orphaned
+  Ashes format-picker UI, not partially-live as assumed when this step was
+  written. They belong with the out-of-scope deck-building UI cleanup, not a
+  one-line edit here.
 - `npm run lint` clean (watch for newly-unused imports/vars).
 - `npm test` — 144/0 (no server test touches this path; if one does, it's a
   stale Ashes test to delete).
@@ -170,24 +174,27 @@ two browsers, Mongo + Redis up, `node .` + `node server/gamenode`:
 8. Confirm the lobby log is clean across all of the above (no `isChained`, no
    `Cannot read/set properties of undefined`).
 
-## Rollout
+## Rollout — all four merged
 
-Three PRs, each independently green and boot-tested:
-
-1. **`chore/remove-ashes-card-preload`** — Step 1 (endpoint + services). Small,
-   low-risk, removes the startup error at the source.
-2. **`chore/remove-ashes-deck-selection`** — Steps 2 + 4 (lobby.js). The risky
-   one — needs the full two-browser test pass above before merge.
-3. **`chore/remove-ashes-card-client`** — Step 3 (client dispatches/actions).
-
-Do 1 first (safe), then 3 (client stops calling the deleted endpoint), then 2.
+1. **`chore/remove-ashes-card-preload`** (`7fa22089d`) — Step 1.
+2. **`chore/remove-ashes-card-client`** (`739202aa9`) — a first-commit
+   correction restoring `/api/cards/alts` (Step 1 had deleted it by mistake),
+   then Step 3.
+3. **`chore/remove-ashes-deck-selection`** (`2a9bf1d43`) — Steps 2 + 4. Manual
+   two-browser testing wasn't available in the execution environment; verified
+   instead with a Node harness that drove the real `Lobby` class's edited
+   handlers end to end against a live game node (see the Step 2 commit message
+   for the full run). Recommend one real two-browser pass before relying on
+   this in production.
 
 ## Follow-ups (separate plans)
 
 - Ashes deck-building removal: `/api/decks*`, `AshesDeckService`, `SelectDeckModal`,
   `DeckList` / `DeckGrid` / `DeckListEx`, `DeckEditor`, `CardsPage`, `ChimeraPage`,
-  `/results`, the bulk of `client/redux/{actions,reducers}` `deck` / `cards` code,
-  and the `data/` Ashes card import scripts.
+  `GameFormats.jsx` / `GameFormatInfo.jsx` (confirmed wholly orphaned — zero
+  importers of `GameFormats`), `/results`, the bulk of
+  `client/redux/{actions,reducers}` `deck` / `cards` code, and the `data/`
+  Ashes card import scripts.
 - Alt-art admin removal (`/useralts`, `UserAltAdmin.jsx`, alt fields in
   `UserAdmin.jsx`, `/api/cards/alts`).
 - SotMDE-native rematch (`onGameRematch` currently assumes `player.deck`).
