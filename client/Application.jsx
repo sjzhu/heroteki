@@ -81,9 +81,6 @@ function Application() {
             }
         }
 
-        dispatch(actions.loadCards());
-        dispatch(actions.loadAllPreconsDecks());
-
         $(document).ajaxError((event, xhr) => {
             if (xhr.status === 403) {
                 navigate('/unauth');
