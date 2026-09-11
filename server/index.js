@@ -31,10 +31,7 @@ async function runServer() {
 
     let lobbyServer = new LobbyServer(process.env.NODE_ENV !== 'production', app);
     lobbyServer.init(options);
-    let lobby = new Lobby(httpServer, options);
-
-    // pre-load card/deck data
-    await lobby.init();
+    new Lobby(httpServer, options);
 
     let port = process.env.PORT || configService.getValueForSection('lobby', 'port') || 4000;
 
