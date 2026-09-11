@@ -122,67 +122,6 @@ function checkConjurations(deck) {
 export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, action) {
     let newState;
     switch (action.type) {
-        case 'RECEIVE_CARDS':
-            newState = Object.assign({}, state, {
-                cards: action.response.cards
-            });
-
-            var decks = state.decks;
-            if (decks.length > 0) {
-                processDecks(decks, newState);
-                newState.decks = decks;
-            }
-
-            var myChimeraDecks = state.myChimeraDecks;
-            if (myChimeraDecks.length > 0) {
-                processDecks(myChimeraDecks, newState);
-                newState.myChimeraDecks = myChimeraDecks;
-            }
-
-            var precons = state.standaloneDecks;
-            if (precons?.length > 0) {
-                processDecks(precons, newState);
-                newState.standaloneDecks = precons;
-            }
-
-            var adventuringPartyDecks = state.adventuringPartyDecks;
-            if (adventuringPartyDecks?.length > 0) {
-                processDecks(adventuringPartyDecks, newState);
-                newState.adventuringPartyDecks = adventuringPartyDecks;
-            }
-
-            var firstAdventureDecks = state.firstAdventureDecks;
-            if (firstAdventureDecks?.length > 0) {
-                processDecks(firstAdventureDecks, newState);
-                newState.firstAdventureDecks = firstAdventureDecks;
-            }
-            var pveDecks = state.pveDecks;
-            if (pveDecks?.length > 0) {
-                processDecks(pveDecks, newState);
-                newState.pveDecks = pveDecks;
-            }
-            var chimeraDecks = state.chimeraDecks;
-            if (chimeraDecks?.length > 0) {
-                processDecks(chimeraDecks, newState);
-                newState.chimeraDecks = chimeraDecks;
-            }
-            var dualDuelDecks = state.dualDuelDecks;
-            if (dualDuelDecks?.length > 0) {
-                processDecks(dualDuelDecks, newState);
-                newState.dualDuelDecks = dualDuelDecks;
-            }
-            var oneCollectionDecks = state.oneCollectionDecks;
-            if (oneCollectionDecks?.length > 0) {
-                processDecks(oneCollectionDecks, newState);
-                newState.oneCollectionDecks = oneCollectionDecks;
-            }
-            var ascendancyDecks = state.ascendancyDecks;
-            if (ascendancyDecks?.length > 0) {
-                processDecks(ascendancyDecks, newState);
-                newState.ascendancyDecks = ascendancyDecks;
-            }
-
-            return newState;
         case 'RECEIVE_ALTS':
             newState = Object.assign({}, state, {
                 alts: action.response.alts
@@ -233,27 +172,6 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
 
             newState = Object.assign({}, state, {
                 standaloneDecks: action.response.decks
-            });
-
-            return newState;
-        case 'PRECON_DECKS_LOADED':
-            if (action.response.decks) {
-                console.log('precon decks received');
-
-                processDecks(action.response.decks, state);
-                console.log('precon decks processed');
-            }
-            var groupedDecks = action.response.decks.groupBy((d) => d.groupName);
-
-            newState = Object.assign({}, state, {
-                standaloneDecks: groupedDecks.reborn || [],
-                adventuringPartyDecks: groupedDecks.aparty || [],
-                firstAdventureDecks: groupedDecks.firstadventure || [],
-                pveDecks: groupedDecks.pve || [],
-                chimeraDecks: groupedDecks.chimera || [],
-                dualDuelDecks: groupedDecks.dualduel || [],
-                oneCollectionDecks: groupedDecks.onecollection || [],
-                ascendancyDecks: groupedDecks.ascendancy || []
             });
 
             return newState;
@@ -495,8 +413,8 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
             });
 
             return newState;
-        case Decks.DeckImported:
-            decks = state.decks;
+        case Decks.DeckImported: {
+            let decks = state.decks;
             decks.unshift(action.response.deck);
             newState = Object.assign({}, state, {
                 deckSaved: true,
@@ -507,6 +425,7 @@ export default function (state = { decks: [], myChimeraDecks: [], cards: {} }, a
             processDecks(newState.decks, state);
 
             return newState;
+        }
 
         case Decks.DeckResynced:
             newState = Object.assign({}, state, {
