@@ -16,8 +16,8 @@ startup and every client page-load, and it was the source of the
 
 **In scope** — the card-preload + deck-selection path:
 
-- `server/api/cards.js` (`/api/cards`, `/api/cards/alts`)
-- `server/services/ServiceFactory.js`, `server/services/AshesCardService.js`
+- `/api/cards` (the deck-selection card preload — **not** `/api/cards/alts`,
+  which stays; see below)
 - `server/CampaignDeckValidator.js`
 - `lobby.js`: `selectDeck()`, `onSelectDeck()`, the `selectdeck` event, the
   `coaloff` / `game.solo` branches in `onNewGame` / `onJoinGame`,
@@ -25,15 +25,21 @@ startup and every client page-load, and it was the source of the
   `this.cards` / `this.precons` / `this.cardService`, the `CampaignDeckValidator`
   and `ServiceFactory` imports, and the rematch calls into `onSelectDeck()`
 - client: `Application.jsx` `loadCards()` / `loadAllPreconsDecks()` dispatch,
-  `client/redux/actions/cards.js` `loadCards` / `loadAlts`, and the reducer /
-  selector code that only those feed
+  `client/redux/actions/cards.js` `loadCards`, and the reducer / selector code
+  that only it feeds
 
 **Explicitly out of scope** (larger, separate efforts — noted at the end):
 
 - The Ashes deck-**building** backend: `server/api/decks.js`,
   `server/services/AshesDeckService.js`, and their scripts
-- Alt-art admin: `/api/cards/alts` consumers in `UserAdmin.jsx` /
-  `UserAltAdmin.jsx`
+- **Alt-art admin** — `/api/cards/alts`, `server/services/ServiceFactory.js` +
+  `AshesCardService.js` (kept alive for this one route),
+  `client/redux/actions/cards.js` `loadAlts`, and the consumers in
+  `UserAdmin.jsx` / `UserAltAdmin.jsx`. **Correction:** an earlier pass of this
+  plan deleted `/api/cards/alts` alongside `/api/cards` in Step 1, breaking the
+  nav-linked, permission-gated `/useralts` page — it was restored in a follow-up
+  commit on the Step 3 branch. `server/api/cards.js` now contains only the
+  `/api/cards/alts` route.
 - Dead-but-URL-reachable pages: `/cards`, `/decks/edit`, `/chimera`, `/results`,
   `/decks/import`
 - A SotMDE-native rematch flow
@@ -56,15 +62,15 @@ All already verified while writing this plan, re-confirm before starting:
    (all Ashes deck-building UI, none nav-linked); `state.cards.alts` only by the
    alt-art admin pages.
 
-## Step 1 — server: delete the card-preload endpoint & services
+## Step 1 — server: delete the card-preload endpoint (DONE, `7fa22089d` + `74a4c281d`)
 
-1. Delete `server/api/cards.js`.
-2. In `server/api/index.js` remove `const cards = require('./cards');` and the
-   `cards.init(server);` call.
-3. Delete `server/services/ServiceFactory.js` and
-   `server/services/AshesCardService.js`.
-4. `grep -rn "ServiceFactory\|AshesCardService\|/api/cards" server/` → expect no
-   hits outside tests.
+1. Remove only the `/api/cards` route from `server/api/cards.js` — leave
+   `/api/cards/alts` in place (`UserAltAdmin.jsx` / `/useralts` needs it; the
+   first pass of this step deleted both and had to be corrected).
+2. Keep `ServiceFactory` / `AshesCardService` — `/api/cards/alts` still needs
+   `cardService.getAltArts()`. They are no longer a "delete in this plan" item;
+   see the "what stays" table.
+3. `grep -rn "/api/cards'" server/` → only the alts route.
 
 Gate: `node -e "require('./server/api/index.js')"` loads; `node .` boots and no
 longer logs the `isChained` line.
@@ -125,9 +131,10 @@ verify `onNewGame` / `onJoinGame` / `onStartGame` still work end to end.
 
 ## Step 4 — sweep
 
-- `grep -rn "isChained\|getChainedList\|coaloff\|CoalOff\|soloLevel\|soloStage\|selectdeck\|loadCards\|CampaignDeckValidator\|ServiceFactory\|AshesCardService" server/ client/ --include=*.js --include=*.jsx | grep -v node_modules`
+- `grep -rn "isChained\|getChainedList\|coaloff\|CoalOff\|soloLevel\|soloStage\|selectdeck\|loadCards\b\|CampaignDeckValidator" server/ client/ --include=*.js --include=*.jsx | grep -v node_modules`
   — every remaining hit should be either a test, an out-of-scope file, or a
-  deliberate keep (document each).
+  deliberate keep (document each). `ServiceFactory` / `AshesCardService` are
+  excluded from this grep — they're a permanent keep for `/api/cards/alts`.
 - `client/util.js` `coaloff` format entry and
   `client/Components/Games/GameFormatInfo.jsx` `case 'coaloff':` — remove.
 - `npm run lint` clean (watch for newly-unused imports/vars).
@@ -139,6 +146,7 @@ verify `onNewGame` / `onJoinGame` / `onStartGame` still work end to end.
 | Kept | Reason |
 |---|---|
 | `server/services/AshesDeckService.js` | backs the out-of-scope `/api/decks*` routes and `server/scripts/{decklist,tournament}.js` |
+| `server/services/ServiceFactory.js` + `AshesCardService.js` | back the surviving `/api/cards/alts` route (alt-art admin, out of scope) |
 | `server/models/DummyUser.js` | still imported by `pendinggame.js` and `gameserver.js` (dead there too, but a separate cleanup) |
 | `client/redux/reducers/cards.js` deck slices | feed `SelectDeckModal` / `DeckList*` / `ChimeraPage` — out-of-scope dead UI |
 | `RECEIVE_ALTS` / alt-art code | only if the alt-art admin cleanup is deferred |
